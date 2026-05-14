@@ -54,19 +54,19 @@ export function UserProducts() {
         />
         <div className="flex items-center gap-3 w-full sm:w-auto">
           <div className="relative flex-1 sm:w-64">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={16} />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--text-muted)]" size={16} />
             <input
               type="text"
               placeholder="Search catalog..."
               value={productSearch}
               onChange={(e) => setProductSearch(e.target.value)}
-              className="w-full bg-slate-900/50 border border-white/10 rounded-xl pl-10 pr-4 py-2.5 text-xs text-white focus:border-indigo-500 outline-none transition-all"
+              className="w-full bg-[var(--bg-secondary)] border border-[var(--border-subtle)] rounded-xl pl-10 pr-4 py-2.5 text-xs text-[var(--text-primary)] focus:border-indigo-500 outline-none transition-all"
             />
           </div>
           <select
             value={productCategory}
             onChange={(e) => setProductCategory(e.target.value)}
-            className="bg-slate-900/50 border border-white/10 rounded-xl px-4 py-2.5 text-xs text-white font-bold focus:border-indigo-500 outline-none transition-all cursor-pointer"
+            className="bg-[var(--bg-secondary)] border border-[var(--border-subtle)] rounded-xl px-4 py-2.5 text-xs text-[var(--text-primary)] font-bold focus:border-indigo-500 outline-none transition-all cursor-pointer"
           >
             <option value="">All Categories</option>
             {productCategories.map(cat => (

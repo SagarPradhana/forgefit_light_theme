@@ -4,9 +4,10 @@ interface DeleteUserModalProps {
   isOpen: boolean;
   onClose: () => void;
   onConfirm: () => void;
+  isProcessing?: boolean;
 }
 
-export const DeleteUserModal = ({ isOpen, onClose, onConfirm }: DeleteUserModalProps) => {
+export const DeleteUserModal = ({ isOpen, onClose, onConfirm, isProcessing }: DeleteUserModalProps) => {
   return (
     <DeleteConfirmationModal
       isOpen={isOpen}
@@ -15,6 +16,7 @@ export const DeleteUserModal = ({ isOpen, onClose, onConfirm }: DeleteUserModalP
       title="User Termination"
       description="This user profile and all associated data will be permanently purged from the master database. This action is irreversible."
       confirmLabel="Submit"
+      isProcessing={isProcessing}
     />
   );
 };

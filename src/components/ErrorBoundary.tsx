@@ -38,35 +38,29 @@ class ErrorBoundary extends Component<Props, State> {
       }
 
       return (
-        <div className="fixed inset-0 z-[1000] flex items-center justify-center bg-slate-950 p-6 font-sans">
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(17,24,39,1)_0%,rgba(2,6,23,1)_100%)]" />
-
-          {/* Animated Background Orbs */}
-          <div className="absolute top-1/4 left-1/4 h-64 w-64 rounded-full bg-indigo-500/10 blur-[120px] animate-pulse" />
-          <div className="absolute bottom-1/4 right-1/4 h-64 w-64 rounded-full bg-orange-500/10 blur-[120px] animate-pulse delay-700" />
+        <div className="fixed inset-0 z-[1000] flex items-center justify-center bg-gradient-to-br from-amber-50 via-orange-50 to-white p-6">
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(232,82,26,0.03)_0%,transparent_100%)]" />
 
           <motion.div
             initial={{ opacity: 0, scale: 0.9, y: 20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
-            className="relative z-10 w-full max-w-xl overflow-hidden rounded-[2.5rem] border border-white/10 bg-slate-900/40 p-8 md:p-12 text-center backdrop-blur-2xl shadow-2xl shadow-black/50"
+            className="relative z-10 w-full max-w-xl overflow-hidden rounded-[2.5rem] border border-amber-200/60 bg-white p-8 md:p-12 text-center shadow-[0_25px_80px_rgba(0,0,0,0.08),0_8px_32px_rgba(232,82,26,0.06)]"
           >
-            <div className="mx-auto mb-8 h-24 w-24 rounded-3xl bg-red-500/10 border border-red-500/20 flex items-center justify-center shadow-inner">
-              <AlertTriangle size={48} className="text-red-500 animate-bounce" />
+            <div className="mx-auto mb-8 h-24 w-24 rounded-3xl bg-red-50 border border-red-200 flex items-center justify-center">
+              <AlertTriangle size={48} className="text-red-500" />
             </div>
 
-            <h1 className="mb-4 text-3xl md:text-4xl font-black text-white uppercase italic tracking-tighter leading-tight">
-              System Breach <br />
-              <span className="text-red-500 underline decoration-white/10 underline-offset-8">Detected</span>
+            <h1 className="mb-4 text-3xl md:text-4xl font-bold text-gray-900 tracking-tight leading-tight">
+              Something went wrong
             </h1>
 
-            <p className="mb-10 text-sm md:text-base font-bold text-slate-400 uppercase tracking-widest leading-relaxed">
-              We encountered an unexpected diagnostic error. The core module has been suspended to protect your data.
+            <p className="mb-10 text-sm font-medium text-gray-500 leading-relaxed max-w-md mx-auto">
+              We encountered an unexpected error. Please try again or return to the home page.
             </p>
 
-            {/* Error Message Trace (Optional/Dev) */}
-            <div className="mb-10 rounded-2xl bg-black/40 border border-white/5 p-4 text-left overflow-hidden">
-              <p className="text-[10px] font-mono text-slate-500 uppercase mb-2">Error Signature:</p>
-              <p className="text-xs font-mono text-red-400/80 truncate font-black tracking-tight">
+            <div className="mb-10 rounded-2xl bg-orange-50 border border-orange-200 p-4 text-left">
+              <p className="text-[10px] font-mono text-gray-500 uppercase mb-2 font-semibold">Error:</p>
+              <p className="text-xs font-mono text-red-600 truncate font-medium">
                 {this.state.error?.message || "Unknown Runtime Exception"}
               </p>
             </div>
@@ -74,24 +68,25 @@ class ErrorBoundary extends Component<Props, State> {
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
               <button
                 onClick={this.handleReset}
-                className="group flex w-full sm:w-auto items-center justify-center gap-3 rounded-2xl bg-red-500 px-8 py-4 font-black uppercase tracking-widest text-white shadow-xl shadow-red-500/20 transition-all hover:bg-red-400 active:scale-95"
+                className="group flex w-full sm:w-auto items-center justify-center gap-3 rounded-2xl bg-gradient-to-r from-[var(--accent-orange)] to-[var(--accent-gold)] px-8 py-4 font-bold uppercase tracking-widest text-white transition-all active:scale-95"
+                style={{ boxShadow: "0 4px 20px rgba(232,82,26,0.3)" }}
               >
                 <RefreshCw size={18} className="group-hover:rotate-180 transition-transform duration-500" />
-                Initialize Recovery
+                Try Again
               </button>
 
               <button
                 onClick={() => window.location.href = '/'}
-                className="flex w-full sm:w-auto items-center justify-center gap-3 rounded-2xl bg-white/5 px-8 py-4 font-black uppercase tracking-widest text-slate-300 border border-white/10 transition-all hover:bg-white/10 hover:text-white"
+                className="flex w-full sm:w-auto items-center justify-center gap-3 rounded-2xl bg-white px-8 py-4 font-bold uppercase tracking-widest text-gray-600 border border-amber-200 transition-all hover:border-amber-300 hover:text-gray-800"
               >
                 <Home size={18} />
-                Abort
+                Go Home
               </button>
             </div>
 
             <div className="mt-12 flex flex-col items-center gap-2">
-              <div className="h-1 w-12 rounded-full bg-white/10" />
-              <p className="text-[9px] font-black text-slate-600 uppercase tracking-[0.5em]">ForgeFit Recovery Protocol v2.4.0</p>
+              <div className="h-1 w-12 rounded-full bg-amber-200" />
+              <p className="text-[9px] font-bold text-gray-400 uppercase tracking-[0.5em]">ForgeFit Recovery Protocol</p>
             </div>
           </motion.div>
         </div>

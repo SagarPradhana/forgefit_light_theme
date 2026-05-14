@@ -2,47 +2,70 @@ import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { PublicLayout } from "../../layouts/PublicLayout";
 import { useGymStore } from "../../store/gymStore";
-import { Check, Crown, ShieldCheck, Users } from "lucide-react";
+import { Check, Crown, ShieldCheck, Users, Star } from "lucide-react";
 import { Counter } from "../../components/common/Counter";
 import { getCurrencySymbol } from "../../utils/currency";
 
 export function PricingPage() {
-  const { publicSubscriptionPlans, publicAppConfig, plans: fallbackPlans } = useGymStore();
+  const { publicSubscriptionPlans, publicAppConfig, plans: fallbackPlans, isLoadingPublicData } = useGymStore();
   const currencySymbol = getCurrencySymbol(publicAppConfig?.currency || "INR");
 
-  const plans = publicSubscriptionPlans.length > 0
-    ? publicSubscriptionPlans.map((p) => ({
-      id: p.id,
-      name: p.name,
-      price: p.price,
-      actualPrice: p.actual_price,
-      duration: `${p.duration_in_months} Month${p.duration_in_months > 1 ? "s" : ""}`,
-      features: p.description.includes(",") ? p.description.split(",").map((f) => f.trim()) : [p.description],
-    }))
-    : fallbackPlans.map((plan) => ({ ...plan, actualPrice: undefined as number | undefined }));
+  // Handle undefined or empty data
+  const apiPlans = publicSubscriptionPlans || [];
+  const localPlans = fallbackPlans || [];
+
+  const plans = apiPlans.length > 0
+    ? apiPlans.map((p) => ({
+        id: p.id,
+        name: p.name,
+        price: p.price,
+        actualPrice: p.actual_price,
+        duration: `${p.duration_in_months} Month${p.duration_in_months > 1 ? "s" : ""}`,
+        features: p.description?.includes(",") ? p.description.split(",").map((f) => f.trim()) : [p.description || "Basic access"],
+      }))
+    : localPlans.map((plan) => ({ ...plan, actualPrice: undefined as number | undefined }));
+
+  // Show loading only if we have NO data at all and are still loading
+  if (isLoadingPublicData && apiPlans.length === 0 && localPlans.length === 0) {
+    return (
+      <PublicLayout>
+        <div className="min-h-screen flex items-center justify-center">
+          <div className="text-center">
+            <div className="w-12 h-12 border-4 border-[var(--border-subtle)] border-t-[var(--accent-orange)] rounded-full animate-spin mx-auto mb-4" />
+            <p className="text-[var(--text-muted)]">Loading plans...</p>
+          </div>
+        </div>
+      </PublicLayout>
+    );
+  }
 
   const allFeatures = Array.from(
-    new Set(plans.flatMap((plan) => plan.features)),
+    new Set(plans.flatMap((plan) => plan.features || [])),
   );
 
   return (
     <PublicLayout>
-      <div className="relative isolate min-h-screen overflow-hidden">
-        <div className="bg-mesh" />
+      <div className="relative isolate min-h-screen overflow-hidden bg-gradient-to-b from-[var(--bg-primary)] via-[var(--bg-secondary)] to-[var(--bg-card)]">
+        {/* Animated Background Orbs */}
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          <div className="absolute top-0 right-0 w-[600px] h-[600px] rounded-full bg-gradient-to-br from-[var(--accent-orange)]/10 to-transparent blur-3xl" />
+          <div className="absolute bottom-0 left-0 w-[400px] h-[400px] rounded-full bg-gradient-to-tr from-[var(--accent-gold)]/10 to-transparent blur-3xl" />
+        </div>
 
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-16">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-16 relative z-10">
           <div className="text-center mb-12 sm:mb-20">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              className="hero-badge"
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-[var(--accent-orange)]/10 to-[var(--accent-gold)]/10 border border-[var(--border-accent)] mb-6"
             >
-              Elite Access Plans
+              <Star className="w-4 h-4 text-[var(--accent-orange)]" />
+              <span className="text-sm font-semibold text-[var(--accent-orange)] uppercase tracking-wider">Elite Access Plans</span>
             </motion.div>
-            <h1 className="text-4xl sm:text-6xl md:text-7xl font-black text-white mb-6 uppercase tracking-tight leading-[0.9]">
-              INVEST IN <br /><span className="text-cinematic">YOUR EVOLUTION</span>
+            <h1 className="text-4xl sm:text-6xl md:text-7xl font-black text-[var(--text-primary)] mb-6 uppercase tracking-tight leading-[0.9]">
+              INVEST IN <br /><span className="text-gradient">YOUR EVOLUTION</span>
             </h1>
-            <p className="text-slate-400 text-base sm:text-lg max-w-2xl mx-auto px-4 sm:px-0">
+            <p className="text-[var(--text-muted)] text-base sm:text-lg max-w-2xl mx-auto px-4 sm:px-0">
               Transparent pricing designed for every stage of your journey. No hidden fees, just pure performance.
             </p>
           </div>
@@ -61,39 +84,42 @@ export function PricingPage() {
                 >
                   {isPopular && (
                     <div className="absolute -top-4 left-1/2 -translate-x-1/2 z-20">
-                      <div className="bg-orange-500 text-white text-[10px] font-black uppercase tracking-[0.2em] px-4 py-1.5 rounded-full shadow-glow">
+                      <div className="bg-gradient-to-r from-[var(--accent-orange)] to-[var(--accent-gold)] text-white text-[10px] font-black uppercase tracking-[0.2em] px-4 py-1.5 rounded-full shadow-[0_4px_15px_var(--glow-orange)]">
                         Most Popular
                       </div>
                     </div>
                   )}
 
-                  <div className={`glass-panel p-8 h-full flex flex-col relative overflow-hidden transition-all duration-500 ${isPopular ? "border-orange-500/40 ring-1 ring-orange-500/20 shadow-glow" : ""}`}>
-                    {isPopular && <div className="absolute top-0 right-0 w-32 h-32 bg-orange-500/5 blur-3xl -mr-16 -mt-16 rounded-full" />}
+                  <div className={`bg-[var(--bg-card)] border rounded-3xl p-8 h-full flex flex-col relative overflow-hidden transition-all duration-500 hover:shadow-[var(--shadow-hover)] hover:-translate-y-2 ${isPopular ? "border-[var(--accent-orange)] ring-1 ring-[var(--border-accent)] shadow-[0_0_30px_var(--glow-orange)]" : "border-[var(--border-subtle)] shadow-[var(--shadow-card)]"}`}>
+                    {isPopular && <div className="absolute top-0 right-0 w-32 h-32 bg-[var(--accent-orange)]/5 blur-3xl -mr-16 -mt-16 rounded-full" />}
 
                     <div className="mb-8">
-                      <p className="text-orange-400 text-xs font-black uppercase tracking-[0.2em] mb-4">{plan.name}</p>
+                      <p className="text-[var(--accent-orange)] text-xs font-black uppercase tracking-[0.2em] mb-4">{plan.name}</p>
                       {typeof plan.actualPrice === "number" && plan.actualPrice > plan.price && (
-                        <p className="text-slate-500 text-sm line-through mb-2">{currencySymbol}{plan.actualPrice.toLocaleString("en-IN")}</p>
+                        <p className="text-[var(--text-muted)] text-sm line-through mb-2">{currencySymbol}{plan.actualPrice.toLocaleString("en-IN")}</p>
                       )}
                       <div className="flex items-baseline gap-1">
-                        <span className="text-5xl font-black text-white">{currencySymbol}<Counter from={0} to={plan.price} /></span>
-                        <span className="text-slate-500 text-sm font-bold uppercase tracking-widest">/ {plan.duration}</span>
+                        <span className="text-5xl font-black text-[var(--text-primary)]">{currencySymbol}<Counter from={0} to={plan.price} /></span>
+                        <span className="text-[var(--text-muted)] text-sm font-bold uppercase tracking-widest">/ {plan.duration}</span>
                       </div>
                     </div>
 
                     <div className="space-y-4 mb-10 flex-grow">
                       {plan.features.map((feature, i) => (
                         <div key={i} className="flex items-start gap-3">
-                          <div className="mt-1 w-5 h-5 rounded-full bg-orange-500/10 flex items-center justify-center flex-shrink-0">
-                            <Check className="h-3 w-3 text-orange-400" />
+                          <div className="mt-1 w-5 h-5 rounded-full bg-[var(--accent-orange)]/10 flex items-center justify-center flex-shrink-0">
+                            <Check className="h-3 w-3 text-[var(--accent-orange)]" />
                           </div>
-                          <span className="text-sm text-slate-300 leading-tight">{feature}</span>
+                          <span className="text-sm text-[var(--text-secondary)] leading-tight">{feature}</span>
                         </div>
                       ))}
                     </div>
 
                     <Link to="/signin">
-                      <button className={`w-full py-4 rounded-xl font-black uppercase tracking-widest text-sm transition-all duration-300 ${isPopular ? "btn-premium" : "bg-white/5 border border-white/10 text-white hover:bg-white/10"}`}>
+                      <button className={`w-full py-4 rounded-xl font-black uppercase tracking-widest text-sm transition-all duration-300 ${isPopular 
+                        ? "bg-gradient-to-r from-[var(--accent-orange)] to-[var(--accent-gold)] text-white shadow-[0_4px_15px_var(--glow-orange)] hover:shadow-[0_10px_35px_var(--glow-orange)] hover:-translate-y-0.5" 
+                        : "bg-[var(--bg-card)] border-2 border-[var(--border-subtle)] text-[var(--text-primary)] hover:border-[var(--accent-orange)] hover:text-[var(--accent-orange)] hover:-translate-y-0.5"
+                      }`}>
                         Select Plan
                       </button>
                     </Link>
@@ -103,34 +129,34 @@ export function PricingPage() {
             })}
           </div>
 
-          <section className="py-20 border-t border-white/5">
+          <section className="py-20 border-t border-[var(--border-subtle)]">
             <div className="text-center mb-16">
-              <h2 className="text-3xl md:text-4xl font-black text-white uppercase tracking-tight">FEATURE COMPARISON</h2>
+              <h2 className="text-3xl md:text-4xl font-black text-[var(--text-primary)] uppercase tracking-tight">FEATURE COMPARISON</h2>
             </div>
 
-            <div className="glass-panel overflow-hidden">
+            <div className="bg-[var(--bg-card)] border border-[var(--border-subtle)] rounded-2xl overflow-hidden shadow-[var(--shadow-card)]">
               <div className="overflow-x-auto">
                 <table className="w-full text-left">
                   <thead>
-                    <tr className="bg-white/5">
-                      <th className="px-8 py-6 text-xs font-black text-slate-400 uppercase tracking-widest border-b border-white/5">Features</th>
+                    <tr className="bg-gradient-to-r from-[var(--bg-secondary)] to-[var(--bg-card)]">
+                      <th className="px-8 py-6 text-xs font-black text-[var(--text-muted)] uppercase tracking-widest border-b border-[var(--border-subtle)]">Features</th>
                       {plans.map((plan) => (
-                        <th key={plan.id} className="px-8 py-6 text-xs font-black text-white uppercase tracking-widest border-b border-white/5 text-center">{plan.name}</th>
+                        <th key={plan.id} className="px-8 py-6 text-xs font-black text-[var(--text-primary)] uppercase tracking-widest border-b border-[var(--border-subtle)] text-center">{plan.name}</th>
                       ))}
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-white/5">
+                  <tbody className="divide-y divide-[var(--border-subtle)]">
                     {allFeatures.map((feature, i) => (
-                      <tr key={i} className="hover:bg-white/[0.02] transition-colors">
-                        <td className="px-8 py-5 text-sm font-bold text-slate-300">{feature}</td>
+                      <tr key={i} className="hover:bg-[var(--bg-card-hover)] transition-colors">
+                        <td className="px-8 py-5 text-sm font-bold text-[var(--text-secondary)]">{feature}</td>
                         {plans.map((plan) => (
                           <td key={plan.id} className="px-8 py-5 text-center">
                             {plan.features.includes(feature) ? (
-                              <div className="inline-flex w-6 h-6 items-center justify-center rounded-full bg-orange-500/20 text-orange-400">
+                              <div className="inline-flex w-6 h-6 items-center justify-center rounded-full bg-[var(--accent-orange)]/20 text-[var(--accent-orange)]">
                                 <Check size={14} />
                               </div>
                             ) : (
-                              <span className="text-slate-600">-</span>
+                              <span className="text-[var(--text-muted)]">-</span>
                             )}
                           </td>
                         ))}
@@ -143,20 +169,20 @@ export function PricingPage() {
           </section>
 
           <div className="mt-24 grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div className="stat-card">
-              <ShieldCheck className="h-8 w-8 text-orange-400 mx-auto mb-4" />
-              <h3 className="text-white font-bold mb-2">SECURE BILLING</h3>
-              <p className="text-slate-400 text-sm">Enterprise-grade encryption for all your transactions and data.</p>
+            <div className="bg-[var(--bg-card)] border border-[var(--border-subtle)] rounded-2xl p-8 text-center shadow-[var(--shadow-card)] hover:shadow-[var(--shadow-hover)] hover:-translate-y-1 transition-all">
+              <ShieldCheck className="h-8 w-8 text-[var(--accent-orange)] mx-auto mb-4" />
+              <h3 className="text-[var(--text-primary)] font-bold mb-2">SECURE BILLING</h3>
+              <p className="text-[var(--text-muted)] text-sm">Enterprise-grade encryption for all your transactions and data.</p>
             </div>
-            <div className="stat-card">
-              <Crown className="h-8 w-8 text-orange-400 mx-auto mb-4" />
-              <h3 className="text-white font-bold mb-2">ELITE PERKS</h3>
-              <p className="text-slate-400 text-sm">Members get exclusive access to events and premium recovery gear.</p>
+            <div className="bg-[var(--bg-card)] border border-[var(--border-subtle)] rounded-2xl p-8 text-center shadow-[var(--shadow-card)] hover:shadow-[var(--shadow-hover)] hover:-translate-y-1 transition-all">
+              <Crown className="h-8 w-8 text-[var(--accent-gold)] mx-auto mb-4" />
+              <h3 className="text-[var(--text-primary)] font-bold mb-2">ELITE PERKS</h3>
+              <p className="text-[var(--text-muted)] text-sm">Members get exclusive access to events and premium recovery gear.</p>
             </div>
-            <div className="stat-card">
-              <Users className="h-8 w-8 text-orange-400 mx-auto mb-4" />
-              <h3 className="text-white font-bold mb-2">NO CONTRACTS</h3>
-              <p className="text-slate-400 text-sm">Flexible memberships that adapt to your evolving lifestyle.</p>
+            <div className="bg-[var(--bg-card)] border border-[var(--border-subtle)] rounded-2xl p-8 text-center shadow-[var(--shadow-card)] hover:shadow-[var(--shadow-hover)] hover:-translate-y-1 transition-all">
+              <Users className="h-8 w-8 text-[var(--accent-orange)] mx-auto mb-4" />
+              <h3 className="text-[var(--text-primary)] font-bold mb-2">NO CONTRACTS</h3>
+              <p className="text-[var(--text-muted)] text-sm">Flexible memberships that adapt to your evolving lifestyle.</p>
             </div>
           </div>
         </div>

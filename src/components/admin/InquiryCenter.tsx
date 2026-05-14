@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import { useTranslation } from "react-i18next";
+import { useSearchParams } from "react-router-dom";
 import {
   Table,
   StatusBadge,
@@ -15,9 +16,13 @@ import { DeleteConfirmationModal } from "../common/DeleteConfirmationModal";
 
 type InquiryType = "subscriptions" | "products" | "contacts" | "expiry";
 
+const VALID_TABS: InquiryType[] = ["subscriptions", "products", "contacts", "expiry"];
+
 export function InquiryCenter() {
   const { t } = useTranslation();
-  const [activeTab, setActiveTab] = useState<InquiryType>("subscriptions");
+  const [searchParams, setSearchParams] = useSearchParams();
+  const tabParam = searchParams.get("tab") as InquiryType | null;
+  const activeTab: InquiryType = tabParam && VALID_TABS.includes(tabParam) ? tabParam : "subscriptions";
   const [loading, setLoading] = useState(false);
   const [initialLoading, setInitialLoading] = useState(true);
   const [data, setData] = useState<any[]>([]);
@@ -65,6 +70,10 @@ export function InquiryCenter() {
       setInitialLoading(false);
     }
   }, [activeTab, debouncedSearchQuery, meta.count, meta.offset]);
+
+  useEffect(() => {
+    setMeta((prev) => ({ ...prev, offset: 0 }));
+  }, [activeTab]);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -123,33 +132,13 @@ export function InquiryCenter() {
     }
   };
 
-  const tabs: { id: InquiryType; label: string }[] = [
-    { id: "subscriptions", label: t("subscriptions") },
-    { id: "products", label: t("products") },
-    { id: "contacts", label: t("contact") },
-    { id: "expiry", label: t("upcomingRenewals") },
-  ];
-
   return (
     <div className="space-y-6">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-2">
-        <div className="flex flex-wrap gap-2">
-          {tabs.map((tab) => (
-            <div key={tab.id} className="flex flex-col">
-              <button
-                onClick={() => {
-                  setActiveTab(tab.id);
-                  setMeta({ ...meta, offset: 0 });
-                }}
-                className={`px-6 py-2.5 rounded-xl text-xs font-black uppercase tracking-widest transition-all duration-300 border ${activeTab === tab.id
-                  ? "bg-indigo-500 border-indigo-400 text-white shadow-lg shadow-indigo-500/20"
-                  : "bg-white/5 border-white/10 text-slate-400 hover:bg-white/10"
-                  }`}
-              >
-                {t(tab.id)}
-              </button>
-            </div>
-          ))}
+        <div className="flex items-center gap-2">
+          <div className="px-3 py-1.5 rounded-lg bg-gradient-to-r from-[var(--accent-orange)] to-[var(--accent-gold)] text-white text-xs font-bold uppercase tracking-widest">
+            {t(activeTab)}
+          </div>
         </div>
 
         <div className="relative w-full md:w-64">
@@ -177,129 +166,61 @@ export function InquiryCenter() {
           </div>
         ) : (
           <>
-            {activeTab === "subscriptions" && (
-              <Table
-                headers={[t("name"), t("mobileEmail"), t("requestedPlan"), t("inquiryDate"), t("status"), t("actions")]}
-                rows={data.map((r) => [
-                  <p key={`${r.id}-name`} className="font-bold text-white uppercase tracking-tighter text-xs">{r.user_name || r.name || r.username || '—'}</p>,
-                  <p key={`${r.id}-contact`} className="text-[10px] text-slate-500">{r.user_mobile || r.email || '—'}</p>,
-                  <div key={`${r.id}-plan`}>
-                    <p className="text-indigo-400 font-black italic text-xs">
-                      {r.plan_name || r.subscription_plan_name || r.subscription_name || `Plan: ${r.subscription_plan_id?.substring(0, 8)}…`}
-                    </p>
-                    {r.description && <p className="text-[10px] text-slate-500 mt-0.5 italic line-clamp-1">{r.description}</p>}
-                  </div>,
-                  <span key={`${r.id}-date`} className="text-slate-400 text-xs">{new Date(r.inquiry_date * 1000).toLocaleDateString()}</span>,
-                  <StatusBadge key={`${r.id}-status`} status={r.status ? t("resolved") as any : t("pending") as any} />,
-                  <div key={`${r.id}-actions`} className="flex gap-3">
-                    <button
-                      onClick={() => handleResolve(r.id)}
-                      disabled={resolveTargetId === r.id}
-                      className="text-emerald-400 hover:scale-125 transition-transform disabled:opacity-60 disabled:hover:scale-100"
-                      title={t("resolve")}
-                    >
-                      {resolveTargetId === r.id ? <InlineSpinner size={16} /> : <CheckCircle size={16} />}
+            <Table
+              columns={[
+                { key: "name", label: t("name"), render: (r: any) => <span className="font-bold text-[var(--text-primary)] text-sm">{r.user_name || r.name || r.username || '—'}</span> },
+                { key: "contact", label: t("mobileEmail"), render: (r: any) => <span className="text-xs text-[var(--text-muted)]">{r.user_mobile || r.email || '—'}</span> },
+                ...(activeTab === "subscriptions" ? [{
+                  key: "plan", label: t("requestedPlan"), render: (r: any) => (
+                    <div>
+                      <span className="text-[var(--accent-orange)] font-semibold text-xs">{r.plan_name || r.subscription_plan_name || `Plan: ${r.subscription_plan_id?.substring(0, 8)}…`}</span>
+                      {r.description && <p className="text-[10px] text-[var(--text-muted)] mt-0.5 italic truncate max-w-[200px]">{r.description}</p>}
+                    </div>
+                  ),
+                }] : []),
+                ...(activeTab === "products" ? [
+                  { key: "product", label: t("product"), render: (r: any) => (
+                    <div>
+                      <span className="text-[var(--accent-orange)] font-semibold text-xs">{r.product_name || r.product?.name || `Product: ${r.product_id?.substring(0, 8)}…`}</span>
+                      {r.description && <p className="text-[10px] text-[var(--text-muted)] mt-0.5 italic truncate max-w-[200px]">{r.description}</p>}
+                    </div>
+                  )},
+                  { key: "qty", label: t("qty"), render: (r: any) => <span className="font-bold text-lg">{r.quantity}</span> },
+                ] : []),
+                ...(activeTab === "contacts" ? [
+                  { key: "subject", label: t("subjectObjective"), render: (r: any) => (
+                    <div className="max-w-xs">
+                      <p className="text-xs font-semibold text-[var(--accent-orange)] uppercase tracking-tight">{r.subject || t("contactMessage")}</p>
+                      <p className="text-[10px] text-[var(--text-muted)] line-clamp-2 italic">"{r.message}"</p>
+                    </div>
+                  )},
+                ] : []),
+                ...(activeTab === "expiry" ? [
+                  { key: "timeline", label: t("timeline"), render: (r: any) => (
+                    <div className="flex flex-col">
+                      <span className="text-xl font-bold text-[var(--accent-orange)] leading-none">{r.remaining_days} {t("days")}</span>
+                      <span className="text-[8px] font-bold text-[var(--text-muted)] uppercase tracking-widest mt-1">{t("daysRemaining")}</span>
+                    </div>
+                  )},
+                ] : []),
+                { key: "date", label: t("date"), render: (r: any) => <span className="text-xs text-[var(--text-muted)]">{new Date((r.inquiry_date || r.created_date) * 1000).toLocaleDateString()}</span> },
+                { key: "status", label: t("status"), render: (r: any) => <StatusBadge status={r.status ? t("resolved") as any : t("pending") as any} /> },
+                { key: "actions", label: t("actions"), render: (r: any) => (
+                  <div className="flex gap-2">
+                    <button onClick={() => handleResolve(r.id)} disabled={resolveTargetId === r.id}
+                      className="text-emerald-500 hover:scale-125 transition-transform disabled:opacity-60" title={t("resolve")}>
+                      {resolveTargetId === r.id ? <InlineSpinner /> : <CheckCircle size={16} />}
                     </button>
-                    <button onClick={() => handleDelete(r.id)} className="text-red-400 hover:scale-125 transition-transform" title={t("delete")}><Trash2 size={16} /></button>
-                  </div>
-                ])}
-              />
-            )}
-
-            {activeTab === "products" && (
-              <Table
-                headers={[t("name"), t("mobileEmail"), t("product"), t("qty"), t("date"), t("status"), t("actions")]}
-                rows={data.map((r) => [
-                  <p key={`${r.id}-name`} className="font-bold text-white uppercase tracking-tighter text-xs">{r.user_name || r.name || r.username || '—'}</p>,
-                  <p key={`${r.id}-contact`} className="text-[10px] text-slate-500">{r.user_mobile || r.email || '—'}</p>,
-                  <div key={`${r.id}-prod`}>
-                    <p className="text-orange-400 font-black text-xs">
-                      {r.product_name || r.product?.name || `Product: ${r.product_id?.substring(0, 8)}…`}
-                    </p>
-                    {r.description && <p className="text-[10px] text-slate-500 mt-0.5 italic line-clamp-1">{r.description}</p>}
-                  </div>,
-                  <span key={`${r.id}-qty`} className="text-slate-200 font-black italic text-lg">{r.quantity}</span>,
-                  <span key={`${r.id}-date`} className="text-slate-400 text-xs">{new Date(r.inquiry_date * 1000).toLocaleDateString()}</span>,
-                  <StatusBadge key={`${r.id}-status`} status={r.status ? t("resolved") as any : t("pending") as any} />,
-                  <div key={`${r.id}-actions`} className="flex gap-3">
-                    <button
-                      onClick={() => handleResolve(r.id)}
-                      disabled={resolveTargetId === r.id}
-                      className="text-emerald-400 hover:scale-125 transition-transform disabled:opacity-60 disabled:hover:scale-100"
-                      title={t("resolve")}
-                    >
-                      {resolveTargetId === r.id ? <InlineSpinner size={16} /> : <CheckCircle size={16} />}
+                    <button onClick={() => handleDelete(r.id)} className="text-red-500 hover:scale-125 transition-transform" title={t("delete")}>
+                      <Trash2 size={16} />
                     </button>
-                    <button onClick={() => handleDelete(r.id)} className="text-red-400 hover:scale-125 transition-transform" title={t("delete")}><Trash2 size={16} /></button>
                   </div>
-                ])}
-              />
-            )}
-
-            {activeTab === "contacts" && (
-              <Table
-                headers={[t("name"), t("mobileEmail"), t("subjectObjective"), t("date"), t("status"), t("actions")]}
-                rows={data.map((r) => [
-                  <p key={`${r.id}-name`} className="font-bold text-white uppercase tracking-tighter text-xs">{r.name}</p>,
-                  <p key={`${r.id}-contact`} className="text-[10px] text-slate-500">{r.phone || r.email}</p>,
-                  <div key={`${r.id}-msg`} className="max-w-xs">
-                    <p className="text-xs font-bold text-indigo-400 uppercase tracking-tight">{r.subject || t("contactMessage")}</p>
-                    <p className="text-[10px] text-slate-400 line-clamp-2 italic">"{r.message}"</p>
-                  </div>,
-                  <div key={`${r.id}-contact`} className="flex flex-col">
-                    <span className="text-[10px] font-black text-white">{r.phone}</span>
-                    <span className="text-[8px] text-slate-500 font-bold uppercase">{r.email}</span>
-                  </div>,
-                  <span key={`${r.id}-date`} className="text-slate-400 text-xs">{new Date(r.inquiry_date * 1000).toLocaleDateString()}</span>,
-                  <StatusBadge key={`${r.id}-status`} status={r.status ? t("resolved") as any : t("pending") as any} />,
-                  <div key={`${r.id}-actions`} className="flex gap-3">
-                    <button
-                      onClick={() => handleResolve(r.id)}
-                      disabled={resolveTargetId === r.id}
-                      className="text-emerald-400 hover:scale-125 transition-transform disabled:opacity-60 disabled:hover:scale-100"
-                      title={t("resolve")}
-                    >
-                      {resolveTargetId === r.id ? <InlineSpinner size={16} /> : <CheckCircle size={16} />}
-                    </button>
-                    <button onClick={() => handleDelete(r.id)} className="text-red-400 hover:scale-125 transition-transform" title={t("delete")}><Trash2 size={16} /></button>
-                  </div>
-                ])}
-              />
-            )}
-
-            {activeTab === "expiry" && (
-              <Table
-                headers={[t("name"), t("mobileEmail"), t("timeline"), t("status"), t("actions")]}
-                rows={data.map((r) => [
-                  <p key={`${r.id}-name`} className="font-bold text-white uppercase tracking-tight italic">{r.user_name || r.name || r.username || '—'}</p>,
-                  <p key={`${r.id}-contact`} className="text-[10px] text-indigo-400 font-bold uppercase tracking-widest">{r.user_mobile || r.mobile || r.email || '—'}</p>,
-                  <div key={`${r.id}-cycle`} className="flex flex-col">
-                    <span className="text-xl font-black text-orange-400 italic leading-none">{r.remaining_days} {t("days")}</span>
-                    <span className="text-[8px] font-black text-slate-500 uppercase tracking-widest mt-1">{t("daysRemaining")}</span>
-                  </div>,
-                  <div key={`${r.id}-status`} className="flex items-center gap-2">
-                    <div className="h-2 w-2 rounded-full bg-orange-500 animate-pulse" />
-                    <span className="text-[10px] font-black text-white uppercase tracking-widest">{r.status ? t(t("resolved")) : t("renewalCritical")}</span>
-                  </div>,
-                  <div key={`${r.id}-actions`} className="flex gap-3">
-                    <button
-                      onClick={() => handleResolve(r.id)}
-                      disabled={resolveTargetId === r.id}
-                      className="h-8 px-3 bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 rounded-lg text-[9px] font-black uppercase tracking-widest hover:bg-emerald-500 hover:text-white transition-all flex items-center gap-2 disabled:opacity-60"
-                    >
-                      {resolveTargetId === r.id ? <InlineSpinner size={12} /> : <CheckCircle size={12} />} {t("resolve")}
-                    </button>
-                    <button onClick={() => handleDelete(r.id)} className="text-red-400 hover:scale-125 transition-transform p-2"><Trash2 size={16} /></button>
-                  </div>
-                ])}
-              />
-            )}
-
-            {data.length === 0 && (
-              <div className="text-center py-20 border border-dashed border-white/10 rounded-2xl">
-                <p className="text-slate-500 uppercase font-black tracking-widest text-xs">No inquiries found in this section.</p>
-              </div>
-            )}
+                )},
+              ]}
+              data={data}
+              pagination={false}
+              sortable={false}
+            />
 
             <Pagination
               currentPage={Math.floor(meta.offset / meta.count) + 1}
@@ -311,7 +232,7 @@ export function InquiryCenter() {
             />
           </>
         )}
-        <LoadingOverlay show={loading && !initialLoading} label="Refreshing records" compact />
+        <LoadingOverlay show={loading && !initialLoading} message="Refreshing records" />
       </div>
 
       <DeleteConfirmationModal

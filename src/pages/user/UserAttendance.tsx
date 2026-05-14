@@ -77,26 +77,26 @@ export function UserAttendance() {
             defaultPreset="monthly"
             onChange={(r) => setAttDateRange(r)}
           />
-          <div className="flex p-1 bg-slate-900/50 backdrop-blur-md border border-white/5 rounded-xl">
+          <div className="flex p-1 bg-[var(--bg-secondary)] backdrop-blur-md border border-[var(--border-subtle)] rounded-xl">
             <button
               onClick={() => setView("calendar")}
-              className={`p-2.5 rounded-lg transition-all duration-300 relative group ${view === "calendar" ? "text-white" : "text-slate-500 hover:text-slate-300"
+              className={`p-2.5 rounded-lg transition-all duration-300 relative group ${view === "calendar" ? "text-[var(--text-primary)]" : "text-[var(--text-muted)] hover:text-[var(--text-secondary)]"
                 }`}
               title="Calendar View"
             >
               {view === "calendar" && (
-                <motion.div layoutId="viewActive" className="absolute inset-0 bg-indigo-500/20 border border-indigo-500/30 rounded-lg" />
+                <motion.div layoutId="viewActive" className="absolute inset-0 bg-indigo-100 border border-indigo-200 rounded-lg" />
               )}
               <CalendarIcon size={18} className="relative z-10" />
             </button>
             <button
               onClick={() => setView("table")}
-              className={`p-2.5 rounded-lg transition-all duration-300 relative group ${view === "table" ? "text-white" : "text-slate-500 hover:text-slate-300"
+              className={`p-2.5 rounded-lg transition-all duration-300 relative group ${view === "table" ? "text-[var(--text-primary)]" : "text-[var(--text-muted)] hover:text-[var(--text-secondary)]"
                 }`}
               title="List View"
             >
               {view === "table" && (
-                <motion.div layoutId="viewActive" className="absolute inset-0 bg-indigo-500/20 border border-indigo-500/30 rounded-lg" />
+                <motion.div layoutId="viewActive" className="absolute inset-0 bg-indigo-100 border border-indigo-200 rounded-lg" />
               )}
               <ListIcon size={18} className="relative z-10" />
             </button>
@@ -106,30 +106,30 @@ export function UserAttendance() {
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <GlassCard className="p-4 flex items-center gap-4">
-          <div className="h-10 w-10 rounded-xl bg-emerald-500/10 flex items-center justify-center text-emerald-400">
+          <div className="h-10 w-10 rounded-xl bg-emerald-100 flex items-center justify-center text-emerald-600">
             <Users size={18} />
           </div>
           <div>
-            <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest leading-none mb-1">Total visits</p>
-            <p className="text-xl font-black text-white leading-none">{attendanceStats?.total_visits || 0} <span className="text-[10px] text-emerald-500">Days</span></p>
+            <p className="text-[10px] font-bold text-[var(--text-muted)] uppercase tracking-widest leading-none mb-1">Total visits</p>
+            <p className="text-xl font-bold text-[var(--text-primary)] leading-none">{attendanceStats?.total_visits || 0} <span className="text-[10px] text-emerald-600">Days</span></p>
           </div>
         </GlassCard>
         <GlassCard className="p-4 flex items-center gap-4">
-          <div className="h-10 w-10 rounded-xl bg-indigo-500/10 flex items-center justify-center text-indigo-400">
+          <div className="h-10 w-10 rounded-xl bg-indigo-100 flex items-center justify-center text-indigo-600">
             <Clock size={18} />
           </div>
           <div>
-            <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest leading-none mb-1">Avg Duration</p>
-            <p className="text-xl font-black text-white leading-none">{attendanceStats?.avg_duration_in_hrs || 0} <span className="text-[10px] text-indigo-500">Hours</span></p>
+            <p className="text-[10px] font-bold text-[var(--text-muted)] uppercase tracking-widest leading-none mb-1">Avg Duration</p>
+            <p className="text-xl font-bold text-[var(--text-primary)] leading-none">{attendanceStats?.avg_duration_in_hrs || 0} <span className="text-[10px] text-indigo-600">Hours</span></p>
           </div>
         </GlassCard>
         <GlassCard className="p-4 flex items-center gap-4">
-          <div className="h-10 w-10 rounded-xl bg-orange-500/10 flex items-center justify-center text-orange-400">
+          <div className="h-10 w-10 rounded-xl bg-orange-100 flex items-center justify-center text-orange-600">
             <Info size={18} />
           </div>
           <div>
-            <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest leading-none mb-1">Current Streak</p>
-            <p className="text-xl font-black text-white leading-none">{attendanceStats?.current_streak || 0} <span className="text-[10px] text-orange-500">Days</span></p>
+            <p className="text-[10px] font-bold text-[var(--text-muted)] uppercase tracking-widest leading-none mb-1">Current Streak</p>
+            <p className="text-xl font-bold text-[var(--text-primary)] leading-none">{attendanceStats?.current_streak || 0} <span className="text-[10px] text-orange-600">Days</span></p>
           </div>
         </GlassCard>
       </div>
@@ -152,7 +152,7 @@ export function UserAttendance() {
                 a.records.length > 1 ? (
                   <button
                     onClick={() => setViewMoreAttendance(a.records)}
-                    className="px-2 py-1 bg-indigo-500/20 text-indigo-400 text-[10px] rounded hover:bg-indigo-500/40"
+                    className="px-2 py-1 bg-indigo-100 text-indigo-600 text-[10px] rounded hover:bg-indigo-200"
                     key={a.date}
                   >
                     +{a.records.length - 1} More

@@ -400,6 +400,12 @@ export const useGymStore = create<GymState>((set) => ({
   isLoadingPublicData: false,
   fetchPublicData: async (configOnly = false) => {
     set({ isLoadingPublicData: true });
+    
+    // Safety timeout to ensure the loader doesn't get stuck forever
+    const timeoutId = setTimeout(() => {
+      set({ isLoadingPublicData: false });
+    }, 5000);
+
     try {
       if (configOnly) {
         const configRes = await publicAppService.getAppConfig().catch(() => null);
@@ -443,8 +449,8 @@ export const useGymStore = create<GymState>((set) => ({
         publicBanners: bannersMap,
         isLoadingPublicData: false,
       });
-    } catch (error) {
-      console.error("Error fetching public data:", error);
+    } finally {
+      clearTimeout(timeoutId);
       set({ isLoadingPublicData: false });
     }
   },

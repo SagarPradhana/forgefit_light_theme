@@ -23,20 +23,20 @@ export function UserProfile() {
               <img src={user.profile_image_path} alt={user.name || ""}
                 className="h-24 w-24 md:h-32 md:w-32 rounded-2xl md:rounded-3xl object-cover shadow-2xl shadow-indigo-500/30 border-2 border-indigo-500/30" />
             ) : (
-              <div className="h-24 w-24 md:h-32 md:w-32 rounded-2xl md:rounded-3xl bg-gradient-to-br from-indigo-500 to-orange-400 flex items-center justify-center text-3xl md:text-5xl font-black text-white shadow-2xl shadow-indigo-500/40">
+              <div className="h-24 w-24 md:h-32 md:w-32 rounded-2xl md:rounded-3xl bg-gradient-to-br from-indigo-500 to-orange-400 flex items-center justify-center text-3xl md:text-5xl font-bold text-[var(--text-primary)] shadow-2xl shadow-indigo-500/40">
                 {user.name?.[0]?.toUpperCase() || "U"}
               </div>
             )}
-            <span className="absolute -bottom-2 -right-2 px-2 py-0.5 rounded-lg bg-indigo-500 text-[9px] font-black uppercase tracking-widest text-white shadow-lg">
+            <span className="absolute -bottom-2 -right-2 px-2 py-0.5 rounded-lg bg-indigo-500 text-[9px] font-bold uppercase tracking-widest text-[var(--text-primary)] shadow-lg">
               {user.role || "member"}
             </span>
           </div>
           <div className="text-center md:text-left space-y-2">
-            <h2 className="text-2xl md:text-4xl font-black text-white uppercase tracking-tighter italic leading-none">{user.name}</h2>
-            {user.username && <p className="text-[11px] font-black text-indigo-400 uppercase tracking-[0.3em]">{user.username}</p>}
-            <p className="text-xs text-slate-400 font-medium tracking-wide uppercase">Gym Member</p>
+            <h2 className="text-2xl md:text-4xl font-bold text-[var(--text-primary)] uppercase tracking-tighter italic leading-none">{user.name}</h2>
+            {user.username && <p className="text-[11px] font-bold text-indigo-600 uppercase tracking-[0.3em]">{user.username}</p>}
+            <p className="text-xs text-[var(--text-muted)] font-medium tracking-wide uppercase">Gym Member</p>
             {user.joining_date && (
-              <p className="text-[10px] text-slate-500 font-bold">
+              <p className="text-[10px] text-[var(--text-muted)] font-bold">
                 Member since {fmtDate(user.joining_date)}
               </p>
             )}
@@ -47,7 +47,7 @@ export function UserProfile() {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* Contact Info */}
         <GlassCard className="p-6 space-y-5">
-          <h3 className="text-sm font-black text-white uppercase tracking-widest border-b border-white/10 pb-3">Contact Information</h3>
+          <h3 className="text-sm font-bold text-[var(--text-primary)] uppercase tracking-widest border-b border-[var(--border-subtle)] pb-3">Contact Information</h3>
           {[
             { label: "Full Name",    value: user.name },
             { label: "Username",     value: user.username },
@@ -57,15 +57,15 @@ export function UserProfile() {
             { label: "Joining Date", value: fmtDate(user.joining_date) },
           ].map(({ label, value }) => (
             <div key={label} className="grid gap-0.5">
-              <p className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em]">{label}</p>
-              <p className="text-sm text-white font-bold">{value || "—"}</p>
+              <p className="text-[10px] font-bold text-[var(--text-muted)] uppercase tracking-[0.2em]">{label}</p>
+              <p className="text-sm text-[var(--text-primary)] font-bold">{value || "—"}</p>
             </div>
           ))}
         </GlassCard>
 
         {/* Health & Vitals */}
         <GlassCard className="p-6 space-y-5">
-          <h3 className="text-sm font-black text-white uppercase tracking-widest border-b border-white/10 pb-3">Health & Vitals</h3>
+          <h3 className="text-sm font-bold text-[var(--text-primary)] uppercase tracking-widest border-b border-[var(--border-subtle)] pb-3">Health & Vitals</h3>
           <div className="space-y-3">
             {[
               { label: "Date of Birth",       value: fmtDate(user.metadata?.dob) },
@@ -77,10 +77,10 @@ export function UserProfile() {
               { label: "Medical Conditions",  value: user.metadata?.medical_conditions },
               { label: "Emergency Contact",   value: user.metadata?.emergency_contact },
             ].map(({ label, value }) => (
-              <div key={label} className="flex items-start gap-3 p-3 rounded-xl bg-white/5 border border-white/5 hover:border-indigo-500/30 transition-all group">
+              <div key={label} className="flex items-start gap-3 p-3 rounded-xl bg-[var(--bg-secondary)] border border-[var(--border-subtle)] hover:border-indigo-500/30 transition-all group">
                 <div className="grid gap-0.5 flex-1">
-                  <p className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em]">{label}</p>
-                  <p className="text-sm text-white font-bold capitalize group-hover:text-indigo-100 transition-colors">{value || "—"}</p>
+                  <p className="text-[10px] font-bold text-[var(--text-muted)] uppercase tracking-[0.2em]">{label}</p>
+                  <p className="text-sm text-[var(--text-primary)] font-bold capitalize group-hover:text-indigo-600 transition-colors">{value || "—"}</p>
                 </div>
               </div>
             ))}
@@ -91,7 +91,7 @@ export function UserProfile() {
       {/* Active Subscription */}
       {sub && (
         <GlassCard className="p-6 bg-gradient-to-br from-emerald-500/10 to-transparent border-emerald-500/20">
-          <h3 className="text-sm font-black text-white uppercase tracking-widest border-b border-white/10 pb-3 mb-4">Active Subscription</h3>
+          <h3 className="text-sm font-bold text-[var(--text-primary)] uppercase tracking-widest border-b border-[var(--border-subtle)] pb-3 mb-4">Active Subscription</h3>
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
             {[
               { label: "Plan",       value: sub.subscription_name },
@@ -102,8 +102,8 @@ export function UserProfile() {
               { label: "Status",     value: sub.status === true ? "Active" : sub.status === false ? "Inactive" : String(sub.status ?? "—") },
             ].map(({ label, value }) => (
               <div key={label} className="grid gap-0.5">
-                <p className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em]">{label}</p>
-                <p className="text-sm text-emerald-300 font-bold">{value || "—"}</p>
+                <p className="text-[10px] font-bold text-[var(--text-muted)] uppercase tracking-[0.2em]">{label}</p>
+                <p className="text-sm text-emerald-600 font-bold">{value || "—"}</p>
               </div>
             ))}
           </div>

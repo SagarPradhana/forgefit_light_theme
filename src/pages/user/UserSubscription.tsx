@@ -38,7 +38,10 @@ export function UserSubscription() {
   const [historyStatusFilter, setHistoryStatusFilter] = useState<"" | "active" | "expired">("");
 
   const fetchSubscriptions = useCallback(async () => {
-    if (!userId) return;
+    if (!userId) {
+      setSubscriptionsLoading(false);
+      return;
+    }
     setSubscriptionsLoading(true);
     try {
       const [plansRes, currentRes, historyRes] = await Promise.all([
@@ -53,6 +56,8 @@ export function UserSubscription() {
       } else if (currentRes && currentRes.data && currentRes.data.length > 0) {
         const activeSub = currentRes.data.find((sub: any) => sub.user_id === userId) || currentRes.data[0];
         setCurrentSubscription(activeSub);
+      } else {
+        setCurrentSubscription(null);
       }
       
       if (historyRes && historyRes.data) setSubscriptionHistory(historyRes.data);
@@ -108,12 +113,12 @@ export function UserSubscription() {
           subtitle={t("membershipCycle")}
         />
         <div className="flex items-center gap-3">
-          <div className="flex items-center gap-2 px-4 py-2 rounded-2xl bg-white/5 border border-white/10 text-[10px] font-black uppercase tracking-widest text-slate-400">
-            <ShieldCheck size={14} className="text-emerald-400" /> Auto-Renewal Enabled
+          <div className="flex items-center gap-2 px-4 py-2 rounded-2xl bg-[var(--bg-secondary)] border border-[var(--border-subtle)] text-[10px] font-bold uppercase tracking-widest text-[var(--text-muted)]">
+            <ShieldCheck size={14} className="text-emerald-600" /> Auto-Renewal Enabled
           </div>
           <button
             onClick={() => setHistoryModalOpen(true)}
-            className="px-4 h-10 flex items-center justify-center gap-2 rounded-2xl bg-white/5 border border-white/10 hover:bg-indigo-500 hover:border-indigo-500 text-indigo-400 hover:text-white transition-all shadow-lg text-[10px] font-black uppercase tracking-widest"
+            className="px-4 h-10 flex items-center justify-center gap-2 rounded-2xl bg-[var(--bg-secondary)] border border-[var(--border-subtle)] hover:bg-indigo-600 hover:border-indigo-600 text-indigo-600 hover:text-[var(--text-primary)] transition-all shadow-lg text-[10px] font-bold uppercase tracking-widest"
             title="Subscription History"
           >
             <Clock size={16} />
@@ -128,34 +133,34 @@ export function UserSubscription() {
         animate={{ opacity: 1, scale: 1 }}
         className="relative p-1 rounded-[2rem] sm:rounded-[2.5rem] bg-gradient-to-r from-indigo-500/20 via-emerald-500/20 to-orange-500/20 shadow-2xl"
       >
-        <div className="bg-slate-950/90 backdrop-blur-2xl px-6 py-10 sm:px-10 sm:py-12 rounded-[1.8rem] sm:rounded-[2.3rem] border border-white/5 relative overflow-hidden flex flex-col md:flex-row items-center justify-between gap-8">
+        <div className="bg-[var(--bg-primary)] backdrop-blur-2xl px-6 py-10 sm:px-10 sm:py-12 rounded-[1.8rem] sm:rounded-[2.3rem] border border-[var(--border-subtle)] relative overflow-hidden flex flex-col md:flex-row items-center justify-between gap-8">
           <div className="absolute top-0 right-0 w-96 h-96 bg-indigo-500/10 blur-[120px] -mr-48 -mt-48" />
 
           <div className="flex flex-col sm:flex-row items-center sm:items-start text-center sm:text-left gap-6 sm:gap-8 relative z-10 w-full sm:w-auto">
             <div className="h-20 w-20 sm:h-24 sm:w-24 rounded-[1.5rem] sm:rounded-[2rem] bg-gradient-to-br from-indigo-500 to-emerald-400 p-[3px] shadow-2xl shadow-indigo-500/30 shrink-0">
-              <div className="h-full w-full bg-slate-950 rounded-[1.3rem] sm:rounded-[1.8rem] flex items-center justify-center">
-                <Star size={32} className="text-white sm:w-[40px] sm:h-[40px]" fill="currentColor" />
+              <div className="h-full w-full bg-[var(--bg-primary)] rounded-[1.3rem] sm:rounded-[1.8rem] flex items-center justify-center">
+                <Star size={32} className="text-[var(--text-primary)] sm:w-[40px] sm:h-[40px]" fill="currentColor" />
               </div>
             </div>
             <div>
-              <p className="text-[9px] sm:text-[11px] font-black text-indigo-400 uppercase tracking-[0.3em] mb-2 leading-none">Current Subscription</p>
+              <p className="text-[9px] sm:text-[11px] font-bold text-indigo-600 uppercase tracking-[0.3em] mb-2 leading-none">Current Subscription</p>
               {currentSubscription ? (
                 <>
-                  <h2 className="text-3xl sm:text-5xl font-black text-white italic tracking-tighter leading-none mb-4">{currentPlanName}</h2>
+                  <h2 className="text-3xl sm:text-5xl font-bold text-[var(--text-primary)] italic tracking-tighter leading-none mb-4">{currentPlanName}</h2>
                   <div className="flex flex-wrap justify-center sm:justify-start gap-3 sm:gap-4">
-                    <span className="flex items-center gap-1.5 sm:gap-2 text-[9px] sm:text-[10px] font-bold text-slate-400 uppercase tracking-widest whitespace-nowrap">
-                      <Clock size={12} className="text-emerald-500 sm:w-[14px] sm:h-[14px]" /> Expires: {fmtDate(currentSubscription?.end_date)}
+                    <span className="flex items-center gap-1.5 sm:gap-2 text-[9px] sm:text-[10px] font-bold text-[var(--text-muted)] uppercase tracking-widest whitespace-nowrap">
+                      <Clock size={12} className="text-emerald-600 sm:w-[14px] sm:h-[14px]" /> Expires: {fmtDate(currentSubscription?.end_date)}
                     </span>
-                    <span className="flex items-center gap-1.5 sm:gap-2 text-[9px] sm:text-[10px] font-bold text-slate-400 uppercase tracking-widest whitespace-nowrap">
-                      <CheckCircle2 size={12} className="text-emerald-500 sm:w-[14px] sm:h-[14px]" /> Duration: {currentDuration}
+                    <span className="flex items-center gap-1.5 sm:gap-2 text-[9px] sm:text-[10px] font-bold text-[var(--text-muted)] uppercase tracking-widest whitespace-nowrap">
+                      <CheckCircle2 size={12} className="text-emerald-600 sm:w-[14px] sm:h-[14px]" /> Duration: {currentDuration}
                     </span>
                   </div>
                 </>
               ) : (
                 <>
-                  <h2 className="text-3xl sm:text-5xl font-black text-slate-500 italic tracking-tighter leading-none mb-4">Not Available</h2>
+                  <h2 className="text-3xl sm:text-5xl font-bold text-[var(--text-muted)] italic tracking-tighter leading-none mb-4">Not Available</h2>
                   <div className="flex flex-wrap justify-center sm:justify-start gap-3 sm:gap-4">
-                    <span className="flex items-center gap-1.5 sm:gap-2 text-[9px] sm:text-[10px] font-bold text-orange-400 uppercase tracking-widest whitespace-nowrap">
+                    <span className="flex items-center gap-1.5 sm:gap-2 text-[9px] sm:text-[10px] font-bold text-orange-600 uppercase tracking-widest whitespace-nowrap">
                       <Info size={12} className="sm:w-[14px] sm:h-[14px]" /> Please select a strategy from below
                     </span>
                   </div>
@@ -190,54 +195,54 @@ export function UserSubscription() {
         title={selectedPlanForUpgrade ? `Request: ${selectedPlanForUpgrade.name}` : "Upgrade Strategy"}
       >
         <div className="space-y-8 p-4">
-          <div className="p-6 rounded-2xl bg-indigo-500/5 border border-indigo-500/20 flex items-start gap-4">
-            <div className="h-10 w-10 rounded-xl bg-indigo-500/20 flex items-center justify-center shrink-0">
-              <Zap size={20} className="text-indigo-400" />
+          <div className="p-6 rounded-2xl bg-indigo-100 border border-indigo-200 flex items-start gap-4">
+            <div className="h-10 w-10 rounded-xl bg-indigo-100 flex items-center justify-center shrink-0">
+              <Zap size={20} className="text-indigo-600" />
             </div>
             <div>
-              <p className="text-sm font-bold text-white mb-1 uppercase tracking-tight">Upgrade Confirmation</p>
-              <p className="text-xs text-slate-400 leading-relaxed">
-                You are requesting to transition from <span className="text-white font-bold">{currentPlanName}</span> to <span className="text-indigo-400 font-bold">{selectedPlanForUpgrade?.name || "a New Plan"}</span>.
+              <p className="text-sm font-bold text-[var(--text-primary)] mb-1 uppercase tracking-tight">Upgrade Confirmation</p>
+              <p className="text-xs text-[var(--text-muted)] leading-relaxed">
+                You are requesting to transition from <span className="text-[var(--text-primary)] font-bold">{currentPlanName}</span> to <span className="text-indigo-600 font-bold">{selectedPlanForUpgrade?.name || "a New Plan"}</span>.
               </p>
             </div>
           </div>
 
           <div className="space-y-4">
-            <h4 className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Request Details</h4>
+            <h4 className="text-[10px] font-bold text-[var(--text-muted)] uppercase tracking-widest">Request Details</h4>
             <div className="space-y-3">
               <div className="flex justify-between items-center text-sm">
-                <span className="text-slate-400">Strategy Level</span>
-                <span className="text-white font-black uppercase tracking-tighter">{selectedPlanForUpgrade?.name || "Inquiry Only"}</span>
+                <span className="text-[var(--text-muted)]">Strategy Level</span>
+                <span className="text-[var(--text-primary)] font-bold uppercase tracking-tighter">{selectedPlanForUpgrade?.name || "Inquiry Only"}</span>
               </div>
               <div className="flex justify-between items-center text-sm">
-                <span className="text-slate-400">Monthly Commitment</span>
-                <span className="text-white font-black italic">{currencySymbol}{selectedPlanForUpgrade?.price || "0"}.00</span>
+                <span className="text-[var(--text-muted)]">Monthly Commitment</span>
+                <span className="text-[var(--text-primary)] font-bold italic">{currencySymbol}{selectedPlanForUpgrade?.price || "0"}.00</span>
               </div>
-              <div className="h-px bg-white/10" />
+              <div className="h-px bg-[var(--border-subtle)]" />
               <div className="flex justify-between items-center">
-                <span className="text-slate-400 text-xs">Administrative Processing</span>
-                <span className="text-emerald-400 text-[10px] font-black uppercase tracking-widest">24-48 Hours</span>
+                <span className="text-[var(--text-muted)] text-xs">Administrative Processing</span>
+                <span className="text-emerald-600 text-[10px] font-bold uppercase tracking-widest">24-48 Hours</span>
               </div>
             </div>
           </div>
 
           <div className="pt-4 space-y-4">
             <div>
-              <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest block mb-2">Additional Description</label>
+              <label className="text-[10px] font-bold text-[var(--text-muted)] uppercase tracking-widest block mb-2">Additional Description</label>
               <textarea
                 value={upgradeDescription}
                 onChange={(e) => setUpgradeDescription(e.target.value)}
-                className="w-full bg-slate-950/50 border border-white/10 rounded-xl p-3 text-xs text-white outline-none focus:border-indigo-500 min-h-[80px]"
+                className="w-full bg-[var(--bg-secondary)] border border-[var(--border-subtle)] rounded-xl p-3 text-xs text-[var(--text-primary)] outline-none focus:border-indigo-500 min-h-[80px]"
                 placeholder="Any specific requests?"
               />
             </div>
             <GlowButton
-              className="w-full h-14 rounded-2xl text-xs font-black uppercase tracking-widest"
+              className="w-full h-14 rounded-2xl text-xs font-bold uppercase tracking-widest"
               onClick={handleConfirmUpgrade}
             >
               Confirm Strategy Transition
             </GlowButton>
-            <p className="text-[9px] text-center text-slate-500 italic px-6">
+            <p className="text-[9px] text-center text-[var(--text-muted)] italic px-6">
               By confirming, you authorize our administrative team to process your plan change. Final billing will be adjusted on your next cycle.
             </p>
           </div>
@@ -246,15 +251,15 @@ export function UserSubscription() {
 
       <Modal open={historyModalOpen} onClose={() => setHistoryModalOpen(false)} title="Subscription History">
         <div className="p-4 space-y-4">
-          <div className="flex items-center gap-1 bg-white/5 border border-white/10 rounded-xl p-1">
+          <div className="flex items-center gap-1 bg-[var(--bg-secondary)] border border-[var(--border-subtle)] rounded-xl p-1">
             {([["", "All"], ["active", "Active"], ["expired", "Expired"]] as const).map(([val, label]) => (
               <button
                 key={val}
                 onClick={() => setHistoryStatusFilter(val)}
-                className={`flex-1 px-3 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all ${
+                className={`flex-1 px-3 py-1.5 rounded-lg text-[10px] font-bold uppercase tracking-widest transition-all ${
                   historyStatusFilter === val
-                    ? "bg-gradient-to-r from-indigo-500 to-violet-500 text-white shadow-lg"
-                    : "text-slate-400 hover:text-white hover:bg-white/5"
+                    ? "bg-gradient-to-r from-indigo-500 to-violet-500 text-[var(--text-primary)] shadow-lg"
+                    : "text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-card-hover)]"
                 }`}
               >
                 {label}
@@ -276,18 +281,18 @@ export function UserSubscription() {
               ) : (
                 <div className="space-y-3">
                   {filtered.map((h) => (
-                    <div key={h.id} className="flex items-center justify-between p-4 rounded-2xl bg-white/5 border border-white/5 hover:border-indigo-500/20 transition-all group">
+                    <div key={h.id} className="flex items-center justify-between p-4 rounded-2xl bg-[var(--bg-secondary)] border border-[var(--border-subtle)] hover:border-indigo-500/20 transition-all group">
                       <div className="space-y-1">
-                        <p className="text-xs font-black text-white uppercase tracking-tight">
+                        <p className="text-xs font-bold text-[var(--text-primary)] uppercase tracking-tight">
                           {(h as any).subscription_name || "Subscription"}
                         </p>
-                        <div className="flex items-center gap-3 text-[10px] text-slate-500 font-bold uppercase tracking-widest">
+                        <div className="flex items-center gap-3 text-[10px] text-[var(--text-muted)] font-bold uppercase tracking-widest">
                           <span>{fmtDate(h.start_date)} → {fmtDate(h.end_date)}</span>
-                          <span className="text-indigo-400">{h.duration_in_months} {h.duration_in_months === 1 ? "Month" : "Months"}</span>
+                          <span className="text-indigo-600">{h.duration_in_months} {h.duration_in_months === 1 ? "Month" : "Months"}</span>
                         </div>
                       </div>
                       <div className="flex flex-col items-end gap-1">
-                        <span className="text-sm font-black text-emerald-400">{currencySymbol}{Number(h.amount).toLocaleString("en-IN")}</span>
+                        <span className="text-sm font-bold text-emerald-600">{currencySymbol}{Number(h.amount).toLocaleString("en-IN")}</span>
                         <StatusBadge status={h.status ? "Active" : "Expired"} />
                       </div>
                     </div>

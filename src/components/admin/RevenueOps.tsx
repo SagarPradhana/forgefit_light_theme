@@ -1,13 +1,13 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { motion } from "framer-motion";
 import {
   TrendingUp, IndianRupee, CreditCard, ShoppingBag,
   RefreshCw, Search, ChevronLeft, ChevronRight,
   Users, Mail, Phone, CheckCircle, XCircle, Filter,
 } from "lucide-react";
-import {
-  BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend,
-} from "recharts";
+import * as am5 from "@amcharts/amcharts5";
+import * as am5xy from "@amcharts/amcharts5/xy";
+import am5themes_Animated from "@amcharts/amcharts5/themes/Animated";
 import { API_ENDPOINTS } from "../../utils/url";
 import { api } from "../../utils/httputils";
 import { GlassCard, SectionTitle } from "../ui/primitives";
@@ -96,20 +96,84 @@ function StatCard({ label, value, icon: Icon, color, delay, currency = "INR" }: 
   );
 }
 
-// ─── Custom Tooltip for Bar Chart ─────────────────────────────────────────────
-function RevTooltip({ active, payload, label, currency = "INR" }: any) {
-  const fmt = createFmt(currency);
-  if (!active || !payload?.length) return null;
-  return (
-    <div className="bg-slate-900 border border-white/10 rounded-xl p-3 text-xs">
-      <p className="font-black text-white mb-2">{label}</p>
-      {payload.map((p: any) => (
-        <p key={p.name} style={{ color: p.color }} className="font-bold">
-          {p.name}: {fmt(p.value)}
-        </p>
-      ))}
-    </div>
-  );
+// ─── AM5 Bar Chart ──────────────────────────────────────────────────────────
+function AM5BarChart({ data, currency = "INR" }: { data: any[]; currency?: string }) {
+  const chartRef = useRef<HTMLDivElement>(null);
+  const rootRef = useRef<am5.Root | null>(null);
+
+  useEffect(() => {
+    if (!chartRef.current || !data.length) return;
+
+    // Dispose previous root if it exists
+    if (rootRef.current) {
+      rootRef.current.dispose();
+      rootRef.current = null;
+    }
+
+    const root = am5.Root.new(chartRef.current);
+    rootRef.current = root;
+    root.setThemes([am5themes_Animated.new(root)]);
+    root._logo?.dispose();
+
+    const chart = root.container.children.push(
+      am5xy.XYChart.new(root, { layout: root.verticalLayout, paddingBottom: 0 })
+    );
+
+    const yAxis = chart.yAxes.push(
+      am5xy.ValueAxis.new(root, {
+        renderer: am5xy.AxisRendererY.new(root, {}),
+        numberFormatter: am5.NumberFormatter.new(root, { numberFormat: "₹#a" }),
+      })
+    );
+
+    const xAxis = chart.xAxes.push(
+      am5xy.CategoryAxis.new(root, {
+        renderer: am5xy.AxisRendererX.new(root, {}),
+        categoryField: "month_label",
+      })
+    );
+    xAxis.data.setAll(data);
+
+    function createSeries(name: string, field: string, color: string) {
+      const series = chart.series.push(
+        am5xy.ColumnSeries.new(root, {
+          name,
+          xAxis,
+          yAxis,
+          valueYField: field,
+          categoryXField: "month_label",
+          tooltip: am5.Tooltip.new(root, { labelText: "{name}: ₹{valueY}" }),
+          clustered: true,
+        })
+      );
+      series.columns.template.setAll({
+        fill: am5.color(color),
+        cornerRadiusTL: 4,
+        cornerRadiusTR: 4,
+        width: am5.percent(70),
+      });
+      series.data.setAll(data);
+    }
+
+    createSeries("Subscriptions", "subscription_revenue", "#d4a853");
+    createSeries("Products", "product_revenue", "#b8953f");
+    createSeries("Renewals", "renewal_revenue", "#f59e0b");
+
+    chart.set("cursor", am5xy.XYCursor.new(root, { behavior: "none" }));
+
+    const legend = chart.children.push(
+      am5.Legend.new(root, { centerX: am5.p50, x: am5.p50, paddingTop: 8 })
+    );
+    legend.data.setAll(chart.series.values);
+
+    return () => { root.dispose(); rootRef.current = null; };
+  }, [data]);
+
+  useEffect(() => {
+    return () => { if (rootRef.current) { rootRef.current.dispose(); rootRef.current = null; } };
+  }, []);
+
+  return <div ref={chartRef} className="w-full h-64" />;
 }
 
 // ─── Badge ────────────────────────────────────────────────────────────────────
@@ -301,26 +365,13 @@ export function RevenueOps() {
           </div>
         </div>
         {revenueLoading ? (
-          <div className="h-64 rounded-xl bg-white/5 animate-pulse" />
+          <div className="h-64 rounded-xl bg-[var(--bg-secondary)] animate-pulse" />
         ) : monthlyRevenue.length === 0 ? (
-          <div className="flex flex-col items-center gap-2 py-16 text-slate-500">
+          <div className="flex flex-col items-center gap-2 py-16 text-[var(--text-muted)]">
             <TrendingUp size={40} className="opacity-20" /><p className="text-sm font-bold">{t("noRevenueData")}</p>
           </div>
         ) : (
-          <div className="h-64">
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={monthlyRevenue} barGap={4}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" vertical={false} />
-                <XAxis dataKey="month_label" stroke="#475569" tick={{ fontSize: 11, fontWeight: 700 }} />
-                <YAxis stroke="#475569" tick={{ fontSize: 10 }} tickFormatter={(v) => `₹${(v / 1000).toFixed(0)}k`} />
-                <Tooltip content={<RevTooltip currency={currency} />} />
-                <Legend wrapperStyle={{ fontSize: 11, fontWeight: 700, paddingTop: 12 }} />
-                <Bar dataKey="subscription_revenue" name={t("subscriptions")} fill="#6366f1" radius={[4, 4, 0, 0]} />
-                <Bar dataKey="product_revenue"      name={t("products")}      fill="#f59e0b" radius={[4, 4, 0, 0]} />
-                <Bar dataKey="renewal_revenue"      name={t("renewals")}      fill="#10b981" radius={[4, 4, 0, 0]} />
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
+          <AM5BarChart data={monthlyRevenue} currency={currency} />
         )}
       </div>
 

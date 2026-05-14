@@ -1,10 +1,10 @@
-import { useState, useEffect, useCallback, useMemo } from "react";
+import { useState, useEffect, useCallback, useMemo, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import {
-  BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend,
-} from "recharts";
+import * as am5 from "@amcharts/amcharts5";
+import * as am5xy from "@amcharts/amcharts5/xy";
+import am5themes_Animated from "@amcharts/amcharts5/themes/Animated";
 import {
   Users, CreditCard, UserPlus, RefreshCw, IndianRupee,
   ShoppingBag, Mail, Bell, Activity,
@@ -43,11 +43,110 @@ function Badge({ v }: { v: string }) {
   const val = String(v ?? "").toLowerCase();
   const cls =
     ["paid", "success", "completed", "active"].includes(val)
-      ? "bg-emerald-500/20 text-emerald-400"
+      ? "bg-emerald-100 text-emerald-600"
       : ["failed", "pending", "inactive"].includes(val)
-        ? "bg-red-500/20 text-red-400"
-        : "bg-indigo-500/20 text-indigo-300";
-  return <span className={`px-2 py-0.5 rounded-full text-[10px] font-black uppercase tracking-widest ${cls}`}>{v || "—"}</span>;
+        ? "bg-red-100 text-red-600"
+        : "bg-indigo-100 text-indigo-600";
+  return <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-widest ${cls}`}>{v || "—"}</span>;
+}
+
+// ─── AM5 Bar Chart ──────────────────────────────────────────────────────────
+function AM5BarChart({ data, currency = "INR" }: { data: any[]; currency?: string }) {
+  const chartRef = useRef<HTMLDivElement>(null);
+  const rootRef = useRef<am5.Root | null>(null);
+
+  useEffect(() => {
+    if (!chartRef.current || !data.length) return;
+
+    if (rootRef.current) {
+      rootRef.current.dispose();
+      rootRef.current = null;
+    }
+
+    const root = am5.Root.new(chartRef.current);
+    rootRef.current = root;
+    root.setThemes([am5themes_Animated.new(root)]);
+    root._logo?.dispose();
+
+    const chart = root.container.children.push(
+      am5xy.XYChart.new(root, {
+        layout: root.verticalLayout,
+        paddingBottom: 0,
+      })
+    );
+
+    const yAxis = chart.yAxes.push(
+      am5xy.ValueAxis.new(root, {
+        renderer: am5xy.AxisRendererY.new(root, {}),
+        numberFormatter: am5.NumberFormatter.new(root, {
+          numberFormat: "₹#a",
+        }),
+      })
+    );
+
+    const xAxis = chart.xAxes.push(
+      am5xy.CategoryAxis.new(root, {
+        renderer: am5xy.AxisRendererX.new(root, {}),
+        categoryField: "month_label",
+      })
+    );
+    xAxis.data.setAll(data);
+
+    function createSeries(name: string, field: string, color: string) {
+      const series = chart.series.push(
+        am5xy.ColumnSeries.new(root, {
+          name,
+          xAxis,
+          yAxis,
+          valueYField: field,
+          categoryXField: "month_label",
+          tooltip: am5.Tooltip.new(root, {
+            labelText: "{name}: ₹{valueY}",
+          }),
+          clustered: true,
+        })
+      );
+      series.columns.template.setAll({
+        fill: am5.color(color),
+        cornerRadiusTL: 4,
+        cornerRadiusTR: 4,
+        width: am5.percent(70),
+      });
+      series.data.setAll(data);
+      return series;
+    }
+
+    createSeries("Subscriptions", "subscription_revenue", "#d4a853");
+    createSeries("Products", "product_revenue", "#b8953f");
+    createSeries("Renewals", "renewal_revenue", "#f59e0b");
+
+    chart.set("cursor", am5xy.XYCursor.new(root, { behavior: "none" }));
+
+    const legend = chart.children.push(
+      am5.Legend.new(root, {
+        centerX: am5.p50,
+        x: am5.p50,
+        paddingTop: 8,
+      })
+    );
+    legend.data.setAll(chart.series.values);
+
+    return () => {
+      root.dispose();
+      rootRef.current = null;
+    };
+  }, [data]);
+
+  useEffect(() => {
+    return () => {
+      if (rootRef.current) {
+        rootRef.current.dispose();
+        rootRef.current = null;
+      }
+    };
+  }, []);
+
+  return <div ref={chartRef} className="w-full h-64" />;
 }
 
 // ─── Stat Card ────────────────────────────────────────────────────────────────
@@ -60,20 +159,21 @@ function StatCard({ label, value, icon: Icon, color, delay, prefix = "", subLabe
       initial={{ opacity: 0, y: 16 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay, duration: 0.35 }}
-      className={`relative overflow-hidden rounded-2xl bg-white/5 border border-white/10 p-5 backdrop-blur-xl hover:border-white/20 transition-all group flex flex-col justify-between ${onClick ? "cursor-pointer" : ""}`}
+      className={`relative overflow-hidden rounded-2xl bg-[var(--bg-card)] border border-[var(--border-subtle)] p-5 backdrop-blur-xl hover:border-[var(--accent-orange)] transition-all group flex flex-col justify-between ${onClick ? "cursor-pointer" : ""}`}
+      style={{ boxShadow: "var(--shadow-card)" }}
       onClick={onClick}
     >
-      <div className={`absolute -top-6 -right-6 w-20 h-20 rounded-full blur-2xl opacity-20 ${color}`} />
+      <div className={`absolute -top-6 -right-6 w-20 h-20 rounded-full blur-2xl opacity-15 ${color}`} />
       <div>
-        <div className={`inline-flex h-10 w-10 items-center justify-center rounded-xl ${color} bg-opacity-20 mb-3 group-hover:scale-110 transition-transform`}>
-          <Icon size={18} className="text-white" />
+        <div className={`inline-flex h-10 w-10 items-center justify-center rounded-xl ${color} bg-opacity-10 mb-3 group-hover:scale-110 transition-transform`}>
+          <Icon size={18} className="text-[var(--accent-orange)]" />
         </div>
-        <p className="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-1 leading-tight">{label}</p>
-        <p className="text-xl font-black text-white tracking-tighter">{prefix}{value ?? "—"}</p>
+        <p className="text-[10px] font-bold uppercase tracking-widest text-[var(--text-muted)] mb-1 leading-tight">{label}</p>
+        <p className="text-xl font-bold text-[var(--text-primary)] tracking-tighter">{prefix}{value ?? "—"}</p>
       </div>
       {subLabel && (
         <div
-          className={`mt-3 pt-3 border-t border-white/5 flex items-center justify-between ${onSubClick ? "cursor-pointer hover:bg-white/5 -mx-5 px-5" : ""}`}
+          className={`mt-3 pt-3 border-t border-[var(--border-subtle)] flex items-center justify-between ${onSubClick ? "cursor-pointer hover:bg-[var(--bg-secondary)] -mx-5 px-5" : ""}`}
           onClick={(e) => {
             if (onSubClick) {
               e.stopPropagation();
@@ -81,8 +181,8 @@ function StatCard({ label, value, icon: Icon, color, delay, prefix = "", subLabe
             }
           }}
         >
-          <p className="text-[9px] font-black uppercase tracking-widest text-slate-500">{subLabel}</p>
-          <p className="text-xs font-black text-red-400">{subValue ?? "—"}</p>
+          <p className="text-[9px] font-bold uppercase tracking-widest text-[var(--text-muted)]">{subLabel}</p>
+          <p className="text-xs font-bold text-red-500">{subValue ?? "—"}</p>
         </div>
       )}
     </motion.div>
@@ -94,15 +194,15 @@ function SectionHeader({ title, sub, onRedirect }: { title: string; sub?: string
   return (
     <div className="mb-4 flex items-center justify-between w-full">
       <div>
-        <p className="text-[10px] font-black uppercase tracking-widest text-slate-500">{sub}</p>
-        <h3 className="text-base font-black text-white uppercase tracking-tight flex items-center gap-2">
+        <p className="text-[10px] font-bold uppercase tracking-widest text-[var(--text-muted)]">{sub}</p>
+        <h3 className="text-base font-bold text-[var(--text-primary)] uppercase tracking-tight flex items-center gap-2">
           {title}
         </h3>
       </div>
       {onRedirect && (
         <button
           onClick={onRedirect}
-          className="group flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/5 border border-white/10 hover:bg-indigo-500/20 hover:border-indigo-500/30 hover:text-indigo-400 transition-all text-[10px] font-black uppercase tracking-widest text-slate-400"
+          className="group flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[var(--bg-secondary)] border border-[var(--border-subtle)] hover:border-[var(--accent-orange)] hover:text-[var(--accent-orange)] transition-all text-[10px] font-bold uppercase tracking-widest text-[var(--text-muted)]"
           title={`Go to ${title}`}
         >
           View All
@@ -114,23 +214,6 @@ function SectionHeader({ title, sub, onRedirect }: { title: string; sub?: string
 }
 
 
-// ─── Custom Tooltip for Bar Chart ─────────────────────────────────────────────
-function RevTooltip({ active, payload, label, currency = "INR" }: any) {
-  const fmt = createFmt(currency);
-  if (!active || !payload?.length) return null;
-  return (
-    <div className="bg-slate-900 border border-white/10 rounded-xl p-3 text-xs">
-      <p className="font-black text-white mb-2">{label}</p>
-      {payload.map((p: any) => (
-        <p key={p.name} style={{ color: p.color }} className="font-bold">
-          {p.name}: {fmt(p.value)}
-        </p>
-      ))}
-    </div>
-  );
-}
-
-// ─── Main Dashboard ───────────────────────────────────────────────────────────
 export default function AdminDashboard() {
   const { t } = useTranslation();
   const navigate = useNavigate();
@@ -344,7 +427,7 @@ export default function AdminDashboard() {
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
             onClick={() => setScannerOpen(true)}
-            className="h-10 px-4 flex items-center justify-center gap-2 rounded-xl bg-emerald-500/10 border border-emerald-500/20 hover:bg-emerald-500 text-emerald-400 hover:text-white transition-all text-xs font-black tracking-widest uppercase shadow-[0_0_15px_rgba(16,185,129,0.15)] hover:shadow-[0_0_20px_rgba(16,185,129,0.3)]"
+            className="h-10 px-4 flex items-center justify-center gap-2 rounded-xl bg-emerald-100 border border-emerald-200 hover:bg-gradient-to-r hover:from-emerald-500 hover:to-emerald-600 text-emerald-600 hover:text-white transition-all text-xs font-bold tracking-widest uppercase"
             title={t("scanIdCard")}
           >
             <Camera size={16} />
@@ -355,7 +438,7 @@ export default function AdminDashboard() {
             onChange={(r) => setDateRange(r)}
           />
           <button onClick={refreshAll}
-            className="h-10 w-10 flex items-center justify-center rounded-xl bg-white/5 border border-white/10 hover:bg-indigo-500 hover:border-indigo-500 text-indigo-400 hover:text-white transition-all" title={t("refreshAll")}>
+            className="h-10 w-10 flex items-center justify-center rounded-xl border border-[var(--border-subtle)] bg-[var(--bg-secondary)] hover:bg-[var(--accent-orange)] hover:text-white text-[var(--accent-orange)] transition-all" title={t("refreshAll")}>
             <RefreshCw size={14} className={isAnyLoading ? "animate-spin" : ""} />
           </button>
         </div>
@@ -367,31 +450,32 @@ export default function AdminDashboard() {
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.05, duration: 0.35 }}
-          className="col-span-2 relative overflow-hidden rounded-2xl bg-white/5 border border-white/10 p-5 backdrop-blur-xl hover:border-indigo-500/30 transition-all group flex flex-col justify-center gap-4"
+          className="col-span-2 relative overflow-hidden rounded-2xl bg-[var(--bg-card)] border border-[var(--border-subtle)] p-5 backdrop-blur-xl hover:border-[var(--accent-orange)] transition-all group flex flex-col justify-center gap-4"
+          style={{ boxShadow: "var(--shadow-card)" }}
         >
-          <div className="absolute -top-6 -right-6 w-32 h-32 rounded-full blur-3xl opacity-20 bg-indigo-500" />
+          <div className="absolute -top-6 -right-6 w-32 h-32 rounded-full blur-3xl opacity-10 bg-[var(--accent-orange)]" />
           <div className="flex items-center gap-4 relative z-10">
-            <div className="inline-flex h-12 w-12 items-center justify-center rounded-xl bg-indigo-500/20 group-hover:scale-110 transition-transform shrink-0">
-              <CreditCard size={20} className="text-indigo-400" />
+            <div className="inline-flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-[var(--accent-orange)] to-[var(--accent-gold)]/20 group-hover:scale-110 transition-transform shrink-0">
+              <CreditCard size={20} className="text-[var(--accent-orange)]" />
             </div>
             <div>
-              <p className="text-[10px] font-black uppercase tracking-widest text-slate-500 leading-tight">{t("subscriptionOverview")}</p>
-              <p className="text-xl font-black text-white tracking-tighter">{t("planStatusTitle")}</p>
+              <p className="text-[10px] font-bold uppercase tracking-widest text-[var(--text-muted)] leading-tight">{t("subscriptionOverview")}</p>
+              <p className="text-xl font-bold text-[var(--text-primary)] tracking-tighter">{t("planStatusTitle")}</p>
             </div>
           </div>
 
           <div className="grid grid-cols-3 gap-2 relative z-10">
-            <button onClick={() => navigate('/admin/users?plan_status=active')} className="py-2 px-1 rounded-xl bg-white/5 hover:bg-emerald-500/20 hover:border-emerald-500/30 border border-transparent transition-all flex flex-col items-center group/btn">
-              <span className="text-lg font-black text-emerald-400 group-hover/btn:scale-110 transition-transform">{stats?.total_active_subscriptions ?? 0}</span>
-              <span className="text-[9px] font-black uppercase tracking-widest text-slate-500 mt-1">{t("active")}</span>
+            <button onClick={() => navigate('/admin/users?plan_status=active')} className="py-2 px-1 rounded-xl bg-[var(--bg-secondary)] hover:bg-emerald-100 hover:border-emerald-300 border border-transparent transition-all flex flex-col items-center group/btn">
+              <span className="text-lg font-bold text-emerald-600 group-hover/btn:scale-110 transition-transform">{stats?.total_active_subscriptions ?? 0}</span>
+              <span className="text-[9px] font-bold uppercase tracking-widest text-[var(--text-muted)] mt-1">{t("active")}</span>
             </button>
-            <button onClick={() => navigate('/admin/users?plan_status=expired')} className="py-2 px-1 rounded-xl bg-white/5 hover:bg-red-500/20 hover:border-red-500/30 border border-transparent transition-all flex flex-col items-center group/btn">
-              <span className="text-lg font-black text-red-400 group-hover/btn:scale-110 transition-transform">{stats?.total_expired_subscriptions ?? 0}</span>
-              <span className="text-[9px] font-black uppercase tracking-widest text-slate-500 mt-1">{t("expired")}</span>
+            <button onClick={() => navigate('/admin/users?plan_status=expired')} className="py-2 px-1 rounded-xl bg-[var(--bg-secondary)] hover:bg-red-100 hover:border-red-300 border border-transparent transition-all flex flex-col items-center group/btn">
+              <span className="text-lg font-bold text-red-600 group-hover/btn:scale-110 transition-transform">{stats?.total_expired_subscriptions ?? 0}</span>
+              <span className="text-[9px] font-bold uppercase tracking-widest text-[var(--text-muted)] mt-1">{t("expired")}</span>
             </button>
-            <button onClick={() => navigate('/admin/users?plan_status=not_subscribed')} className="py-2 px-1 rounded-xl bg-white/5 hover:bg-amber-500/20 hover:border-amber-500/30 border border-transparent transition-all flex flex-col items-center group/btn">
-              <span className="text-lg font-black text-amber-400 group-hover/btn:scale-110 transition-transform">{stats?.total_no_subscriptions ?? 0}</span>
-              <span className="text-[9px] font-black uppercase tracking-widest text-slate-500 mt-1">{t("not_subscribed")}</span>
+            <button onClick={() => navigate('/admin/users?plan_status=not_subscribed')} className="py-2 px-1 rounded-xl bg-[var(--bg-secondary)] hover:bg-amber-100 hover:border-amber-300 border border-transparent transition-all flex flex-col items-center group/btn">
+              <span className="text-lg font-bold text-amber-600 group-hover/btn:scale-110 transition-transform">{stats?.total_no_subscriptions ?? 0}</span>
+              <span className="text-[9px] font-bold uppercase tracking-widest text-[var(--text-muted)] mt-1">{t("not_subscribed")}</span>
             </button>
           </div>
         </motion.div>
@@ -412,13 +496,12 @@ export default function AdminDashboard() {
       <GlassCard>
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-5">
           <SectionHeader title={t("recentInquiries")} sub={t("latestRequests")} onRedirect={() => navigate('/admin/inquiries')} />
-          {/* Tab pills */}
           <div className="flex flex-wrap gap-1.5">
             {inqTabs.map(({ id, label, icon: Icon }) => (
               <button key={id} onClick={() => setInqTab(id as any)}
-                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all whitespace-nowrap border ${inqTab === id
-                  ? "bg-indigo-500 border-indigo-400 text-white shadow-lg shadow-indigo-500/20"
-                  : "bg-white/5 border-white/10 text-slate-400 hover:text-white hover:bg-white/10"
+                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-[10px] font-bold uppercase tracking-widest transition-all whitespace-nowrap border ${inqTab === id
+                  ? "bg-[var(--accent-orange)] border-[var(--accent-orange)] text-white"
+                  : "bg-[var(--bg-secondary)] border-[var(--border-subtle)] text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-card-hover)]"
                   }`}>
                 <Icon size={11} />{t(id)}
               </button>
@@ -427,10 +510,10 @@ export default function AdminDashboard() {
         </div>
         {loading.inquiries ? (
           <div className="space-y-2">
-            {[...Array(4)].map((_, i) => <div key={i} className="h-16 rounded-xl bg-white/5 animate-pulse" />)}
+            {[...Array(4)].map((_, i) => <div key={i} className="h-16 rounded-xl bg-[var(--bg-secondary)] animate-pulse" />)}
           </div>
         ) : inqData.length === 0 ? (
-          <div className="flex flex-col items-center gap-2 py-10 text-slate-500">
+          <div className="flex flex-col items-center gap-2 py-10 text-[var(--text-muted)]">
             <Bell size={32} className="opacity-20" /><p className="text-sm font-bold">{t("noRecords")}</p>
           </div>
         ) : (
@@ -441,14 +524,14 @@ export default function AdminDashboard() {
                 initial={{ opacity: 0, y: 8 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: i * 0.04 }}
-                className="flex items-center gap-3 px-4 py-3 rounded-lg bg-white/5 border border-white/10 hover:bg-white/[0.07] transition-all"
+                className="flex items-center gap-3 px-4 py-3 rounded-lg bg-[var(--bg-secondary)] border border-[var(--border-subtle)] hover:bg-[var(--bg-card-hover)] transition-all"
               >
                 <div
-                  className={`h-10 w-10 rounded-full flex items-center justify-center text-sm font-black shrink-0 ${inqTab === "subscriptions"
-                      ? "bg-indigo-500/20 text-indigo-400"
+                  className={`h-10 w-10 rounded-full flex items-center justify-center text-sm font-bold shrink-0 ${inqTab === "subscriptions"
+                      ? "bg-indigo-100 text-indigo-600"
                       : inqTab === "product_orders"
-                        ? "bg-emerald-500/20 text-emerald-400"
-                        : "bg-amber-500/20 text-amber-400"
+                        ? "bg-emerald-100 text-emerald-600"
+                        : "bg-amber-100 text-amber-600"
                     }`}
                 >
                   {(item.user_name ?? "?")?.[0]?.toUpperCase()}
@@ -456,27 +539,27 @@ export default function AdminDashboard() {
 
                 <div className="min-w-0 flex-1">
                   <div className="flex items-center justify-between gap-2">
-                    <p className="text-sm font-semibold text-white truncate">
+                    <p className="text-sm font-semibold text-[var(--text-primary)] truncate">
                       {item.user_name ?? "—"}
                     </p>
 
                     <span
                       className={`text-[10px] font-bold uppercase px-2 py-1 rounded-md ${item.status
-                          ? "bg-emerald-500/10 text-emerald-400"
-                          : "bg-amber-500/10 text-amber-400"
+                          ? "bg-emerald-100 text-emerald-600"
+                          : "bg-amber-100 text-amber-600"
                         }`}
                     >
                       {item.status ? t("resolved") : t("pending")}
                     </span>
                   </div>
 
-                  <p className="text-xs text-slate-400 truncate mt-1">
+                  <p className="text-xs text-[var(--text-secondary)] truncate mt-1">
                     {item.description ?? "—"}
                   </p>
 
                   <div className="flex items-center gap-1 mt-1">
-                    <Clock size={10} className="text-slate-500" />
-                    <span className="text-[10px] text-slate-500">
+                    <Clock size={10} className="text-[var(--text-muted)]" />
+                    <span className="text-[10px] text-[var(--text-muted)]">
                       {fmtDate(item.inquiry_date)}
                     </span>
                   </div>
@@ -493,18 +576,18 @@ export default function AdminDashboard() {
         <GlassCard>
           <SectionHeader title={t("recentPayments")} sub={t("thisMonth")} onRedirect={() => navigate('/admin/payments')} />
           {loading.payments ? <SkeletonRows /> : payments.length === 0 ? (
-            <p className="text-slate-500 text-xs text-center py-8">{t("noPayments")}</p>
+            <p className="text-[var(--text-muted)] text-xs text-center py-8">{t("noPayments")}</p>
           ) : (
             <div className="space-y-2">
               {payments.slice(0, 5).map((p: any, i: number) => (
                 <motion.div key={p.id ?? i} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: i * 0.04 }}
-                  className="flex items-center justify-between p-3 rounded-xl bg-white/5 border border-white/5 hover:border-white/15 transition-all">
+                  className="flex items-center justify-between p-3 rounded-xl bg-[var(--bg-secondary)] border border-[var(--border-subtle)] hover:border-[var(--accent-orange)] transition-all">
                   <div className="min-w-0">
-                    <p className="text-xs font-bold text-white truncate">{p.name ?? "—"}</p>
-                    <p className="text-[10px] text-slate-500">{p.payment_method} · {fmtDate(p.payment_date)}</p>
+                    <p className="text-xs font-bold text-[var(--text-primary)] truncate">{p.name ?? "—"}</p>
+                    <p className="text-[10px] text-[var(--text-muted)]">{p.payment_method} · {fmtDate(p.payment_date)}</p>
                   </div>
                   <div className="flex flex-col items-end gap-1 shrink-0">
-                    <span className="text-xs font-black text-emerald-400">{fmt(p.amount)}</span>
+                    <span className="text-xs font-bold text-emerald-600">{fmt(p.amount)}</span>
                     <Badge v={p.status} />
                   </div>
                 </motion.div>
@@ -517,18 +600,18 @@ export default function AdminDashboard() {
         <GlassCard>
           <SectionHeader title={t("subscriptionHistory")} sub={t("thisMonth")} onRedirect={() => navigate('/admin/subscriptions')} />
           {loading.subscriptions ? <SkeletonRows /> : subscriptions.length === 0 ? (
-            <p className="text-slate-500 text-xs text-center py-8">{t("noRecords")}</p>
+            <p className="text-[var(--text-muted)] text-xs text-center py-8">{t("noRecords")}</p>
           ) : (
             <div className="space-y-2">
               {subscriptions.slice(0, 5).map((s: any, i: number) => (
                 <motion.div key={s.id ?? i} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: i * 0.04 }}
-                  className="flex items-center justify-between p-3 rounded-xl bg-white/5 border border-white/5 hover:border-white/15 transition-all">
+                  className="flex items-center justify-between p-3 rounded-xl bg-[var(--bg-secondary)] border border-[var(--border-subtle)] hover:border-[var(--accent-orange)] transition-all">
                   <div className="min-w-0">
-                    <p className="text-xs font-bold text-white truncate">{s.user_name ?? "—"}</p>
-                    <p className="text-[10px] text-slate-500 truncate">{s.plan_name} · {s.duration_in_months}mo</p>
+                    <p className="text-xs font-bold text-[var(--text-primary)] truncate">{s.user_name ?? "—"}</p>
+                    <p className="text-[10px] text-[var(--text-muted)] truncate">{s.plan_name} · {s.duration_in_months}mo</p>
                   </div>
                   <div className="flex flex-col items-end gap-1 shrink-0">
-                    <span className="text-xs font-black text-violet-400">{fmt(s.amount)}</span>
+                    <span className="text-xs font-bold text-violet-600">{fmt(s.amount)}</span>
                     <Badge v={s.status === true ? "active" : s.status === false ? "inactive" : String(s.status)} />
                   </div>
                 </motion.div>
@@ -541,18 +624,18 @@ export default function AdminDashboard() {
         <GlassCard>
           <SectionHeader title={t("productPurchases")} sub={t("thisMonth")} onRedirect={() => navigate('/admin/products')} />
           {loading.products ? <SkeletonRows /> : products.length === 0 ? (
-            <p className="text-slate-500 text-xs text-center py-8">{t("noRecords")}</p>
+            <p className="text-[var(--text-muted)] text-xs text-center py-8">{t("noRecords")}</p>
           ) : (
             <div className="space-y-2">
               {products.slice(0, 5).map((p: any, i: number) => (
                 <motion.div key={p.id ?? i} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: i * 0.04 }}
-                  className="flex items-center justify-between p-3 rounded-xl bg-white/5 border border-white/5 hover:border-white/15 transition-all">
+                  className="flex items-center justify-between p-3 rounded-xl bg-[var(--bg-secondary)] border border-[var(--border-subtle)] hover:border-[var(--accent-orange)] transition-all">
                   <div className="min-w-0">
-                    <p className="text-xs font-bold text-white truncate">{p.user_name ?? "—"}</p>
-                    <p className="text-[10px] text-slate-500 truncate">{p.product_name}</p>
+                    <p className="text-xs font-bold text-[var(--text-primary)] truncate">{p.user_name ?? "—"}</p>
+                    <p className="text-[10px] text-[var(--text-muted)] truncate">{p.product_name}</p>
                   </div>
                   <div className="flex flex-col items-end gap-1 shrink-0">
-                    <span className="text-xs font-black text-amber-400">{fmt(p.amount)}</span>
+                    <span className="text-xs font-bold text-amber-600">{fmt(p.amount)}</span>
                     <Badge v={p.status} />
                   </div>
                 </motion.div>
@@ -568,18 +651,18 @@ export default function AdminDashboard() {
           <SectionHeader title={t("attendanceOverview")} sub={t("activityPeriod")} onRedirect={() => navigate('/admin/attendance')} />
         </div>
         {loading.attendance ? (
-          <div className="grid grid-cols-3 gap-4"><div className="h-20 rounded-xl bg-white/5 animate-pulse" /><div className="h-20 rounded-xl bg-white/5 animate-pulse" /><div className="h-20 rounded-xl bg-white/5 animate-pulse" /></div>
+          <div className="grid grid-cols-3 gap-4"><div className="h-20 rounded-xl bg-[var(--bg-secondary)] animate-pulse" /><div className="h-20 rounded-xl bg-[var(--bg-secondary)] animate-pulse" /><div className="h-20 rounded-xl bg-[var(--bg-secondary)] animate-pulse" /></div>
         ) : (
           <div className="grid grid-cols-3 gap-4">
             {[
-              { label: t("totalCheckins"), value: attendance?.total_count ?? 0, icon: Users, color: "text-indigo-400", bg: "bg-indigo-500/10" },
-              { label: t("presentNow"), value: attendance?.present_now ?? 0, icon: Activity, color: "text-emerald-400", bg: "bg-emerald-500/10" },
-              { label: t("checkedOut"), value: attendance?.checked_out ?? 0, icon: TrendingUp, color: "text-amber-400", bg: "bg-amber-500/10" },
+              { label: t("totalCheckins"), value: attendance?.total_count ?? 0, icon: Users, color: "text-indigo-600", bg: "bg-indigo-100" },
+              { label: t("presentNow"), value: attendance?.present_now ?? 0, icon: Activity, color: "text-emerald-600", bg: "bg-emerald-100" },
+              { label: t("checkedOut"), value: attendance?.checked_out ?? 0, icon: TrendingUp, color: "text-amber-600", bg: "bg-amber-100" },
             ].map(({ label, value, icon: Icon, color, bg }) => (
-              <div key={label} className={`rounded-2xl ${bg} border border-white/5 p-5 flex flex-col items-center gap-2 text-center`}>
+              <div key={label} className={`rounded-2xl ${bg} border border-[var(--border-subtle)] p-5 flex flex-col items-center gap-2 text-center`}>
                 <Icon size={22} className={color} />
-                <p className="text-2xl font-black text-white">{value}</p>
-                <p className="text-[10px] font-black uppercase tracking-widest text-slate-500">{label}</p>
+                <p className="text-2xl font-bold text-[var(--text-primary)]">{value}</p>
+                <p className="text-[10px] font-bold uppercase tracking-widest text-[var(--text-muted)]">{label}</p>
               </div>
             ))}
           </div>
@@ -593,33 +676,24 @@ export default function AdminDashboard() {
           <div className="flex items-center gap-2">
             {[3, 6, 12].map((m) => (
               <button key={m} onClick={() => handleRevenueMonthsChange(m)}
-                className={`px-3 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all ${derivedRevenueMonths === m ? "bg-indigo-500 text-white shadow-lg shadow-indigo-500/20" : "bg-white/5 text-slate-400 hover:text-white border border-white/10"}`}>
+                className={`px-3 py-1.5 rounded-lg text-[10px] font-bold uppercase tracking-widest transition-all ${
+                  derivedRevenueMonths === m
+                    ? "bg-gradient-to-r from-[var(--accent-orange)] to-[var(--accent-gold)] text-white"
+                    : "bg-[var(--bg-secondary)] text-[var(--text-muted)] hover:text-[var(--text-primary)] border border-[var(--border-subtle)]"
+                }`}>
                 {m}M
               </button>
             ))}
           </div>
         </div>
         {loading.revenue ? (
-          <div className="h-64 rounded-xl bg-white/5 animate-pulse" />
+          <div className="h-64 rounded-xl bg-[var(--bg-secondary)] animate-pulse" />
         ) : monthlyRevenue.length === 0 ? (
-          <div className="flex flex-col items-center gap-2 py-16 text-slate-500">
+          <div className="flex flex-col items-center gap-2 py-16 text-[var(--text-muted)]">
             <TrendingUp size={40} className="opacity-20" /><p className="text-sm font-bold">{t("noRevenueData")}</p>
           </div>
         ) : (
-          <div className="h-64">
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={monthlyRevenue} barGap={4}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" vertical={false} />
-                <XAxis dataKey="month_label" stroke="#475569" tick={{ fontSize: 11, fontWeight: 700 }} />
-                <YAxis stroke="#475569" tick={{ fontSize: 10 }} tickFormatter={(v) => `₹${(v / 1000).toFixed(0)}k`} />
-                <Tooltip content={<RevTooltip currency={currency} />} />
-                <Legend wrapperStyle={{ fontSize: 11, fontWeight: 700, paddingTop: 12 }} />
-                <Bar dataKey="subscription_revenue" name={t("subscriptions")} fill="#6366f1" radius={[4, 4, 0, 0]} />
-                <Bar dataKey="product_revenue" name={t("products")} fill="#f59e0b" radius={[4, 4, 0, 0]} />
-                <Bar dataKey="renewal_revenue" name={t("renewals")} fill="#10b981" radius={[4, 4, 0, 0]} />
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
+          <AM5BarChart data={monthlyRevenue} currency={currency} />
         )}
       </GlassCard>
 

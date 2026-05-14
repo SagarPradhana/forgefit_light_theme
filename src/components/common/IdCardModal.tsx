@@ -112,15 +112,14 @@ export const IdCardModal: React.FC<IdCardModalProps> = ({ isOpen, onClose, user,
 
   return (
     <Modal
-      open={isOpen}
+      isOpen={isOpen}
       onClose={onClose}
       title=""
-      maxWidth="max-w-4xl"
-      hideTitle
+      size="xl"
       className="!bg-transparent !border-none !shadow-none"
     >
       <div className="flex flex-col items-center py-6">
-        <div className="text-[10px] font-black text-slate-500 uppercase tracking-[0.4em] mb-8">
+        <div className="text-[10px] font-black text-[var(--text-muted)] uppercase tracking-[0.4em] mb-8">
           {brandName} Gym Portal · Member ID Card
         </div>
 
@@ -128,13 +127,13 @@ export const IdCardModal: React.FC<IdCardModalProps> = ({ isOpen, onClose, user,
         <div className="flex gap-4 w-full justify-center mb-10">
           <button
             onClick={handlePrint}
-            className="px-8 md:px-10 h-14 rounded-xl text-[11px] font-black uppercase tracking-widest bg-white/90 text-slate-700 shadow-xl hover:scale-105 transition-transform"
+            className="px-8 md:px-10 h-14 rounded-xl text-[11px] font-black uppercase tracking-widest bg-[var(--bg-card)] text-[var(--text-primary)] shadow-[var(--shadow-card)] hover:shadow-[var(--shadow-hover)] hover:scale-105 transition-all border border-[var(--border-subtle)]"
           >
             {t("print") || "Print Card"}
           </button>
           <button
             onClick={handleDownload}
-            className="px-6 h-14 rounded-xl text-[10px] font-black uppercase tracking-widest bg-slate-800 text-slate-400 hover:text-white transition-all flex items-center justify-center border border-white/10"
+            className="px-6 h-14 rounded-xl text-[10px] font-black uppercase tracking-widest bg-[var(--text-primary)] text-[var(--bg-card)] transition-all flex items-center justify-center border border-transparent hover:border-[var(--accent-orange)]"
             title="Download Image"
           >
             <Download size={18} />

@@ -97,25 +97,25 @@ export function AdminProducts() {
         />
         <div className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3 w-full md:w-auto">
           <div className="relative flex-1 md:w-64">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={16} />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--text-muted)]" size={16} />
             <input
               type="text"
               placeholder={t("search") || "Search products..."}
               value={productSearch}
               onChange={(e) => setProductSearch(e.target.value)}
-              className="w-full bg-white/5 border border-white/10 rounded-xl pl-9 pr-4 py-2 text-sm text-white outline-none focus:border-indigo-500 transition"
+              className="w-full bg-[var(--bg-secondary)] border border-[var(--border-subtle)] rounded-xl pl-9 pr-4 py-2 text-sm text-[var(--text-primary)] outline-none focus:border-indigo-500 transition"
             />
           </div>
           <select
-            className="bg-white/5 border border-white/10 rounded-xl px-4 py-2 text-sm text-white outline-none focus:border-indigo-500 transition cursor-pointer"
+            className="bg-[var(--bg-secondary)] border border-[var(--border-subtle)] rounded-xl px-4 py-2 text-sm text-[var(--text-primary)] outline-none focus:border-indigo-500 transition cursor-pointer"
             value={productCategory}
             onChange={(e) => setProductCategory(e.target.value)}
           >
-            <option value="All" className="bg-slate-900">{t("allCategories") || "All Categories"}</option>
-            <option value="Supplements" className="bg-slate-900">Supplements</option>
-            <option value="Apparel" className="bg-slate-900">Apparel</option>
-            <option value="Equipment" className="bg-slate-900">Equipment</option>
-            <option value="Accessories" className="bg-slate-900">Accessories</option>
+            <option value="All" className="bg-[var(--bg-card)]">{t("allCategories") || "All Categories"}</option>
+            <option value="Supplements" className="bg-[var(--bg-card)]">Supplements</option>
+            <option value="Apparel" className="bg-[var(--bg-card)]">Apparel</option>
+            <option value="Equipment" className="bg-[var(--bg-card)]">Equipment</option>
+            <option value="Accessories" className="bg-[var(--bg-card)]">Accessories</option>
           </select>
           <GlowButton
             className="w-full md:w-auto justify-center"
@@ -139,51 +139,77 @@ export function AdminProducts() {
       ) : fetchedProducts.length > 0 ? (
         <>
           <Table
-            headers={["Product Info", "Category", "Price", "Stock", "Actions"]}
-            rows={fetchedProducts.map((p) => [
-              <div key={p.id} className="flex items-center gap-3 text-left">
-                <img src={p.image_url || "https://images.unsplash.com/photo-1540497077202-7c8a3999166f?auto=format&fit=crop&q=80&w=400"} alt={p.name} className="h-10 w-10 rounded-lg object-cover border border-white/10" />
-                <div className="flex flex-col">
-                  <span className="font-bold text-white tracking-tight uppercase text-xs">{p.name}</span>
-                  <span className="text-[10px] text-slate-500 truncate max-w-[120px]">{p.description}</span>
-                </div>
-              </div>,
-              <span key={`${p.id}-cat`} className="text-[10px] font-black uppercase tracking-widest text-slate-400">{p.category}</span>,
-              <span key={`${p.id}-price`} className="text-emerald-400 font-bold">{currencySymbol}{p.price}</span>,
-              <div key={`${p.id}-stock`} className="flex flex-col items-center gap-1">
-                <span className={`text-xs font-bold ${p.stock_count < 10 ? 'text-red-400' : 'text-indigo-300'}`}>{p.stock_count}</span>
-                {p.stock_count < 10 && <span className="text-[8px] font-black uppercase text-red-500/80 animate-pulse">{t("lowStock")}</span>}
-              </div>,
-              <div key={`${p.id}-actions`} className="flex gap-4">
-                <button
-                  className="text-indigo-400 hover:text-indigo-300 transition-transform hover:scale-125"
-                  onClick={() => {
-                    setProductForm({
-                      name: p.name,
-                      category: p.category,
-                      price: p.price.toString(),
-                      stock: p.stock_count.toString(),
-                      unit: p.unit || "kg",
-                      image: p.image_url || "",
-                      description: p.description || ""
-                    });
-                    setEditProduct(p.id);
-                    setProductModalOpen(true);
-                  }}
-                >
-                  <Edit2 size={18} />
-                </button>
-                <button
-                  className="text-red-400 hover:text-red-300 transition-transform hover:scale-125"
-                  onClick={() => {
-                    setDeleteTarget({ type: "product", id: p.id });
-                    setDeleteModalOpen(true);
-                  }}
-                >
-                  <Trash2 size={18} />
-                </button>
-              </div>,
-            ])}
+            columns={[
+              {
+                key: "info",
+                label: "Product Info",
+                render: (p) => (
+                  <div className="flex items-center gap-3 text-left">
+                    <img src={p.image_url || "https://images.unsplash.com/photo-1540497077202-7c8a3999166f?auto=format&fit=crop&q=80&w=400"} alt={p.name} className="h-10 w-10 rounded-lg object-cover border border-[var(--border-subtle)]" />
+                    <div className="flex flex-col">
+                      <span className="font-bold text-[var(--text-primary)] tracking-tight uppercase text-xs">{p.name}</span>
+                      <span className="text-[10px] text-[var(--text-muted)] truncate max-w-[120px]">{p.description}</span>
+                    </div>
+                  </div>
+                )
+              },
+              {
+                key: "category",
+                label: "Category",
+                render: (p) => <span className="text-[10px] font-bold uppercase tracking-widest text-[var(--text-muted)]">{p.category}</span>
+              },
+              {
+                key: "price",
+                label: "Price",
+                render: (p) => <span className="text-emerald-600 font-bold">{currencySymbol}{p.price}</span>
+              },
+              {
+                key: "stock",
+                label: "Stock",
+                render: (p) => (
+                  <div className="flex flex-col items-center gap-1">
+                    <span className={`text-xs font-bold ${p.stock_count < 10 ? 'text-red-600' : 'text-indigo-600'}`}>{p.stock_count}</span>
+                    {p.stock_count < 10 && <span className="text-[8px] font-bold uppercase text-red-500/80 animate-pulse">{t("lowStock")}</span>}
+                  </div>
+                )
+              },
+              {
+                key: "actions",
+                label: "Actions",
+                render: (p) => (
+                  <div className="flex gap-4">
+                    <button
+                      className="text-indigo-600 hover:text-indigo-700 transition-transform hover:scale-125"
+                      onClick={() => {
+                        setProductForm({
+                          name: p.name,
+                          category: p.category,
+                          price: p.price.toString(),
+                          stock: p.stock_count.toString(),
+                          unit: p.unit || "kg",
+                          image: p.image_url || "",
+                          description: p.description || ""
+                        });
+                        setEditProduct(p.id);
+                        setProductModalOpen(true);
+                      }}
+                    >
+                      <Edit2 size={18} />
+                    </button>
+                    <button
+                      className="text-red-600 hover:text-red-700 transition-transform hover:scale-125"
+                      onClick={() => {
+                        setDeleteTarget({ type: "product", id: p.id });
+                        setDeleteModalOpen(true);
+                      }}
+                    >
+                      <Trash2 size={18} />
+                    </button>
+                  </div>
+                )
+              }
+            ]}
+            data={fetchedProducts}
           />
 
           <Pagination

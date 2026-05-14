@@ -278,30 +278,37 @@ export function AttendanceManagement() {
               exit={{ opacity: 0, x: 20 }}
             >
               <Table
-                headers={[t("nameMobileEmail"), t("checkIn"), t("checkOut"), t("status"), t("actions")]}
-                rows={records.map(r => [
-                  <div key={r.id} className="flex items-center gap-3">
-                    <div className="h-8 w-8 rounded-xl bg-gradient-to-br from-indigo-500/30 to-violet-500/30 flex items-center justify-center text-xs font-black text-white shrink-0">
-                      {r.user_name?.[0]?.toUpperCase() || "?"}
+                columns={[
+                  { key: "name", label: t("nameMobileEmail"), render: (r: any) => (
+                    <div className="flex items-center gap-3">
+                      <div className="h-8 w-8 rounded-xl bg-gradient-to-br from-[var(--accent-orange)]/30 to-[var(--accent-gold)]/30 flex items-center justify-center text-xs font-bold text-[var(--accent-orange)] shrink-0">
+                        {r.user_name?.[0]?.toUpperCase() || "?"}
+                      </div>
+                      <div className="text-left">
+                        <p className="text-xs font-bold text-[var(--text-primary)]">{r.user_name || "—"}</p>
+                        <p className="text-[10px] text-[var(--text-muted)]">{(r as any).email || (r as any).mobile || "—"}</p>
+                      </div>
                     </div>
-                    <div className="text-left">
-                      <p className="text-xs font-bold text-white">{r.user_name || "—"}</p>
-                      <p className="text-[10px] text-slate-500">{(r as any).email || (r as any).mobile || "—"}</p>
+                  )},
+                  { key: "check_in", label: t("checkIn"), render: (r: any) => new Date(r.check_in * 1000).toLocaleTimeString('en-IN', { hour12: false, hour: '2-digit', minute: '2-digit' }) },
+                  { key: "check_out", label: t("checkOut"), render: (r: any) => r.check_out ? new Date(r.check_out * 1000).toLocaleTimeString('en-IN', { hour12: false, hour: '2-digit', minute: '2-digit' }) : <span className="text-emerald-600 font-semibold">{t("active")}</span> },
+                  { key: "status", label: t("status"), render: (r: any) => (
+                    <span className={`px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest ${
+                      r.status?.toLowerCase() === "present" ? "bg-emerald-100 text-emerald-600" :
+                      r.status?.toLowerCase() === "late" ? "bg-amber-100 text-amber-600" :
+                      "bg-red-100 text-red-600"
+                    }`}>{r.status || 'N/A'}</span>
+                  )},
+                  { key: "actions", label: t("actions"), render: (r: any) => (
+                    <div className="flex gap-3 justify-center">
+                      <button onClick={() => handleEdit(r)} className="text-[var(--accent-orange)] hover:text-[var(--accent-gold)] transition-transform hover:scale-125"><Edit2 size={16} /></button>
+                      <button onClick={() => { setDeleteId(r.id); setDeleteModalOpen(true); }} className="text-red-500 hover:text-red-600 transition-transform hover:scale-125"><Trash2 size={16} /></button>
                     </div>
-                  </div>,
-                  new Date(r.check_in * 1000).toLocaleTimeString('en-IN', { hour12: false, hour: '2-digit', minute: '2-digit' }),
-                  r.check_out ? new Date(r.check_out * 1000).toLocaleTimeString('en-IN', { hour12: false, hour: '2-digit', minute: '2-digit' }) : t("active"),
-                  <span key={`${r.id}-status`} className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest ${r.status?.toLowerCase() === "present" ? "bg-emerald-500/20 text-emerald-400" :
-                    r.status?.toLowerCase() === "late" ? "bg-amber-500/20 text-amber-400" :
-                      "bg-red-500/20 text-red-400"
-                    }`}>
-                    {r.status || 'N/A'}
-                  </span>,
-                  <div key={`${r.id}-act`} className="flex gap-3 justify-center">
-                    <button onClick={() => handleEdit(r)} className="text-indigo-400 hover:text-indigo-300 transition-transform hover:scale-125"><Edit2 size={16} /></button>
-                    <button onClick={() => { setDeleteId(r.id); setDeleteModalOpen(true); }} className="text-red-400 hover:text-red-300 transition-transform hover:scale-125"><Trash2 size={16} /></button>
-                  </div>
-                ])}
+                  )},
+                ]}
+                data={records}
+                pagination={false}
+                sortable={false}
               />
             </motion.div>
           )}

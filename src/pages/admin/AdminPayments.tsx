@@ -249,9 +249,9 @@ export function AdminPayments() {
 
       <div className="mb-6 flex flex-col sm:flex-row gap-4 items-end">
         <div className="space-y-1">
-          <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest">{t("transactionStatus")}</label>
+          <label className="text-[10px] font-bold text-[var(--text-muted)] uppercase tracking-widest">{t("transactionStatus")}</label>
           <select
-            className="w-full rounded-xl border border-white/10 bg-slate-950 p-3 text-xs font-bold text-white outline-none focus:border-indigo-500 transition shadow-2xl"
+            className="w-full rounded-xl border border-[var(--border-subtle)] bg-[var(--bg-card)] p-3 text-xs font-bold text-[var(--text-primary)] outline-none focus:border-indigo-500 transition"
             value={paymentStatus}
             onChange={(e) => setPaymentStatus(e.target.value as any)}
           >
@@ -269,7 +269,7 @@ export function AdminPayments() {
           <CommonButton variant="ghost" onClick={handleExportPDF} disabled={exportingPdf} className="flex items-center gap-2">
             {exportingPdf ? <InlineSpinner size={16} /> : <FileText size={16} />} PDF
           </CommonButton>
-          <CommonButton variant="ghost" onClick={handleExportExcel} disabled={exportingExcel} className="flex items-center gap-2 text-emerald-400">
+          <CommonButton variant="ghost" onClick={handleExportExcel} disabled={exportingExcel} className="flex items-center gap-2 text-emerald-600">
             {exportingExcel ? <InlineSpinner size={16} /> : <Download size={16} />} Excel
           </CommonButton>
         </div>
@@ -284,47 +284,83 @@ export function AdminPayments() {
       ) : fetchedPayments.length > 0 ? (
         <div className="relative">
           <Table
-            headers={[t("name"), t("contact"), t("timestamp"), t("valuation"), t("method"), t("type"), t("status"), t("operations")]}
-            rows={fetchedPayments.map((p) => [
-              <span key={`${p.id}-name`} className="text-xs font-bold text-white uppercase tracking-tight italic">{(p as any).name || p.Name || '--'}</span>,
-              <span key={`${p.id}-contact`} className="text-[10px] font-black text-indigo-400 tracking-widest">{p.mobile || '--'}</span>,
-              <span key={`${p.id}-date`} className="text-xs font-medium text-slate-300">
-                {new Date(p.payment_date * 1000).toLocaleDateString()}
-              </span>,
-              <span key={`${p.id}-amt`} className="text-emerald-400 font-black italic">{currencySymbol}{p.amount}</span>,
-              <span key={`${p.id}-method`} className="text-[10px] font-black uppercase text-indigo-400 tracking-widest">{p.payment_method}</span>,
-              <span key={`${p.id}-type`} className="text-[10px] font-bold text-slate-400 uppercase">{p.purchase_type}</span>,
-              <StatusBadge key={`${p.id}-status`} status={p.status.charAt(0).toUpperCase() + p.status.slice(1) as any} />,
-              <div key={`${p.id}-act`} className="flex gap-2 justify-center">
-                <button
-                  onClick={() => bootstrapPaymentModal(p)}
-                  className={`${p.purchase_type === "subscription" ? "text-slate-600 cursor-not-allowed pointer-events-none" : "text-indigo-400 hover:text-indigo-300"}`}
-                  title={p.purchase_type === "subscription" ? t("cannotEditSubPayment") : t("editPayment")}
-                >
-                  <Edit2 size={16} />
-                </button>
-                <button
-                  onClick={() => {
-                    setDeleteTarget({ type: "payment", id: p.id });
-                    setDeleteModalOpen(true);
-                  }}
-                  className={`${p.purchase_type === "subscription" ? "text-slate-600 cursor-not-allowed pointer-events-none" : "text-red-400 hover:text-red-300"}`}
-                  title={p.purchase_type === "subscription" ? t("cannotDeleteSubPayment") : t("deletePayment")}
-                >
-                  <Trash2 size={16} />
-                </button>
-                <button
-                  onClick={() => {
-                    setSelectedPayment(p);
-                    setInvoiceModalOpen(true);
-                  }}
-                  className="text-emerald-400 hover:text-emerald-300"
-                  title={t("downloadInvoice")}
-                >
-                  <Printer size={16} />
-                </button>
-              </div>
-            ])}
+            columns={[
+              {
+                key: "name",
+                label: t("name"),
+                render: (p) => <span className="text-xs font-bold text-[var(--text-primary)] uppercase tracking-tight italic">{(p as any).name || p.Name || '--'}</span>
+              },
+              {
+                key: "contact",
+                label: t("contact"),
+                render: (p) => <span className="text-[10px] font-bold text-indigo-600 tracking-widest">{p.mobile || '--'}</span>
+              },
+              {
+                key: "timestamp",
+                label: t("timestamp"),
+                render: (p) => (
+                  <span className="text-xs font-medium text-[var(--text-secondary)]">
+                    {new Date(p.payment_date * 1000).toLocaleDateString()}
+                  </span>
+                )
+              },
+              {
+                key: "valuation",
+                label: t("valuation"),
+                render: (p) => <span className="text-emerald-600 font-bold italic">{currencySymbol}{p.amount}</span>
+              },
+              {
+                key: "method",
+                label: t("method"),
+                render: (p) => <span className="text-[10px] font-bold uppercase text-indigo-600 tracking-widest">{p.payment_method}</span>
+              },
+              {
+                key: "type",
+                label: t("type"),
+                render: (p) => <span className="text-[10px] font-bold text-[var(--text-muted)] uppercase">{p.purchase_type}</span>
+              },
+              {
+                key: "status",
+                label: t("status"),
+                render: (p) => <StatusBadge status={p.status.charAt(0).toUpperCase() + p.status.slice(1) as any} />
+              },
+              {
+                key: "operations",
+                label: t("operations"),
+                render: (p) => (
+                  <div className="flex gap-2 justify-center">
+                    <button
+                      onClick={() => bootstrapPaymentModal(p)}
+                      className={`${p.purchase_type === "subscription" ? "text-[var(--text-secondary)] cursor-not-allowed pointer-events-none" : "text-indigo-600 hover:text-indigo-700"}`}
+                      title={p.purchase_type === "subscription" ? t("cannotEditSubPayment") : t("editPayment")}
+                    >
+                      <Edit2 size={16} />
+                    </button>
+                    <button
+                      onClick={() => {
+                        setDeleteTarget({ type: "payment", id: p.id });
+                        setDeleteModalOpen(true);
+                      }}
+                      className={`${p.purchase_type === "subscription" ? "text-[var(--text-secondary)] cursor-not-allowed pointer-events-none" : "text-red-600 hover:text-red-700"}`}
+                      title={p.purchase_type === "subscription" ? t("cannotDeleteSubPayment") : t("deletePayment")}
+                    >
+                      <Trash2 size={16} />
+                    </button>
+                    <button
+                      onClick={() => {
+                        setSelectedPayment(p);
+                        setInvoiceModalOpen(true);
+                      }}
+                      className="text-emerald-600 hover:text-emerald-700"
+                      title={t("downloadInvoice")}
+                    >
+                      <Printer size={16} />
+                    </button>
+                  </div>
+                )
+              }
+            ]}
+            data={fetchedPayments}
           />
           <LoadingOverlay show={paymentsLoading && fetchedPayments.length > 0} label="Refreshing payments" compact />
 

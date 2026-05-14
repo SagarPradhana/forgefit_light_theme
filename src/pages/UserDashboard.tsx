@@ -206,7 +206,7 @@ function UserDashboard() {
 
   // Shimmer skeleton block
   const Sk = ({ cls }: { cls: string }) => (
-    <div className={`animate-pulse bg-white/[0.06] rounded-xl ${cls}`} />
+    <div className={`animate-pulse bg-[var(--bg-secondary)] rounded-xl ${cls}`} />
   );
 
   return (
@@ -220,7 +220,7 @@ function UserDashboard() {
           <GlowButton
             onClick={handleManualSync}
             disabled={isSyncing}
-            className="flex-1 md:flex-none h-12 px-4 sm:px-6 rounded-xl text-[10px] font-black uppercase tracking-widest flex items-center justify-center gap-2 bg-white/5 border-white/10 hover:bg-white/10 transition-all shadow-lg"
+            className="flex-1 md:flex-none h-12 px-4 sm:px-6 rounded-xl text-[10px] font-bold uppercase tracking-widest flex items-center justify-center gap-2 bg-[var(--bg-secondary)] border-[var(--border-subtle)] hover:bg-[var(--bg-card-hover)] transition-all shadow-lg"
           >
             <RefreshCw size={18} className={isSyncing ? "animate-spin shrink-0" : "shrink-0"} />
             <span className="truncate">{isSyncing ? "Syncing..." : "Re-sync"}</span>
@@ -228,7 +228,7 @@ function UserDashboard() {
           
           <GlowButton
             onClick={() => setIdCardOpen(true)}
-            className="flex-1 md:flex-none h-12 px-4 sm:px-6 rounded-xl text-[10px] font-black uppercase tracking-widest flex items-center justify-center gap-2 bg-indigo-500/10 border-indigo-500/20 hover:bg-indigo-500 hover:text-white transition-all shadow-lg shadow-indigo-500/10"
+            className="flex-1 md:flex-none h-12 px-4 sm:px-6 rounded-xl text-[10px] font-bold uppercase tracking-widest flex items-center justify-center gap-2 bg-indigo-100 border-indigo-500/20 hover:bg-indigo-500 hover:text-[var(--text-primary)] transition-all shadow-lg shadow-indigo-500/10"
           >
             <QrCode size={18} className="shrink-0" />
             <span className="truncate">{t("profile")} ID</span>
@@ -242,62 +242,62 @@ function UserDashboard() {
         <GlassCard className="p-6 border-indigo-500/20 bg-gradient-to-br from-indigo-500/5 to-transparent">
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-2">
-              <div className="h-8 w-8 rounded-xl bg-indigo-500/20 flex items-center justify-center text-indigo-400">
+              <div className="h-8 w-8 rounded-xl bg-indigo-100 flex items-center justify-center text-indigo-600">
                 <Dumbbell size={18} />
               </div>
-              <h3 className="text-sm font-black text-white uppercase tracking-tight">Today's Workout Plan</h3>
+              <h3 className="text-sm font-bold text-[var(--text-primary)] uppercase tracking-tight">Today's Workout Plan</h3>
             </div>
             <select
               value={workoutDay}
               onChange={(e) => setWorkoutDay(e.target.value)}
-              className="bg-slate-900/50 border border-white/10 rounded-lg px-3 py-1.5 text-xs text-white font-bold focus:border-indigo-500 outline-none"
+              className="bg-[var(--bg-secondary)] border border-[var(--border-subtle)] rounded-lg px-3 py-1.5 text-xs text-[var(--text-primary)] font-bold focus:border-indigo-500 outline-none"
             >
               {dayNames.map((day, i) => i > 0 && <option key={i} value={String(i)}>{day}</option>)}
             </select>
           </div>
           {workoutLoading ? (
             <div className="animate-pulse space-y-2">
-              <div className="h-4 bg-white/[0.06] rounded w-3/4" />
-              <div className="h-4 bg-white/[0.06] rounded w-1/2" />
+              <div className="h-4 bg-[var(--bg-secondary)] rounded w-3/4" />
+              <div className="h-4 bg-[var(--bg-secondary)] rounded w-1/2" />
             </div>
           ) : workoutPlan?.workout_details?.workouts?.length > 0 ? (
             <div className="space-y-3">
               <div>
-                <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Plan Name</p>
-                <p className="text-lg font-black text-white italic">{workoutPlan.name || "-"}</p>
+                <p className="text-[10px] font-bold text-[var(--text-muted)] uppercase tracking-widest">Plan Name</p>
+                <p className="text-lg font-bold text-[var(--text-primary)] italic">{workoutPlan.name || "-"}</p>
               </div>
               <div>
-                <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Focus</p>
-                <p className="text-sm font-bold text-indigo-400">{workoutPlan.focus || "-"}</p>
+                <p className="text-[10px] font-bold text-[var(--text-muted)] uppercase tracking-widest">Focus</p>
+                <p className="text-sm font-bold text-indigo-600">{workoutPlan.focus || "-"}</p>
               </div>
               <div className="space-y-2">
-                <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Exercises</p>
+                <p className="text-[10px] font-bold text-[var(--text-muted)] uppercase tracking-widest">Exercises</p>
                 {workoutPlan.workout_details.workouts.map((ex: any, idx: number) => (
                   <div 
                     key={idx} 
                     onClick={() => toggleExercise(idx)}
                     className={`flex justify-between items-center py-2 px-3 rounded-lg border cursor-pointer transition-all ${
                       completedExercises.includes(idx)
-                        ? "bg-emerald-500/10 border-emerald-500/30"
-                        : "bg-white/5 border-white/5 hover:border-indigo-500/30"
+                        ? "bg-emerald-100 border-emerald-500/30"
+                        : "bg-[var(--bg-secondary)] border-[var(--border-subtle)] hover:border-indigo-500/30"
                     }`}
                   >
                     <div className="flex items-center gap-2">
                       <div className={`h-5 w-5 rounded-full flex items-center justify-center text-[10px] ${
                         completedExercises.includes(idx) 
-                          ? "bg-emerald-500 text-white" 
-                          : "bg-white/10 text-slate-500"
+                          ? "bg-emerald-500 text-[var(--text-primary)]" 
+                          : "bg-[var(--bg-secondary)] text-[var(--text-muted)]"
                       }`}>
                         {completedExercises.includes(idx) ? "✓" : (idx + 1)}
                       </div>
                       <div>
-                        <p className={`text-xs font-bold ${completedExercises.includes(idx) ? "text-emerald-400 line-through" : "text-white"}`}>{ex.name}</p>
-                        <p className="text-[9px] text-slate-500">{ex.target_body_part}</p>
+                        <p className={`text-xs font-bold ${completedExercises.includes(idx) ? "text-emerald-600 line-through" : "text-[var(--text-primary)]"}`}>{ex.name}</p>
+                        <p className="text-[9px] text-[var(--text-muted)]">{ex.target_body_part}</p>
                       </div>
                     </div>
                     <div className="text-right">
-                      <p className="text-[9px] font-black text-indigo-400">{ex.no_of_sets} Sets</p>
-                      <p className="text-[9px] text-slate-500">{ex.reps} Reps</p>
+                      <p className="text-[9px] font-bold text-indigo-600">{ex.no_of_sets} Sets</p>
+                      <p className="text-[9px] text-[var(--text-muted)]">{ex.reps} Reps</p>
                     </div>
                   </div>
                 ))}
@@ -307,12 +307,12 @@ function UserDashboard() {
                   <button
                     onClick={handleCompleteSession}
                     disabled={sessionCompleted || !allDone}
-                    className={`w-full mt-4 py-3 rounded-xl text-xs font-black uppercase tracking-widest transition-all flex items-center justify-center gap-2 ${
+                    className={`w-full mt-4 py-3 rounded-xl text-xs font-bold uppercase tracking-widest transition-all flex items-center justify-center gap-2 ${
                       sessionCompleted
-                        ? "bg-emerald-500/20 text-emerald-400 border border-emerald-500/30"
+                        ? "bg-emerald-100 text-emerald-600 border border-emerald-500/30"
                         : allDone
-                          ? "bg-indigo-500 hover:bg-indigo-400 text-white shadow-lg shadow-indigo-500/20"
-                          : "bg-white/5 text-slate-500 border border-white/10 opacity-50 cursor-not-allowed"
+                          ? "bg-indigo-500 hover:bg-indigo-400 text-[var(--text-primary)] shadow-lg shadow-indigo-500/20"
+                          : "bg-[var(--bg-secondary)] text-[var(--text-muted)] border border-[var(--border-subtle)] opacity-50 cursor-not-allowed"
                     }`}
                   >
                     {sessionCompleted ? (
@@ -323,7 +323,7 @@ function UserDashboard() {
                   </button>
                   <button
                     onClick={() => setWorkoutModalOpen(true)}
-                    className="w-full mt-2 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest bg-white/5 text-slate-400 hover:text-white border border-white/5 hover:border-white/20 transition-all"
+                    className="w-full mt-2 py-2 rounded-xl text-[10px] font-bold uppercase tracking-widest bg-[var(--bg-secondary)] text-[var(--text-muted)] hover:text-[var(--text-primary)] border border-[var(--border-subtle)] hover:border-[var(--accent-orange)] transition-all"
                   >
                     View All Details
                   </button>
@@ -332,8 +332,8 @@ function UserDashboard() {
             </div>
           ) : (
             <div className="py-8 text-center">
-              <p className="text-lg font-black text-slate-600 uppercase italic">Break</p>
-              <p className="text-[10px] text-slate-500 mt-1">No workout assigned for {dayNames[parseInt(workoutDay)]}</p>
+              <p className="text-lg font-bold text-[var(--text-secondary)] uppercase italic">Break</p>
+              <p className="text-[10px] text-[var(--text-muted)] mt-1">No workout assigned for {dayNames[parseInt(workoutDay)]}</p>
             </div>
           )}
         </GlassCard>
@@ -342,43 +342,43 @@ function UserDashboard() {
         <GlassCard className="p-6 border-emerald-500/20 bg-gradient-to-br from-emerald-500/5 to-transparent">
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-2">
-              <div className="h-8 w-8 rounded-xl bg-emerald-500/20 flex items-center justify-center text-emerald-400">
+              <div className="h-8 w-8 rounded-xl bg-emerald-100 flex items-center justify-center text-emerald-600">
                 <Zap size={18} />
               </div>
-              <h3 className="text-sm font-black text-white uppercase tracking-tight">Today's Diet Plan</h3>
+              <h3 className="text-sm font-bold text-[var(--text-primary)] uppercase tracking-tight">Today's Diet Plan</h3>
             </div>
             <select
               value={dietDay}
               onChange={(e) => setDietDay(e.target.value)}
-              className="bg-slate-900/50 border border-white/10 rounded-lg px-3 py-1.5 text-xs text-white font-bold focus:border-emerald-500 outline-none"
+              className="bg-[var(--bg-secondary)] border border-[var(--border-subtle)] rounded-lg px-3 py-1.5 text-xs text-[var(--text-primary)] font-bold focus:border-emerald-500 outline-none"
             >
               {dayNames.map((day, i) => i > 0 && <option key={i} value={String(i)}>{day}</option>)}
             </select>
           </div>
           {dietLoading ? (
             <div className="animate-pulse space-y-2">
-              <div className="h-4 bg-white/[0.06] rounded w-3/4" />
-              <div className="h-4 bg-white/[0.06] rounded w-1/2" />
+              <div className="h-4 bg-[var(--bg-secondary)] rounded w-3/4" />
+              <div className="h-4 bg-[var(--bg-secondary)] rounded w-1/2" />
             </div>
           ) : dietPlan?.diet_details?.foods?.length > 0 ? (
             <div className="space-y-3">
               <div>
-                <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Plan Name</p>
-                <p className="text-lg font-black text-white italic">{dietPlan.name || "-"}</p>
+                <p className="text-[10px] font-bold text-[var(--text-muted)] uppercase tracking-widest">Plan Name</p>
+                <p className="text-lg font-bold text-[var(--text-primary)] italic">{dietPlan.name || "-"}</p>
               </div>
               <div>
-                <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Focus</p>
-                <p className="text-sm font-bold text-emerald-400">{dietPlan.focus || "-"}</p>
+                <p className="text-[10px] font-bold text-[var(--text-muted)] uppercase tracking-widest">Focus</p>
+                <p className="text-sm font-bold text-emerald-600">{dietPlan.focus || "-"}</p>
               </div>
               <div className="space-y-2">
-                <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Meals</p>
+                <p className="text-[10px] font-bold text-[var(--text-muted)] uppercase tracking-widest">Meals</p>
                 {dietPlan.diet_details.foods.map((food: any, idx: number) => (
-                  <div key={idx} className="flex justify-between items-center py-2 px-3 bg-white/5 rounded-lg border border-white/5">
+                  <div key={idx} className="flex justify-between items-center py-2 px-3 bg-[var(--bg-secondary)] rounded-lg border border-[var(--border-subtle)]">
                     <div>
-                      <p className="text-xs font-bold text-white">{food.name}</p>
+                      <p className="text-xs font-bold text-[var(--text-primary)]">{food.name}</p>
                     </div>
                     <div className="text-right">
-                      <p className="text-[9px] font-black text-emerald-400">{food.weight}</p>
+                      <p className="text-[9px] font-bold text-emerald-600">{food.weight}</p>
                     </div>
                   </div>
                 ))}
@@ -386,7 +386,7 @@ function UserDashboard() {
               {dietPlan.diet_details.foods.length > 0 && (
                 <button
                   onClick={() => setDietModalOpen(true)}
-                  className="w-full mt-2 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest bg-white/5 text-slate-400 hover:text-white border border-white/5 hover:border-white/20 transition-all"
+                  className="w-full mt-2 py-2 rounded-xl text-[10px] font-bold uppercase tracking-widest bg-[var(--bg-secondary)] text-[var(--text-muted)] hover:text-[var(--text-primary)] border border-[var(--border-subtle)] hover:border-[var(--accent-orange)] transition-all"
                 >
                   View All Details
                 </button>
@@ -394,8 +394,8 @@ function UserDashboard() {
             </div>
           ) : (
             <div className="py-8 text-center">
-              <p className="text-lg font-black text-slate-600 uppercase italic">Break</p>
-              <p className="text-[10px] text-slate-500 mt-1">No diet assigned for {dayNames[parseInt(dietDay)]}</p>
+              <p className="text-lg font-bold text-[var(--text-secondary)] uppercase italic">Break</p>
+              <p className="text-[10px] text-[var(--text-muted)] mt-1">No diet assigned for {dayNames[parseInt(dietDay)]}</p>
             </div>
           )}
         </GlassCard>
@@ -421,35 +421,35 @@ function UserDashboard() {
         ) : (
           <GlassCard className="p-8 border-indigo-500/20 bg-gradient-to-br from-indigo-500/5 to-transparent">
             <div className="flex flex-wrap sm:flex-nowrap items-center gap-3 mb-6">
-              <div className="h-10 w-10 rounded-xl bg-indigo-500/20 flex items-center justify-center text-indigo-400 shrink-0">
+              <div className="h-10 w-10 rounded-xl bg-indigo-100 flex items-center justify-center text-indigo-600 shrink-0">
                 <Zap size={20} />
               </div>
-              <h3 className="text-lg sm:text-xl font-black text-white uppercase tracking-tight flex-1 min-w-[120px] truncate">
+              <h3 className="text-lg sm:text-xl font-bold text-[var(--text-primary)] uppercase tracking-tight flex-1 min-w-[120px] truncate">
                 {t("activePlan")} {planInfo.name !== "No Active Plan" && `- ${planInfo.name}`}
               </h3>
-              <div className={`shrink-0 flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[9px] font-black uppercase tracking-widest border ${planInfo.status ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/20" : "bg-red-500/10 text-red-400 border-red-500/20"}`}>
+              <div className={`shrink-0 flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[9px] font-bold uppercase tracking-widest border ${planInfo.status ? "bg-emerald-100 text-emerald-600 border-emerald-500/20" : "bg-red-100 text-red-600 border-red-500/20"}`}>
                 <span className={`h-1.5 w-1.5 rounded-full ${planInfo.status ? "bg-emerald-400 animate-pulse" : "bg-red-400"}`} />
                 {planInfo.status ? "Active" : "Expired"}
               </div>
             </div>
             <div className="space-y-6">
               <div className="grid grid-cols-2 gap-4">
-                <div className="p-4 rounded-2xl bg-white/5 border border-white/5">
-                  <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1">Start Date</p>
-                  <p className="text-lg font-black text-white italic tracking-tighter">{planInfo.startDate}</p>
+                <div className="p-4 rounded-2xl bg-[var(--bg-secondary)] border border-[var(--border-subtle)]">
+                  <p className="text-[10px] font-bold text-[var(--text-muted)] uppercase tracking-widest mb-1">Start Date</p>
+                  <p className="text-lg font-bold text-[var(--text-primary)] italic tracking-tighter">{planInfo.startDate}</p>
                 </div>
-                <div className="p-4 rounded-2xl bg-white/5 border border-white/5">
-                  <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1">Expiry Date</p>
-                  <p className="text-lg font-black text-orange-400 italic tracking-tighter">{planInfo.expiryDate}</p>
+                <div className="p-4 rounded-2xl bg-[var(--bg-secondary)] border border-[var(--border-subtle)]">
+                  <p className="text-[10px] font-bold text-[var(--text-muted)] uppercase tracking-widest mb-1">Expiry Date</p>
+                  <p className="text-lg font-bold text-orange-600 italic tracking-tighter">{planInfo.expiryDate}</p>
                 </div>
               </div>
               <div className={`relative h-20 rounded-2xl shadow-lg flex items-center justify-between px-8 overflow-hidden ${isExpired ? "bg-gradient-to-r from-red-600 to-orange-500 shadow-red-500/20" : "bg-indigo-500 shadow-indigo-500/20"}`}>
-                <div className="absolute top-0 right-0 w-32 h-full bg-white/10 -skew-x-12 translate-x-8" />
+                <div className="absolute top-0 right-0 w-32 h-full bg-[var(--bg-secondary)] -skew-x-12 translate-x-8" />
                 <div>
-                  <p className="text-[10px] font-black text-white/70 uppercase tracking-widest">{isExpired ? "Plan Expired" : "Remaining Days"}</p>
-                  <p className="text-3xl font-black text-white italic tracking-tighter">{isExpired ? "0 Days" : `${planInfo.daysRemaining} Days`}</p>
+                  <p className="text-[10px] font-bold text-[var(--text-secondary)] uppercase tracking-widest">{isExpired ? "Plan Expired" : "Remaining Days"}</p>
+                  <p className="text-3xl font-bold text-[var(--text-primary)] italic tracking-tighter">{isExpired ? "0 Days" : `${planInfo.daysRemaining} Days`}</p>
                 </div>
-                <Zap size={32} className="text-white/20" />
+                <Zap size={32} className="text-[var(--text-muted)]" />
               </div>
             </div>
           </GlassCard>
@@ -457,7 +457,7 @@ function UserDashboard() {
 
         {/* --- ATTENDANCE STATUS --- */}
         {trackerLoading || planLoading ? (
-          <GlassCard className="p-8 border-white/5 flex flex-col items-center justify-center gap-6">
+          <GlassCard className="p-8 border-[var(--border-subtle)] flex flex-col items-center justify-center gap-6">
             <Sk cls="h-24 w-24 rounded-full" />
             <Sk cls="h-8 w-48" />
             <Sk cls="h-4 w-40" />
@@ -466,21 +466,21 @@ function UserDashboard() {
         ) : (
           <GlassCard className={`p-8 border-[1px] flex flex-col justify-center text-center transition-all ${isExpired ? "border-orange-500/20 bg-orange-500/5 shadow-lg shadow-orange-500/5" : isPresentToday ? "border-emerald-500/20 bg-emerald-500/5" : "border-red-500/20 bg-red-500/5 shadow-lg shadow-red-500/5"}`}>
             <div className="mb-6">
-              <div className={`h-24 w-24 mx-auto rounded-full flex items-center justify-center transition-all duration-700 shadow-xl ${isExpired ? "bg-orange-500 text-white shadow-orange-500/20" : isPresentToday ? "bg-emerald-500 text-white shadow-emerald-500/20" : "bg-red-500 text-white shadow-red-500/20 animate-pulse"}`}>
+              <div className={`h-24 w-24 mx-auto rounded-full flex items-center justify-center transition-all duration-700 shadow-xl ${isExpired ? "bg-orange-500 text-[var(--text-primary)] shadow-orange-500/20" : isPresentToday ? "bg-emerald-500 text-[var(--text-primary)] shadow-emerald-500/20" : "bg-red-500 text-[var(--text-primary)] shadow-red-500/20 animate-pulse"}`}>
                 {isExpired ? <AlertCircle size={48} /> : isPresentToday ? <CheckCircle2 size={48} /> : <XCircle size={48} />}
               </div>
-              <h3 className="mt-6 text-3xl font-black text-white uppercase italic tracking-tighter">
+              <h3 className="mt-6 text-3xl font-bold text-[var(--text-primary)] uppercase italic tracking-tighter">
                 {isExpired ? "Plan Expired" : isPresentToday ? t("verifiedPresent") : t("markedAbsent")}
               </h3>
-              <p className="text-sm text-slate-400 mt-2 font-medium">Official Registry Status for Today</p>
+              <p className="text-sm text-[var(--text-muted)] mt-2 font-medium">Official Registry Status for Today</p>
             </div>
             {isExpired ? (
               <div className="space-y-3">
-                <div className="py-4 rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] border bg-orange-500/10 text-orange-400 border-orange-500/20">Subscription Expired • Access Restricted</div>
-                <p className="text-xs text-slate-500 italic leading-relaxed px-2">Your membership plan has expired. Please renew your subscription to regain gym access.</p>
+                <div className="py-4 rounded-2xl text-[10px] font-bold uppercase tracking-[0.2em] border bg-orange-100 text-orange-600 border-orange-500/20">Subscription Expired • Access Restricted</div>
+                <p className="text-xs text-[var(--text-muted)] italic leading-relaxed px-2">Your membership plan has expired. Please renew your subscription to regain gym access.</p>
               </div>
             ) : (
-              <div className={`py-4 rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] border ${isPresentToday ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/20" : "bg-red-500/10 text-red-400 border-red-500/20"}`}>
+              <div className={`py-4 rounded-2xl text-[10px] font-bold uppercase tracking-[0.2em] border ${isPresentToday ? "bg-emerald-100 text-emerald-600 border-emerald-500/20" : "bg-red-100 text-red-600 border-red-500/20"}`}>
                 {isPresentToday ? "Scan Complete • Access Granted" : "Awaiting Scanner Authentication"}
               </div>
             )}
@@ -504,15 +504,15 @@ function UserDashboard() {
         <GlassCard className="p-8">
           <div className="flex items-center justify-between mb-8">
             <div className="flex items-center gap-3">
-              <div className="h-10 w-10 rounded-xl bg-white/5 flex items-center justify-center text-slate-400">
+              <div className="h-10 w-10 rounded-xl bg-[var(--bg-secondary)] flex items-center justify-center text-[var(--text-muted)]">
                 <Calendar size={20} />
               </div>
-              <h3 className="text-xl font-black text-white uppercase tracking-tight">{t("consistencyTracker")} <span className="text-slate-600 ml-2">{monthName} {yearName}</span></h3>
+              <h3 className="text-xl font-bold text-[var(--text-primary)] uppercase tracking-tight">{t("consistencyTracker")} <span className="text-[var(--text-secondary)] ml-2">{monthName} {yearName}</span></h3>
             </div>
           </div>
           <div className="grid grid-cols-7 gap-1 sm:gap-2">
             {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map(day => (
-              <div key={day} className="text-center text-[9px] sm:text-[10px] font-black text-slate-600 uppercase tracking-widest mb-2">{day}</div>
+              <div key={day} className="text-center text-[9px] sm:text-[10px] font-bold text-[var(--text-secondary)] uppercase tracking-widest mb-2">{day}</div>
             ))}
             {Array.from({ length: firstDayOfMonth }).map((_, i) => <div key={`empty-${i}`} />)}
             {trackerDays.map((dayData: any) => {
@@ -521,7 +521,7 @@ function UserDashboard() {
               const wasPresent = dayData.attended;
               const isToday = new Date().toLocaleDateString() === dateObj.toLocaleDateString();
               return (
-                <div key={day} className={`aspect-square rounded-xl flex items-center justify-center text-xs font-bold transition-all border ${(isToday && wasPresent) || wasPresent ? "bg-emerald-500/20 border-emerald-500/40 text-emerald-400" : isToday ? "bg-indigo-500/20 border-indigo-500/40 text-indigo-400 animate-pulse" : "bg-white/5 border-white/5 text-slate-600"}`}>
+                <div key={day} className={`aspect-square rounded-xl flex items-center justify-center text-xs font-bold transition-all border ${(isToday && wasPresent) || wasPresent ? "bg-emerald-100 border-emerald-500/40 text-emerald-600" : isToday ? "bg-indigo-100 border-indigo-500/40 text-indigo-600 animate-pulse" : "bg-[var(--bg-secondary)] border-[var(--border-subtle)] text-[var(--text-secondary)]"}`}>
                   {day}
                 </div>
               );
@@ -537,16 +537,16 @@ function UserDashboard() {
         title="Protocol Termination Warning"
       >
         <div className="space-y-6 text-center py-4">
-          <div className="h-20 w-20 bg-orange-500/10 rounded-full mx-auto flex items-center justify-center text-orange-500 border border-orange-500/20 shadow-lg shadow-orange-500/10">
+          <div className="h-20 w-20 bg-orange-100 rounded-full mx-auto flex items-center justify-center text-orange-600 border border-orange-500/20 shadow-lg shadow-orange-500/10">
             <AlertCircle size={48} />
           </div>
           <div className="space-y-2">
-            <p className="text-xl font-black text-white italic uppercase tracking-tighter">Membership Cycle Expiring</p>
-            <p className="text-sm text-slate-400 leading-relaxed px-6">
-              Your current access protocol is scheduled to terminate in <span className="text-orange-400 font-bold">{planInfo.daysRemaining} days</span>. Please process renewal to maintain continuity.
+            <p className="text-xl font-bold text-[var(--text-primary)] italic uppercase tracking-tighter">Membership Cycle Expiring</p>
+            <p className="text-sm text-[var(--text-muted)] leading-relaxed px-6">
+              Your current access protocol is scheduled to terminate in <span className="text-orange-600 font-bold">{planInfo.daysRemaining} days</span>. Please process renewal to maintain continuity.
             </p>
           </div>
-          <GlowButton className="w-full h-14 rounded-2xl text-[10px] font-black uppercase tracking-widest">Execute Immediate Renewal</GlowButton>
+          <GlowButton className="w-full h-14 rounded-2xl text-[10px] font-bold uppercase tracking-widest">Execute Immediate Renewal</GlowButton>
         </div>
       </Modal>
 
@@ -566,7 +566,7 @@ function UserDashboard() {
         footer={
           <div className="flex gap-3 justify-end w-full">
             <button
-              className="px-6 py-2.5 rounded-xl text-sm font-bold text-slate-400 hover:text-white hover:bg-white/5 transition-all"
+              className="px-6 py-2.5 rounded-xl text-sm font-bold text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-card-hover)] transition-all"
               onClick={() => setWorkoutModalOpen(false)}
             >
               Close
@@ -577,48 +577,48 @@ function UserDashboard() {
         <div className="space-y-4 max-h-[60vh] overflow-y-auto pr-2">
           {workoutPlan?.workout_details?.workouts?.length > 0 ? (
             <>
-              <div className="grid grid-cols-2 gap-4 p-4 bg-white/5 rounded-xl border border-white/10">
+              <div className="grid grid-cols-2 gap-4 p-4 bg-[var(--bg-secondary)] rounded-xl border border-[var(--border-subtle)]">
                 <div>
-                  <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Type</p>
-                  <p className="text-sm font-bold text-white">{workoutPlan.type || "-"}</p>
+                  <p className="text-[10px] font-bold text-[var(--text-muted)] uppercase tracking-widest">Type</p>
+                  <p className="text-sm font-bold text-[var(--text-primary)]">{workoutPlan.type || "-"}</p>
                 </div>
                 <div>
-                  <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Focus</p>
-                  <p className="text-sm font-bold text-indigo-400">{workoutPlan.focus || "-"}</p>
+                  <p className="text-[10px] font-bold text-[var(--text-muted)] uppercase tracking-widest">Focus</p>
+                  <p className="text-sm font-bold text-indigo-600">{workoutPlan.focus || "-"}</p>
                 </div>
               </div>
               <div>
-                <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-3">Description</p>
-                <p className="text-sm text-slate-300">{workoutPlan.description || "-"}</p>
+                <p className="text-[10px] font-bold text-[var(--text-muted)] uppercase tracking-widest mb-3">Description</p>
+                <p className="text-sm text-[var(--text-secondary)]">{workoutPlan.description || "-"}</p>
               </div>
               <div className="space-y-3">
-                <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Exercises</p>
+                <p className="text-[10px] font-bold text-[var(--text-muted)] uppercase tracking-widest">Exercises</p>
                 {workoutPlan.workout_details.workouts.map((ex: any, idx: number) => (
                   <div 
                     key={idx} 
                     onClick={() => toggleExercise(idx)}
                     className={`flex justify-between items-center py-3 px-4 rounded-xl border cursor-pointer transition-all ${
                       completedExercises.includes(idx)
-                        ? "bg-emerald-500/10 border-emerald-500/30"
-                        : "bg-white/5 border-white/5 hover:border-indigo-500/30"
+                        ? "bg-emerald-100 border-emerald-500/30"
+                        : "bg-[var(--bg-secondary)] border-[var(--border-subtle)] hover:border-indigo-500/30"
                     }`}
                   >
                     <div className="flex items-center gap-3">
                       <div className={`h-8 w-8 rounded-full flex items-center justify-center text-sm ${
                         completedExercises.includes(idx) 
-                          ? "bg-emerald-500 text-white" 
-                          : "bg-white/10 text-slate-500"
+                          ? "bg-emerald-500 text-[var(--text-primary)]" 
+                          : "bg-[var(--bg-secondary)] text-[var(--text-muted)]"
                       }`}>
                         {completedExercises.includes(idx) ? "✓" : (idx + 1)}
                       </div>
                       <div>
-                        <p className={`text-sm font-bold ${completedExercises.includes(idx) ? "text-emerald-400 line-through" : "text-white"}`}>{ex.name}</p>
-                        <p className="text-xs text-slate-500">{ex.target_body_part}</p>
+                        <p className={`text-sm font-bold ${completedExercises.includes(idx) ? "text-emerald-600 line-through" : "text-[var(--text-primary)]"}`}>{ex.name}</p>
+                        <p className="text-xs text-[var(--text-muted)]">{ex.target_body_part}</p>
                       </div>
                     </div>
                     <div className="text-right">
-                      <p className="text-xs font-black text-indigo-400">{ex.no_of_sets} Sets</p>
-                      <p className="text-xs text-slate-500">{ex.reps} Reps</p>
+                      <p className="text-xs font-bold text-indigo-600">{ex.no_of_sets} Sets</p>
+                      <p className="text-xs text-[var(--text-muted)]">{ex.reps} Reps</p>
                     </div>
                   </div>
                 ))}
@@ -626,8 +626,8 @@ function UserDashboard() {
             </>
           ) : (
             <div className="py-12 text-center">
-              <p className="text-xl font-black text-slate-600 uppercase italic">Break</p>
-              <p className="text-xs text-slate-500 mt-2">No workout assigned for {dayNames[parseInt(workoutDay)]}</p>
+              <p className="text-xl font-bold text-[var(--text-secondary)] uppercase italic">Break</p>
+              <p className="text-xs text-[var(--text-muted)] mt-2">No workout assigned for {dayNames[parseInt(workoutDay)]}</p>
             </div>
           )}
         </div>
@@ -641,7 +641,7 @@ function UserDashboard() {
         footer={
           <div className="flex gap-3 justify-end w-full">
             <button
-              className="px-6 py-2.5 rounded-xl text-sm font-bold text-slate-400 hover:text-white hover:bg-white/5 transition-all"
+              className="px-6 py-2.5 rounded-xl text-sm font-bold text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-card-hover)] transition-all"
               onClick={() => setDietModalOpen(false)}
             >
               Close
@@ -652,24 +652,24 @@ function UserDashboard() {
         <div className="space-y-4 max-h-[60vh] overflow-y-auto pr-2">
           {dietPlan?.diet_details?.foods?.length > 0 ? (
             <>
-              <div className="p-4 bg-white/5 rounded-xl border border-white/10">
-                <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Focus</p>
-                <p className="text-sm font-bold text-emerald-400">{dietPlan.focus || "-"}</p>
+              <div className="p-4 bg-[var(--bg-secondary)] rounded-xl border border-[var(--border-subtle)]">
+                <p className="text-[10px] font-bold text-[var(--text-muted)] uppercase tracking-widest">Focus</p>
+                <p className="text-sm font-bold text-emerald-600">{dietPlan.focus || "-"}</p>
               </div>
               <div className="space-y-3">
-                <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Meals</p>
+                <p className="text-[10px] font-bold text-[var(--text-muted)] uppercase tracking-widest">Meals</p>
                 {dietPlan.diet_details.foods.map((food: any, idx: number) => (
-                  <div key={idx} className="flex justify-between items-center py-3 px-4 bg-white/5 rounded-xl border border-white/5">
+                  <div key={idx} className="flex justify-between items-center py-3 px-4 bg-[var(--bg-secondary)] rounded-xl border border-[var(--border-subtle)]">
                     <div className="flex items-center gap-3">
-                      <div className="h-8 w-8 rounded-full bg-emerald-500/20 flex items-center justify-center text-emerald-400 text-xs font-bold">
+                      <div className="h-8 w-8 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-600 text-xs font-bold">
                         {idx + 1}
                       </div>
                       <div>
-                        <p className="text-sm font-bold text-white">{food.name}</p>
+                        <p className="text-sm font-bold text-[var(--text-primary)]">{food.name}</p>
                       </div>
                     </div>
                     <div className="text-right">
-                      <p className="text-xs font-black text-emerald-400">{food.weight}</p>
+                      <p className="text-xs font-bold text-emerald-600">{food.weight}</p>
                     </div>
                   </div>
                 ))}
@@ -677,8 +677,8 @@ function UserDashboard() {
             </>
           ) : (
             <div className="py-12 text-center">
-              <p className="text-xl font-black text-slate-600 uppercase italic">Break</p>
-              <p className="text-xs text-slate-500 mt-2">No diet assigned for {dayNames[parseInt(dietDay)]}</p>
+              <p className="text-xl font-bold text-[var(--text-secondary)] uppercase italic">Break</p>
+              <p className="text-xs text-[var(--text-muted)] mt-2">No diet assigned for {dayNames[parseInt(dietDay)]}</p>
             </div>
           )}
         </div>
@@ -696,14 +696,14 @@ function UserDashboard() {
                 setSubscriptionPopupOpen(false);
                 navigate("/user/subscription");
               }}
-              className="px-6 py-3 rounded-xl text-xs font-black uppercase tracking-widest bg-indigo-500 hover:bg-indigo-400 text-white transition-all flex items-center gap-2"
+              className="px-6 py-3 rounded-xl text-xs font-bold uppercase tracking-widest bg-indigo-500 hover:bg-indigo-400 text-[var(--text-primary)] transition-all flex items-center gap-2"
             >
               <Zap size={16} />
               Renew Now
             </button>
             <button
               onClick={() => setSubscriptionPopupOpen(false)}
-              className="px-6 py-3 rounded-xl text-xs font-black uppercase tracking-widest bg-white/5 text-slate-400 hover:text-white border border-white/10 hover:border-white/20 transition-all"
+              className="px-6 py-3 rounded-xl text-xs font-bold uppercase tracking-widest bg-[var(--bg-secondary)] text-[var(--text-muted)] hover:text-[var(--text-primary)] border border-[var(--border-subtle)] hover:border-[var(--accent-orange)] transition-all"
             >
               Got It
             </button>
@@ -714,27 +714,27 @@ function UserDashboard() {
           <div className="relative w-24 h-24 mx-auto mb-6">
             <div className="absolute inset-0 bg-amber-500/20 rounded-full blur-xl animate-pulse" />
             <div className="relative h-24 w-24 rounded-full bg-gradient-to-br from-amber-500 to-orange-500 flex items-center justify-center shadow-xl shadow-amber-500/20">
-              <AlertCircle size={48} className="text-white" />
+              <AlertCircle size={48} className="text-[var(--text-primary)]" />
             </div>
           </div>
           
-          <h3 className="text-2xl font-black text-white uppercase italic tracking-tighter mb-2">
+          <h3 className="text-2xl font-bold text-[var(--text-primary)] uppercase italic tracking-tighter mb-2">
             {subscriptionPopupData?.subscription_name || "Subscription"}
           </h3>
           
           {subscriptionPopupData?.remaining_days !== undefined && (
-            <div className="inline-flex items-center gap-2 px-4 py-2 bg-amber-500/10 border border-amber-500/30 rounded-xl mb-4">
-              <span className="text-3xl font-black text-amber-400">{subscriptionPopupData.remaining_days}</span>
-              <span className="text-xs font-bold text-amber-300 uppercase tracking-widest">Days Remaining</span>
+            <div className="inline-flex items-center gap-2 px-4 py-2 bg-amber-100 border border-amber-500/30 rounded-xl mb-4">
+              <span className="text-3xl font-bold text-amber-600">{subscriptionPopupData.remaining_days}</span>
+              <span className="text-xs font-bold text-amber-600 uppercase tracking-widest">Days Remaining</span>
             </div>
           )}
           
-          <p className="text-sm text-slate-300 leading-relaxed px-4">
+          <p className="text-sm text-[var(--text-secondary)] leading-relaxed px-4">
             {subscriptionPopupData?.message || "Your subscription is active. Keep up the great work!"}
           </p>
           
-          <div className="mt-6 pt-4 border-t border-white/10">
-            <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest">
+          <div className="mt-6 pt-4 border-t border-[var(--border-subtle)]">
+            <p className="text-[10px] font-bold text-[var(--text-muted)] uppercase tracking-widest">
               Renew early to avoid interruption
             </p>
           </div>

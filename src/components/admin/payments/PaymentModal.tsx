@@ -91,14 +91,7 @@ export function PaymentModal({
         <>
           <GlowButton className="bg-gray-600" onClick={onClose} disabled={submitting}>{t("cancel")}</GlowButton>
           <GlowButton onClick={handleSubmit} disabled={submitting}>
-            {submitting ? (
-              <div className="flex items-center gap-2">
-                <ButtonLoader />
-                <span>{t("loading")}</span>
-              </div>
-            ) : (
-              t("submit")
-            )}
+            <ButtonLoader label={t("submit")} loadingLabel={t("loading")} loading={submitting} />
           </GlowButton>
         </>
       }

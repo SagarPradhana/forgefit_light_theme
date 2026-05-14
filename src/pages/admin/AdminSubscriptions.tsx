@@ -72,9 +72,12 @@ export function AdminSubscriptions() {
           has_next: res.has_next,
           has_previous: res.has_previous
         });
+      } else {
+        setPlans([]);
       }
     } catch (err) {
       console.error(err);
+      setPlans([]);
     } finally {
       setPlansLoading(false);
     }
@@ -96,13 +99,13 @@ export function AdminSubscriptions() {
         />
         <div className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3 w-full md:w-auto">
           <div className="relative flex-1 md:w-64">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={16} />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--text-muted)]" size={16} />
             <input
               type="text"
               placeholder={t("search") || "Search plans..."}
               value={planSearch}
               onChange={(e) => setPlanSearch(e.target.value)}
-              className="w-full bg-white/5 border border-white/10 rounded-xl pl-9 pr-4 py-2 text-sm text-white outline-none focus:border-indigo-500 transition"
+              className="w-full bg-[var(--bg-secondary)] border border-[var(--border-subtle)] rounded-xl pl-9 pr-4 py-2 text-sm text-[var(--text-primary)] outline-none focus:border-indigo-500 transition"
             />
           </div>
           <GlowButton
@@ -127,41 +130,67 @@ export function AdminSubscriptions() {
       ) : plans.length > 0 ? (
         <>
           <Table
-            headers={[t("planDetails"), t("actualPrice"), t("valuation"), t("duration"), t("description"), t("actions")]}
-            rows={plans.map((p) => [
-              <span className="font-bold text-white uppercase tracking-tight" key={p.id}>{p.name}</span>,
-              <span className="text-slate-400 line-through text-xs" key={`${p.id}-actual`}>{currencySymbol}{p.actual_price}</span>,
-              <span className="text-emerald-400 font-black" key={`${p.id}-price`}>{currencySymbol}{p.price}</span>,
-              <span className="text-indigo-300 font-bold" key={`${p.id}-dur`}>{getDurationLabel(p.duration_in_months)}</span>,
-              <span className="text-slate-400 text-xs truncate max-w-xs block" key={`${p.id}-desc`}>{p.description}</span>,
-              <div key={`${p.id}-actions`} className="flex gap-4">
-                <button
-                  className="text-indigo-400 hover:text-indigo-300 transition-transform hover:scale-125"
-                  onClick={() => {
-                    setPlanForm({
-                      name: p.name,
-                      description: p.description,
-                      actual_price: p.actual_price?.toString() || "",
-                      price: p.price.toString(),
-                      duration_in_months: p.duration_in_months.toString(),
-                    });
-                    setEditPlan(p.id);
-                    setPlanModalOpen(true);
-                  }}
-                >
-                  <Edit2 size={18} />
-                </button>
-                <button
-                  className="text-red-400 hover:text-red-300 transition-transform hover:scale-125"
-                  onClick={() => {
-                    setDeleteTarget({ type: "plan", id: p.id });
-                    setDeleteModalOpen(true);
-                  }}
-                >
-                  <Trash2 size={18} />
-                </button>
-              </div>,
-            ])}
+            columns={[
+              {
+                key: "name",
+                label: t("planDetails") || "Plan Details",
+                render: (p) => <span className="font-bold text-[var(--text-primary)] uppercase tracking-tight">{p.name}</span>
+              },
+              {
+                key: "actual_price",
+                label: t("actualPrice") || "Actual Price",
+                render: (p) => <span className="text-[var(--text-muted)] line-through text-xs">{currencySymbol}{p.actual_price}</span>
+              },
+              {
+                key: "price",
+                label: t("valuation") || "Selling Price",
+                render: (p) => <span className="text-emerald-600 font-bold">{currencySymbol}{p.price}</span>
+              },
+              {
+                key: "duration",
+                label: t("duration") || "Duration",
+                render: (p) => <span className="text-indigo-600 font-bold">{getDurationLabel(p.duration_in_months)}</span>
+              },
+              {
+                key: "description",
+                label: t("description") || "Description",
+                render: (p) => <span className="text-[var(--text-muted)] text-xs truncate max-w-xs block">{p.description}</span>
+              },
+              {
+                key: "actions",
+                label: t("actions") || "Actions",
+                render: (p) => (
+                  <div className="flex gap-4">
+                    <button
+                      className="text-indigo-600 hover:text-indigo-700 transition-transform hover:scale-125"
+                      onClick={() => {
+                        setPlanForm({
+                          name: p.name,
+                          description: p.description,
+                          actual_price: p.actual_price?.toString() || "",
+                          price: p.price.toString(),
+                          duration_in_months: p.duration_in_months.toString(),
+                        });
+                        setEditPlan(p.id);
+                        setPlanModalOpen(true);
+                      }}
+                    >
+                      <Edit2 size={18} />
+                    </button>
+                    <button
+                      className="text-red-600 hover:text-red-700 transition-transform hover:scale-125"
+                      onClick={() => {
+                        setDeleteTarget({ type: "plan", id: p.id });
+                        setDeleteModalOpen(true);
+                      }}
+                    >
+                      <Trash2 size={18} />
+                    </button>
+                  </div>
+                )
+              }
+            ]}
+            data={plans}
           />
 
           {lastPage > 1 && (
@@ -169,17 +198,17 @@ export function AdminSubscriptions() {
               <button
                 disabled={!plansMeta.has_previous}
                 onClick={() => fetchPlans(plansMeta.page_no - 1)}
-                className="px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-xs font-bold uppercase tracking-widest disabled:opacity-30"
+                className="px-4 py-2 bg-[var(--bg-secondary)] border border-[var(--border-subtle)] rounded-lg text-xs font-bold uppercase tracking-widest disabled:opacity-30"
               >
                 {t("prev")}
               </button>
-              <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">
+              <span className="text-[10px] font-bold text-[var(--text-muted)] uppercase tracking-widest">
                 {t("pageOf", { current: plansMeta.page_no, total: lastPage })}
               </span>
               <button
                 disabled={!plansMeta.has_next}
                 onClick={() => fetchPlans(plansMeta.page_no + 1)}
-                className="px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-xs font-bold uppercase tracking-widest disabled:opacity-30"
+                className="px-4 py-2 bg-[var(--bg-secondary)] border border-[var(--border-subtle)] rounded-lg text-xs font-bold uppercase tracking-widest disabled:opacity-30"
               >
                 {t("next")}
               </button>

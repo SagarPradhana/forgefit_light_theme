@@ -3,10 +3,10 @@ import clsx from "clsx";
 
 export function Button({ children, className, variant = "primary", size = "md", ...props }: any) {
   const variants = {
-    primary: "bg-gradient-to-r from-accent-indigo to-accent-violet text-white shadow-gold hover:shadow-gold-lg",
-    secondary: "bg-gradient-to-r from-gold-400 to-gold-500 text-white shadow-gold hover:shadow-gold-lg",
-    danger: "bg-gradient-to-r from-red-500 to-red-600 text-white shadow-md",
-    ghost: "bg-white text-slate-700 border border-cream-200 hover:bg-cream-50 hover:border-gold-400/30",
+    primary: "bg-gradient-to-r from-[var(--accent-orange)] to-[var(--accent-gold)] text-white shadow-[0_4px_15px_var(--glow-orange)] hover:shadow-[0_10px_35px_var(--glow-orange)] hover:-translate-y-0.5",
+    secondary: "bg-[var(--bg-card)] border border-[var(--border-subtle)] text-[var(--text-primary)] hover:border-[var(--accent-orange)] hover:text-[var(--accent-orange)] hover:-translate-y-0.5",
+    danger: "bg-gradient-to-r from-red-500 to-red-600 text-white shadow-md hover:shadow-lg hover:-translate-y-0.5",
+    ghost: "bg-transparent border border-[var(--border-subtle)] text-[var(--text-secondary)] hover:bg-[var(--bg-card-hover)] hover:border-[var(--border-accent)] hover:text-[var(--accent-orange)]",
   };
 
   const sizes = {
@@ -16,7 +16,17 @@ export function Button({ children, className, variant = "primary", size = "md", 
   };
 
   return (
-    <motion.button whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} className={clsx("rounded-2xl font-semibold transition-all duration-200", variants[variant], sizes[size], className)} {...props}>
+    <motion.button 
+      whileHover={{ scale: 1.02 }} 
+      whileTap={{ scale: 0.98 }} 
+      className={clsx(
+        "rounded-xl font-semibold transition-all duration-200 inline-flex items-center justify-center gap-2",
+        variants[variant], 
+        sizes[size], 
+        className
+      )} 
+      {...props}
+    >
       {children}
     </motion.button>
   );

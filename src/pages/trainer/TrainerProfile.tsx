@@ -14,22 +14,25 @@ export function TrainerProfile() {
           <div className="relative shrink-0">
             {user.profile_image_path ? (
               <img src={user.profile_image_path} alt={user.name || ""}
-                className="h-24 w-24 md:h-32 md:w-32 rounded-2xl md:rounded-3xl object-cover shadow-2xl shadow-indigo-500/30 border-2 border-indigo-500/30" />
+                className="h-24 w-24 md:h-32 md:w-32 rounded-2xl md:rounded-3xl object-cover border-2 border-indigo-500/30"
+                style={{ boxShadow: "var(--shadow-card)" }} />
             ) : (
-              <div className="h-24 w-24 md:h-32 md:w-32 rounded-2xl md:rounded-3xl bg-gradient-to-br from-indigo-500 to-orange-400 flex items-center justify-center text-3xl md:text-5xl font-black text-white shadow-2xl shadow-indigo-500/40">
+              <div className="h-24 w-24 md:h-32 md:w-32 rounded-2xl md:rounded-3xl bg-gradient-to-br from-indigo-500 to-orange-400 flex items-center justify-center text-3xl md:text-5xl font-bold text-[var(--text-primary)]"
+                style={{ boxShadow: "var(--shadow-card)" }}>
                 {user.name?.[0]?.toUpperCase() || "T"}
               </div>
             )}
-            <span className="absolute -bottom-2 -right-2 px-2 py-0.5 rounded-lg bg-indigo-500 text-[9px] font-black uppercase tracking-widest text-white shadow-lg">
+            <span className="absolute -bottom-2 -right-2 px-2 py-0.5 rounded-lg bg-indigo-500 text-[9px] font-bold uppercase tracking-widest text-[var(--text-primary)]"
+              style={{ boxShadow: "var(--shadow-card)" }}>
               {user.role || "trainer"}
             </span>
           </div>
           <div className="text-center md:text-left space-y-2">
-            <h2 className="text-2xl md:text-4xl font-black text-white uppercase tracking-tighter italic leading-none">{user.name}</h2>
-            {user.username && <p className="text-[11px] font-black text-indigo-400 uppercase tracking-[0.3em]">{user.username}</p>}
-            <p className="text-xs text-slate-400 font-medium tracking-wide uppercase">Personal Trainer</p>
+            <h2 className="text-2xl md:text-4xl font-bold text-[var(--text-primary)] uppercase tracking-tighter italic leading-none">{user.name}</h2>
+            {user.username && <p className="text-[11px] font-bold text-indigo-600 uppercase tracking-[0.3em]">{user.username}</p>}
+            <p className="text-xs text-[var(--text-muted)] font-medium tracking-wide uppercase">Personal Trainer</p>
             {user.joining_date && (
-              <p className="text-[10px] text-slate-500 font-bold">
+              <p className="text-[10px] text-[var(--text-muted)] font-bold">
                 Member since {fmtDate(user.joining_date)}
               </p>
             )}
@@ -39,7 +42,7 @@ export function TrainerProfile() {
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <GlassCard className="p-6 space-y-5">
-          <h3 className="text-sm font-black text-white uppercase tracking-widest border-b border-white/10 pb-3">Contact Information</h3>
+          <h3 className="text-sm font-bold text-[var(--text-primary)] uppercase tracking-widest border-b border-[var(--border-subtle)] pb-3">Contact Information</h3>
           {[
             { label: "Full Name", value: user.name },
             { label: "Username", value: user.username },
@@ -49,14 +52,14 @@ export function TrainerProfile() {
             { label: "Joining Date", value: fmtDate(user.joining_date) },
           ].map(({ label, value }) => (
             <div key={label} className="grid gap-0.5">
-              <p className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em]">{label}</p>
-              <p className="text-sm text-white font-bold">{value || "—"}</p>
+              <p className="text-[10px] font-bold text-[var(--text-muted)] uppercase tracking-[0.2em]">{label}</p>
+              <p className="text-sm text-[var(--text-primary)] font-bold">{value || "—"}</p>
             </div>
           ))}
         </GlassCard>
 
         <GlassCard className="p-6 space-y-5">
-          <h3 className="text-sm font-black text-white uppercase tracking-widest border-b border-white/10 pb-3">Professional Details</h3>
+          <h3 className="text-sm font-bold text-[var(--text-primary)] uppercase tracking-widest border-b border-[var(--border-subtle)] pb-3">Professional Details</h3>
           {[
             { label: "Employee ID", value: user.id },
             { label: "Role", value: user.role },
@@ -65,8 +68,8 @@ export function TrainerProfile() {
             { label: "Certifications", value: user.metadata?.certifications },
           ].map(({ label, value }) => (
             <div key={label} className="grid gap-0.5">
-              <p className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em]">{label}</p>
-              <p className="text-sm text-white font-bold">{value || "—"}</p>
+              <p className="text-[10px] font-bold text-[var(--text-muted)] uppercase tracking-[0.2em]">{label}</p>
+              <p className="text-sm text-[var(--text-primary)] font-bold">{value || "—"}</p>
             </div>
           ))}
         </GlassCard>

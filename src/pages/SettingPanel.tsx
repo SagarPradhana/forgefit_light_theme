@@ -61,7 +61,7 @@ export function SettingsPanel() {
     <div className="max-w-4xl mx-auto space-y-8">
       {/* --- TAB NAVIGATION --- */}
       {!isPasswordOnly && (
-        <div className="flex p-1.5 bg-slate-900/50 backdrop-blur-md border border-white/5 rounded-2xl w-full sm:w-fit mx-auto sm:mx-0 overflow-x-auto no-scrollbar">
+        <div className="flex p-1.5 bg-[var(--bg-secondary)] backdrop-blur-md border border-[var(--border-subtle)] rounded-2xl w-full sm:w-fit mx-auto sm:mx-0 overflow-x-auto no-scrollbar">
           <div className="flex min-w-max sm:min-w-0">
             {tabs.map((tab) => {
               const Icon = tab.icon;
@@ -70,13 +70,13 @@ export function SettingsPanel() {
                 <button
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id as TabType)}
-                  className={`relative flex items-center gap-2 px-5 sm:px-6 py-2.5 rounded-xl text-[10px] sm:text-xs font-black uppercase tracking-widest transition-all duration-300 ${isActive ? "text-white" : "text-slate-500 hover:text-slate-300"
+                  className={`relative flex items-center gap-2 px-5 sm:px-6 py-2.5 rounded-xl text-[10px] sm:text-xs font-bold uppercase tracking-widest transition-all duration-300 ${isActive ? "text-white" : "text-[var(--text-muted)] hover:text-[var(--text-primary)]"
                     }`}
                 >
                   {isActive && (
                     <motion.div
                       layoutId="activeTabBg"
-                      className="absolute inset-0 bg-gradient-to-r from-indigo-500/20 to-indigo-600/20 border border-indigo-500/30 rounded-xl"
+                      className="absolute inset-0 bg-gradient-to-r from-[var(--accent-orange)] to-[var(--accent-gold)] rounded-xl"
                       transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
                     />
                   )}
@@ -101,7 +101,7 @@ export function SettingsPanel() {
         >
           {activeTab === "general" && (
             <div className="space-y-6">
-              <GlassCard className="p-8 shadow-2xl">
+              <GlassCard className="p-8">
                 <SectionTitle 
                   title={t("profilePreferences")} 
                   subtitle={t("profilePreferencesSub")}
@@ -111,21 +111,21 @@ export function SettingsPanel() {
                 <div className="grid md:grid-cols-2 gap-8">
                   <div className="space-y-6">
                     <div className="space-y-2">
-                      <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest">{t("displayPrivacy")}</label>
-                      <div className="flex items-center justify-between p-4 rounded-2xl bg-white/5 border border-white/5 hover:border-white/10 transition">
+                      <label className="text-[10px] font-bold text-[var(--text-muted)] uppercase tracking-widest">{t("displayPrivacy")}</label>
+                      <div className="flex items-center justify-between p-4 rounded-2xl bg-[var(--bg-secondary)] border border-[var(--border-subtle)] hover:border-[var(--accent-orange)] transition">
                         <div className="flex items-center gap-3">
-                          <CheckCircle2 size={18} className="text-emerald-400" />
-                          <span className="text-sm font-bold text-white">{t("publicProfile")}</span>
+                          <CheckCircle2 size={18} className="text-emerald-500" />
+                          <span className="text-sm font-bold text-[var(--text-primary)]">{t("publicProfile")}</span>
                         </div>
                         <ToggleButton active={prefs.publicProfile} onClick={() => handleToggle("publicProfile")} />
                       </div>
                     </div>
                   </div>
 
-                  <div className="p-6 rounded-2xl bg-indigo-500/5 border border-indigo-500/10 flex flex-col justify-center items-center text-center">
-                    <Zap className="text-indigo-400 mb-3" size={32} />
-                    <h4 className="text-sm font-black text-white uppercase mb-1">{t("quickSync")}</h4>
-                    <p className="text-xs text-slate-400 leading-relaxed italic">
+                  <div className="p-6 rounded-2xl bg-indigo-50 border border-indigo-200 flex flex-col justify-center items-center text-center">
+                    <Zap className="text-indigo-600 mb-3" size={32} />
+                    <h4 className="text-sm font-bold text-[var(--text-primary)] uppercase mb-1">{t("quickSync")}</h4>
+                    <p className="text-xs text-[var(--text-muted)] leading-relaxed italic">
                       {t("quickSyncDesc")}
                     </p>
                   </div>
@@ -146,7 +146,7 @@ export function SettingsPanel() {
                 <div className="grid md:grid-cols-2 gap-8">
                   <div className="space-y-4">
                     <div className="space-y-2">
-                      <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest">{t("currentPassword")}</label>
+                      <label className="text-[10px] font-bold text-[var(--text-muted)] uppercase tracking-widest">{t("currentPassword")}</label>
                       <InputField 
                         type="password" 
                         placeholder="••••••••" 
@@ -155,7 +155,7 @@ export function SettingsPanel() {
                       />
                     </div>
                     <div className="space-y-2">
-                      <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest">{t("newPassword")}</label>
+                      <label className="text-[10px] font-bold text-[var(--text-muted)] uppercase tracking-widest">{t("newPassword")}</label>
                       <InputField 
                         type="password" 
                         placeholder="••••••••" 
@@ -164,25 +164,25 @@ export function SettingsPanel() {
                       />
                     </div>
                     <div className="flex justify-start pt-2">
-                      <CommonButton className="px-8 bg-indigo-500 text-xs font-black uppercase tracking-widest rounded-xl">
+                      <CommonButton className="px-8 bg-gradient-to-r from-[var(--accent-orange)] to-[var(--accent-gold)] text-white text-xs font-bold uppercase tracking-widest rounded-xl">
                         {t("updateVault")}
                       </CommonButton>
                     </div>
                   </div>
 
                   <div className="space-y-6">
-                    <div className="p-4 rounded-2xl bg-orange-500/5 border border-orange-500/20">
+                    <div className="p-4 rounded-2xl bg-orange-50 border border-orange-200">
                       <div className="flex items-center gap-3 mb-2">
-                        <ShieldCheck className="text-orange-400" size={18} />
-                        <h4 className="text-[11px] font-black text-white uppercase tracking-widest">{t("twoFactorAuth")}</h4>
+                        <ShieldCheck className="text-orange-600" size={18} />
+                        <h4 className="text-[11px] font-bold text-[var(--text-primary)] uppercase tracking-widest">{t("twoFactorAuth")}</h4>
                       </div>
-                      <p className="text-xs text-slate-400 mb-4 tracking-tight">{t("twoFactorDesc")}</p>
+                      <p className="text-xs text-[var(--text-muted)] mb-4 tracking-tight">{t("twoFactorDesc")}</p>
                       <button 
                         onClick={() => handleToggle("twoFactor")}
-                        className={`w-full py-2.5 rounded-xl border text-[10px] font-black uppercase tracking-widest transition-all ${
+                        className={`w-full py-2.5 rounded-xl border text-[10px] font-bold uppercase tracking-widest transition-all ${
                           prefs.twoFactor 
-                            ? "bg-emerald-500/20 text-emerald-400 border-emerald-500/30" 
-                            : "bg-white/5 text-slate-400 border-white/10 hover:bg-white/10"
+                            ? "bg-emerald-100 text-emerald-600 border-emerald-300" 
+                            : "bg-[var(--bg-secondary)] text-[var(--text-muted)] border-[var(--border-subtle)] hover:bg-[var(--bg-card-hover)]"
                         }`}
                       >
                         {prefs.twoFactor ? t("enabled") : t("enable2FA")}
@@ -210,7 +210,7 @@ export function SettingsPanel() {
                     desc={t("workoutRemindersDesc")}
                     active={prefs.workoutReminders}
                     onToggle={() => handleToggle("workoutReminders")}
-                    color="text-indigo-400"
+                    color="text-indigo-600"
                   />
                   <NotificationRow 
                     icon={Mail} 
@@ -218,7 +218,7 @@ export function SettingsPanel() {
                     desc={t("paymentInvoicesDesc")}
                     active={prefs.paymentAlerts}
                     onToggle={() => handleToggle("paymentAlerts")}
-                    color="text-emerald-400"
+                    color="text-emerald-600"
                   />
                   <NotificationRow 
                     icon={Smartphone} 
@@ -226,7 +226,7 @@ export function SettingsPanel() {
                     desc={t("gymNewslettersDesc")}
                     active={prefs.newsletters}
                     onToggle={() => handleToggle("newsletters")}
-                    color="text-amber-400"
+                    color="text-amber-600"
                   />
                 </div>
               </GlassCard>
@@ -237,15 +237,15 @@ export function SettingsPanel() {
 
       {/* --- FOOTER ACTIONS --- */}
       {!isPasswordOnly && (
-        <div className="flex items-center justify-between p-6 bg-white/5 border border-white/10 rounded-[2.5rem] shadow-xl">
-          <div className="flex items-center gap-2 text-slate-500">
+        <div className="flex items-center justify-between p-6 bg-[var(--bg-card)] border border-[var(--border-subtle)] rounded-[2.5rem]" style={{ boxShadow: "var(--shadow-card)" }}>
+          <div className="flex items-center gap-2 text-[var(--text-muted)]">
             <AlertCircle size={14} />
             <span className="text-[10px] font-bold uppercase tracking-widest">Auto-saved to local storage</span>
           </div>
           <CommonButton
             variant="secondary"
             onClick={handleSave}
-            className="px-10 h-12 text-xs font-black uppercase tracking-widest shadow-orange-500/20"
+            className="px-10 h-12 text-xs font-bold uppercase tracking-widest"
           >
             {t("confirmSync")}
           </CommonButton>
@@ -262,7 +262,7 @@ function ToggleButton({ active, onClick }: { active: boolean; onClick: () => voi
     <button
       onClick={onClick}
       className={`w-11 h-6 flex items-center rounded-full p-1 transition-all duration-500 ${
-        active ? "bg-emerald-500 shadow-[0_0_15px_rgba(16,185,129,0.4)]" : "bg-slate-700 shadow-inner"
+        active ? "bg-emerald-500" : "bg-[var(--bg-secondary)] border border-[var(--border-subtle)]"
       }`}
     >
       <motion.div
@@ -276,14 +276,14 @@ function ToggleButton({ active, onClick }: { active: boolean; onClick: () => voi
 
 function NotificationRow({ icon: Icon, title, desc, active, onToggle, color }: any) {
   return (
-    <div className="flex items-center justify-between p-5 rounded-[2rem] bg-white/5 border border-white/10 hover:bg-white/[0.08] transition-all group">
+    <div className="flex items-center justify-between p-5 rounded-[2rem] bg-[var(--bg-secondary)] border border-[var(--border-subtle)] hover:bg-[var(--bg-card-hover)] hover:border-[var(--accent-orange)] transition-all group">
       <div className="flex items-center gap-4">
-        <div className={`h-12 w-12 rounded-2xl bg-white/5 flex items-center justify-center ${color} group-hover:scale-110 transition-transform`}>
+        <div className={`h-12 w-12 rounded-2xl bg-[var(--bg-card)] flex items-center justify-center ${color} group-hover:scale-110 transition-transform`}>
           <Icon size={22} />
         </div>
         <div>
-          <h4 className="text-sm font-black text-white uppercase tracking-tight mb-0.5">{title}</h4>
-          <p className="text-[10px] font-medium text-slate-400 max-w-[250px] leading-relaxed">{desc}</p>
+          <h4 className="text-sm font-bold text-[var(--text-primary)] uppercase tracking-tight mb-0.5">{title}</h4>
+          <p className="text-[10px] font-medium text-[var(--text-muted)] max-w-[250px] leading-relaxed">{desc}</p>
         </div>
       </div>
       <ToggleButton active={active} onClick={onToggle} />

@@ -778,8 +778,9 @@ export function UserManagement({ portalType = "admin" }: { portalType?: "admin" 
 
       <DeleteUserModal
         isOpen={deleteModalOpen}
-        onClose={() => setDeleteModalOpen(false)}
+        onClose={() => { setDeleteModalOpen(false); setDeleteTarget(null); }}
         onConfirm={() => deleteTarget && handleDeleteUser(deleteTarget)}
+        isProcessing={deletingRecord}
       />
 
       <SubscriptionModal

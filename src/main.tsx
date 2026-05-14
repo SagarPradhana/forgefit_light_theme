@@ -8,18 +8,32 @@ import ErrorBoundary from "./components/ErrorBoundary";
 
 import { HelmetProvider } from "react-helmet-async";
 import { registerSW } from 'virtual:pwa-register';
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+
+// Initialize Query Client
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      retry: 1,
+      refetchOnWindowFocus: false,
+      staleTime: 5 * 60 * 1000, // 5 minutes
+    },
+  },
+});
 
 // Register PWA service worker
 registerSW({ immediate: true });
 
 ReactDOM.createRoot(document.getElementById("app") as HTMLElement).render(
   <React.StrictMode>
-    <HelmetProvider>
-      <ErrorBoundary>
-        <BrowserRouter>
-          <App />
-        </BrowserRouter>
-      </ErrorBoundary>
-    </HelmetProvider>
+    <QueryClientProvider client={queryClient}>
+      <HelmetProvider>
+        <ErrorBoundary>
+          <BrowserRouter>
+            <App />
+          </BrowserRouter>
+        </ErrorBoundary>
+      </HelmetProvider>
+    </QueryClientProvider>
   </React.StrictMode>,
 );
