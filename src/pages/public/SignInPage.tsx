@@ -8,10 +8,9 @@ import {
 } from "../../components/ui/primitives";
 import { PublicLayout } from "../../layouts/PublicLayout";
 import { useAuthStore } from "../../store/authStore";
-import { Dumbbell, Loader2, Eye, EyeOff, Sparkles } from "lucide-react";
+import { Loader2, Eye, EyeOff, Sparkles } from "lucide-react";
 import { useMutation } from "../../hooks/useApi";
 import { API_ENDPOINTS } from "../../utils/url";
-import { useGymStore } from "../../store/gymStore";
 
 export function SignInPage() {
   const navigate = useNavigate();
@@ -74,9 +73,6 @@ export function SignInPage() {
     handleRealSignIn();
   };
 
-  const { publicAppConfig, isLoadingPublicData } = useGymStore();
-  const brandName = isLoadingPublicData ? "" : (publicAppConfig?.brand_name || "ForgeFit");
-
   return (
     <PublicLayout>
       <div className="min-h-[80vh] grid md:grid-cols-2 items-center gap-10 overflow-hidden">
@@ -85,33 +81,24 @@ export function SignInPage() {
           initial={{ x: -60, opacity: 0 }}
           animate={{ x: 0, opacity: 1 }}
           transition={{ duration: 0.8, ease: "easeOut" }}
-          className="hidden md:flex flex-col justify-center space-y-6"
+          className="hidden md:grid justify-center space-y-6"
         >
-          <div className="flex items-center gap-3">
-            <motion.div
-              whileHover={{ rotate: 180 }}
-              className="h-12 w-12 flex items-center justify-center rounded-xl bg-gradient-to-br from-indigo-500 to-orange-400 shadow-lg shadow-indigo-500/20 overflow-hidden"
-            >
-              {isLoadingPublicData ? (
-                <div className="w-6 h-6 border-2 border-white/20 border-t-white rounded-full animate-spin" />
-              ) : publicAppConfig?.logo_image_path ? (
-                <img src={publicAppConfig.logo_image_path} alt={brandName} className="h-full w-full object-cover" />
-              ) : (
-                <Dumbbell className="text-white" />
-              )}
-            </motion.div>
-            <h2 className="text-2xl font-bold tracking-tight">{brandName}</h2>
+          <div className="flex flex-col space-y-2">
+            <span className="badge-premium w-fit">
+              <Sparkles className="w-4 h-4" />
+              Member Exclusive
+            </span>
           </div>
 
           <motion.h1
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2, duration: 0.6 }}
-            className="text-4xl font-bold leading-tight"
+            className="text-5xl md:text-7xl font-display font-bold leading-[0.95] text-charcoal"
           >
-            Transform Your Body <br />
-            <span className="bg-gradient-to-r from-indigo-400 via-white to-orange-400 bg-clip-text text-transparent">
-              Build Your Strength
+            TRANSFORM <br />
+            <span className="text-gradient">
+              YOUR BODY
             </span>
           </motion.h1>
 
@@ -119,14 +106,14 @@ export function SignInPage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3, duration: 0.6 }}
-            className="text-slate-300 max-w-md"
+            className="text-muted max-w-md"
           >
             Join thousands of members achieving their fitness goals with
             personalized training, smart tracking, and expert coaching.
           </motion.p>
 
           {/* STATS */}
-          <div className="flex gap-8 text-sm text-slate-400 pt-4">
+          <div className="flex gap-8 text-sm pt-4">
             {[
               { label: "Members", value: "500+" },
               { label: "Trainers", value: "50+" },
@@ -138,8 +125,8 @@ export function SignInPage() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.4 + i * 0.1 }}
               >
-                <p className="text-white font-bold text-lg">{stat.value}</p>
-                <p className="text-xs uppercase tracking-widest text-slate-500">{stat.label}</p>
+                <p className="text-charcoal font-bold text-xl">{stat.value}</p>
+                <p className="text-[10px] uppercase tracking-widest text-muted font-bold">{stat.label}</p>
               </motion.div>
             ))}
           </div>
@@ -152,9 +139,9 @@ export function SignInPage() {
           transition={{ duration: 0.8, ease: "easeOut" }}
           className="w-full max-w-md mx-auto"
         >
-          <CommonCard className="p-6 md:p-10 backdrop-blur-2xl bg-white/5 border border-white/10 shadow-2xl relative overflow-hidden group">
-            <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-30 transition-opacity">
-              <Sparkles className="text-orange-400 h-12 w-12" />
+          <CommonCard className="p-8 md:p-12 bg-white border border-[var(--border-subtle)] shadow-2xl relative overflow-hidden group rounded-3xl">
+            <div className="absolute top-0 right-0 p-6 opacity-5 group-hover:opacity-20 transition-opacity">
+              <Sparkles className="text-[var(--accent-orange)] h-16 w-16" />
             </div>
 
             <motion.div
@@ -162,8 +149,8 @@ export function SignInPage() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2 }}
             >
-              <h2 className="text-2xl font-bold mb-2 text-white">Welcome Back 👋</h2>
-              <p className="text-slate-400 mb-8">
+              <h2 className="text-3xl font-display font-bold mb-3 text-charcoal">Welcome Back 👋</h2>
+              <p className="text-muted mb-10">
                 Sign in to continue your journey
               </p>
             </motion.div>
@@ -179,10 +166,10 @@ export function SignInPage() {
                   placeholder="Username / Email / Phone"
                   value={email}
                   onChange={(e: any) => { setEmail(e); if (errors.email) setErrors(prev => ({ ...prev, email: undefined })); }}
-                  className={`bg-white/5 focus:bg-white/10 transition-all border-white/10 focus:border-indigo-400 ${errors.email ? "!border-red-500" : ""}`}
+                  className={`bg-cream-50 focus:bg-white transition-all border-[var(--border-subtle)] focus:border-[var(--accent-orange)] ${errors.email ? "!border-red-500" : ""}`}
                 />
                 {errors.email && (
-                  <p className="mt-1.5 text-xs text-red-400 font-medium">{errors.email}</p>
+                  <p className="mt-1.5 text-xs text-red-500 font-medium">{errors.email}</p>
                 )}
               </motion.div>
 
@@ -197,17 +184,17 @@ export function SignInPage() {
                   type={showPassword ? "text" : "password"}
                   value={password}
                   onChange={(e: any) => { setPassword(e); if (errors.password) setErrors(prev => ({ ...prev, password: undefined })); }}
-                  className={`pr-12 bg-white/5 focus:bg-white/10 transition-all border-white/10 focus:border-indigo-400 ${errors.password ? "!border-red-500" : ""}`}
+                  className={`pr-12 bg-cream-50 focus:bg-white transition-all border-[var(--border-subtle)] focus:border-[var(--accent-orange)] ${errors.password ? "!border-red-500" : ""}`}
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white transition-colors p-1"
+                  className="absolute right-4 top-1/2 -translate-y-1/2 text-muted hover:text-charcoal transition-colors p-1"
                 >
                   {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                 </button>
                 {errors.password && (
-                  <p className="mt-1.5 text-xs text-red-400 font-medium">{errors.password}</p>
+                  <p className="mt-1.5 text-xs text-red-500 font-medium">{errors.password}</p>
                 )}
               </motion.div>
 
@@ -219,7 +206,7 @@ export function SignInPage() {
                 className="flex justify-end"
               >
                 <Link to="/forgot-password">
-                  <button type="button" className="text-sm text-indigo-400 hover:text-indigo-300 transition-colors font-medium">
+                  <button type="button" className="text-sm text-[var(--accent-orange)] hover:text-[var(--accent-gold)] transition-colors font-bold uppercase tracking-wider">
                     Forgot password?
                   </button>
                 </Link>
@@ -248,9 +235,9 @@ export function SignInPage() {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ delay: 0.7 }}
-                className="text-center text-slate-500 text-sm pt-2"
+                className="text-center text-muted text-sm pt-2"
               >
-                Don't have an account? <Link to="/contact" className="text-orange-400 hover:underline font-medium">Join us</Link>
+                Don't have an account? <Link to="/contact" className="text-[var(--accent-orange)] hover:underline font-bold">Join us</Link>
               </motion.p>
             </form>
           </CommonCard>

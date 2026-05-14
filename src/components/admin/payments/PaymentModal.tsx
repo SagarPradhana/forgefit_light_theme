@@ -40,8 +40,25 @@ export function PaymentModal({
 }: PaymentModalProps) {
   const { t } = useTranslation();
   const [submitting, setSubmitting] = useState(false);
+  const [errors, setErrors] = useState<Record<string, string>>({});
+
+  const validateForm = () => {
+    const newErrors: Record<string, string> = {};
+    if (!paymentForm.user_id) newErrors.user_id = t("fieldRequired");
+    if (!paymentForm.purchase_id) newErrors.purchase_id = t("fieldRequired");
+    if (!paymentForm.payment_date) newErrors.payment_date = t("fieldRequired");
+    if (Number(paymentForm.amount) <= 0) newErrors.amount = t("amountMustBePositive");
+    
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
 
   const handleSubmit = async () => {
+    if (!validateForm()) {
+      toast.error(t("pleaseFixErrors"));
+      return;
+    }
+    
     setSubmitting(true);
     const payload = {
       ...paymentForm,
@@ -58,8 +75,8 @@ export function PaymentModal({
       }
       onSuccess();
       onClose();
-    } catch (err) {
-      toast.error("Process failed");
+    } catch (err: any) {
+      toast.error(err?.message || "Process failed");
     } finally {
       setSubmitting(false);
     }
@@ -74,7 +91,14 @@ export function PaymentModal({
         <>
           <GlowButton className="bg-gray-600" onClick={onClose} disabled={submitting}>{t("cancel")}</GlowButton>
           <GlowButton onClick={handleSubmit} disabled={submitting}>
-            <ButtonLoader label={t("submit")} loadingLabel={t("loading")} loading={submitting} />
+            {submitting ? (
+              <div className="flex items-center gap-2">
+                <ButtonLoader />
+                <span>{t("loading")}</span>
+              </div>
+            ) : (
+              t("submit")
+            )}
           </GlowButton>
         </>
       }
@@ -83,15 +107,19 @@ export function PaymentModal({
         <div className="space-y-1">
           <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest">{t("selectMember")}</label>
           <select
-            className="w-full rounded-xl bg-slate-950 border border-white/10 p-4 text-white focus:border-indigo-500 outline-none transition font-bold"
+            className={`w-full rounded-xl bg-slate-950 border p-4 text-white focus:border-indigo-500 outline-none transition font-bold ${errors.user_id ? "border-red-500" : "border-white/10"}`}
             value={paymentForm.user_id}
-            onChange={(e) => setPaymentForm({ ...paymentForm, user_id: e.target.value })}
+            onChange={(e) => {
+              setPaymentForm({ ...paymentForm, user_id: e.target.value });
+              if (errors.user_id) setErrors({ ...errors, user_id: "" });
+            }}
           >
             <option value="">{t("chooseRegistryEntity")}</option>
             {usersDropdown.map((u: any) => (
               <option key={u.id} value={u.id}>{u.name} (@{u.username || u.member_id})</option>
             ))}
           </select>
+          {errors.user_id && <p className="text-red-500 text-[10px] font-bold uppercase">{errors.user_id}</p>}
         </div>
 
         <div className="space-y-1">
@@ -110,7 +138,7 @@ export function PaymentModal({
           <div className="space-y-1">
             <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest">{t("selectInventoryItem")}</label>
             <select
-              className="w-full rounded-xl bg-slate-950 border border-white/10 p-4 text-white focus:border-indigo-500 outline-none transition font-bold"
+              className={`w-full rounded-xl bg-slate-950 border p-4 text-white focus:border-indigo-500 outline-none transition font-bold ${errors.purchase_id ? "border-red-500" : "border-white/10"}`}
               value={paymentForm.purchase_id}
               onChange={(e) => {
                 const product = fetchedProducts.find(p => p.id === e.target.value);
@@ -120,6 +148,7 @@ export function PaymentModal({
                   amount: product ? String(product.price) : "0",
                   purchase_details: product ? { product_name: product.name, price: product.price, category: product.category } : { additionalProp1: {} }
                 });
+                if (errors.purchase_id) setErrors({ ...errors, purchase_id: "" });
               }}
             >
               <option value="">{t("chooseProduct")}</option>
@@ -127,6 +156,7 @@ export function PaymentModal({
                 <option key={p.id} value={p.id}>{p.name} ({currencySymbol}{p.price})</option>
               ))}
             </select>
+            {errors.purchase_id && <p className="text-red-500 text-[10px] font-bold uppercase">{errors.purchase_id}</p>}
           </div>
         )}
 
@@ -134,7 +164,7 @@ export function PaymentModal({
           <div className="space-y-1">
             <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest">{t("selectSubscriptionPlan")}</label>
             <select
-              className="w-full rounded-xl bg-slate-950 border border-white/10 p-4 text-white focus:border-indigo-500 outline-none transition font-bold"
+              className={`w-full rounded-xl bg-slate-950 border p-4 text-white focus:border-indigo-500 outline-none transition font-bold ${errors.purchase_id ? "border-red-500" : "border-white/10"}`}
               value={paymentForm.purchase_id}
               onChange={(e) => {
                 const plan = subscriptionPlans.find(pl => pl.id === e.target.value);
@@ -144,6 +174,7 @@ export function PaymentModal({
                   amount: plan ? String(plan.price) : "0",
                   purchase_details: plan ? { plan_name: plan.name, price: plan.price, duration: plan.duration_in_months } : { additionalProp1: {} }
                 });
+                if (errors.purchase_id) setErrors({ ...errors, purchase_id: "" });
               }}
             >
               <option value="">{t("chooseSubscriptionPlan")}</option>
@@ -151,6 +182,7 @@ export function PaymentModal({
                 <option key={pl.id} value={pl.id}>{pl.name} - {pl.duration_in_months} months ({currencySymbol}{pl.price})</option>
               ))}
             </select>
+            {errors.purchase_id && <p className="text-red-500 text-[10px] font-bold uppercase">{errors.purchase_id}</p>}
           </div>
         )}
 
@@ -167,12 +199,16 @@ export function PaymentModal({
           <div className="space-y-1">
             <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest">{t("entryDate")}</label>
             <input
-              className="w-full rounded-xl bg-slate-950 border border-white/10 p-4 text-white focus:border-indigo-500 outline-none transition font-bold"
+              className={`w-full rounded-xl bg-slate-950 border p-4 text-white focus:border-indigo-500 outline-none transition font-bold ${errors.payment_date ? "border-red-500" : "border-white/10"}`}
               type="date"
               max={new Date().toISOString().split('T')[0]}
               value={paymentForm.payment_date}
-              onChange={(e) => setPaymentForm({ ...paymentForm, payment_date: e.target.value })}
+              onChange={(e) => {
+                setPaymentForm({ ...paymentForm, payment_date: e.target.value });
+                if (errors.payment_date) setErrors({ ...errors, payment_date: "" });
+              }}
             />
+            {errors.payment_date && <p className="text-red-500 text-[10px] font-bold uppercase">{errors.payment_date}</p>}
           </div>
         </div>
 

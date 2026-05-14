@@ -1,398 +1,554 @@
 import { Link } from "react-router-dom";
-import { Dumbbell, Trophy, Users, Star } from "lucide-react";
 import { PublicLayout } from "../../layouts/PublicLayout";
-import { motion } from "framer-motion";
-import { Counter } from "../../components/common/Counter";
-
+import { motion, AnimatePresence } from "framer-motion";
+import { 
+  Trophy, Users, Star, ArrowRight, Play, 
+  Check, Zap, Flame, Award, Heart, ChevronLeft, ChevronRight
+} from "lucide-react";
 import { useGymStore } from "../../store/gymStore";
-import { BannerCarousel } from "../../components/common/BannerCarousel";
-import { formatCurrency } from "../../utils/currency";
-import { NoDataFound } from "../../components/ui/NoDataFound";
+import { useState, useEffect } from "react";
 
-export function HomePage() {
-  const { publicAppConfig, publicBanners, publicLocations, publicSubscriptionPlans, publicTestimonials, isLoadingPublicData } = useGymStore();
+const premiumFeatures = [
+  { icon: Trophy, title: "World-Class Equipment", desc: "State-of-the-art fitness gear from premium brands" },
+  { icon: Users, title: "Expert Trainers", desc: "Certified professionals to guide your journey" },
+  { icon: Heart, title: "Personal Training", desc: "Customized workouts tailored to your goals" },
+  { icon: Zap, title: "Energy & Power", desc: "High-intensity programs for maximum results" },
+];
 
-  const homeBanners = publicBanners["home"] || publicBanners["common"] || [];
-  const offersBanners = publicBanners["offers"] || [];
-  const trainerBanners = publicBanners["trainers"] || [];
-  const inspirationalBanners = publicBanners["inspirational"] || [];
-  const mainLocation = publicLocations[0];
-  const featuredPlans = publicSubscriptionPlans.slice(0, 3);
-  const featuredTestimonials = publicTestimonials.filter((item) => item.note?.trim() || item.name?.trim()).slice(0, 3);
+function BannerCarousel() {
+  const { publicBanners, isLoadingPublicData } = useGymStore();
+  const [currentIndex, setCurrentIndex] = useState(0);
 
-  const brandName = isLoadingPublicData ? "" : (publicAppConfig?.brand_name || "ForgeFit");
+  const banners = publicBanners?.["common"] || [];
+  
+  useEffect(() => {
+    if (banners.length <= 1) return;
+    const interval = setInterval(() => {
+      setCurrentIndex((prev) => (prev + 1) % banners.length);
+    }, 5000);
+    return () => clearInterval(interval);
+  }, [banners.length]);
+
+  if (isLoadingPublicData || banners.length === 0) return null;
+
   return (
-    <PublicLayout>
-      <div className="relative isolate min-h-screen bg-[#0a0a0c]">
-        {/* Hero Section - Scoped Full Screen Background */}
-        <section className="relative min-h-screen min-h-[700px] flex items-start lg:items-center overflow-hidden pt-28 sm:pt-32 lg:pt-24 pb-16 sm:pb-24">
-          {/* Background Carousel (Scoped to this section) */}
-          <div className="absolute inset-0 z-0">
-            <BannerCarousel banners={homeBanners} isLoading={isLoadingPublicData} />
-            {/* Cinematic Overlays */}
-            <div className="absolute inset-0 bg-gradient-to-r from-black/90 via-black/60 to-transparent z-10 pointer-events-none" />
-            <div className="absolute inset-0 bg-gradient-to-t from-[#0a0a0c] via-transparent to-transparent z-10 pointer-events-none" />
+    <div className="relative h-[500px] w-full overflow-hidden">
+      <AnimatePresence mode="wait">
+        <motion.div
+          key={currentIndex}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.5 }}
+          className="absolute inset-0"
+        >
+          <img 
+            src={banners[currentIndex]?.file_path} 
+            alt="Banner"
+            className="w-full h-full object-cover"
+          />
+          <div className="absolute inset-0 bg-gradient-to-r from-black/60 to-transparent" />
+        </motion.div>
+      </AnimatePresence>
+      
+      {banners.length > 1 && (
+        <>
+          <button 
+            onClick={() => setCurrentIndex((prev) => (prev - 1 + banners.length) % banners.length)}
+            className="absolute left-4 top-1/2 -translate-y-1/2 w-12 h-12 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-white/40 transition"
+          >
+            <ChevronLeft className="w-6 h-6 text-white" />
+          </button>
+          <button 
+            onClick={() => setCurrentIndex((prev) => (prev + 1) % banners.length)}
+            className="absolute right-4 top-1/2 -translate-y-1/2 w-12 h-12 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-white/40 transition"
+          >
+            <ChevronRight className="w-6 h-6 text-white" />
+          </button>
+          <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2">
+            {banners.map((_, idx) => (
+              <button
+                key={idx}
+                onClick={() => setCurrentIndex(idx)}
+                className={`w-2 h-2 rounded-full transition ${idx === currentIndex ? 'bg-white' : 'bg-white/50'}`}
+              />
+            ))}
           </div>
+        </>
+      )}
+    </div>
+  );
+}
 
-          {/* Hero Content Overlay */}
-          <div className="relative z-20 w-full px-4 sm:px-8 md:pl-[clamp(2rem,6vw,7rem)] md:pr-4 max-w-[960px]">
-            <motion.div
-              initial={{ opacity: 0, y: -10 }}
+function AnimatedCounter({ value }: { value: string }) {
+  return (
+    <motion.span
+      initial={{ opacity: 0, y: 20 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true }}
+      transition={{ duration: 0.8 }}
+      className="text-6xl md:text-7xl font-display font-black text-gradient"
+    >
+      {value}
+    </motion.span>
+  );
+}
+
+function HeroSection() {
+  const { publicAppConfig, isLoadingPublicData } = useGymStore();
+  const brandName = isLoadingPublicData ? "" : (publicAppConfig?.brand_name || "FORGE");
+  const logoUrl = publicAppConfig?.logo_image_path;
+  
+  const stats = [
+    { number: "500+", label: "Active Members" },
+    { number: "50+", label: "Expert Trainers" },
+    { number: "100+", label: "Fitness Programs" },
+    { number: "15+", label: "Years Experience" },
+  ];
+
+  return (
+    <section className="relative min-h-screen flex items-center bg-gradient-to-b from-white via-ivory to-cream overflow-hidden">
+      {/* Animated Background */}
+      <div className="absolute inset-0 overflow-hidden">
+        <div className="absolute top-20 right-10 w-[500px] h-[500px] rounded-full glow-blob-light glow-orange-light animate-float" />
+        <div className="absolute bottom-20 left-10 w-[400px] h-[400px] rounded-full glow-blob-light glow-gold-light animate-float" style={{ animationDelay: '2s' }} />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] rounded-full glow-blob-light glow-rose-light opacity-20" />
+        
+        {/* Subtle Pattern */}
+        <div className="absolute inset-0 opacity-[0.4]" style={{ 
+          backgroundImage: 'radial-gradient(circle at 1px 1px, rgba(212,168,83,0.1) 1px, transparent 0)',
+          backgroundSize: '40px 40px'
+        }} />
+      </div>
+
+      <div className="relative z-10 container mx-auto px-6 py-24">
+        <div className="grid lg:grid-cols-2 gap-12 items-center">
+          {/* Left Content */}
+          <motion.div 
+            initial={{ opacity: 0, x: -50 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.8 }}
+            className="space-y-8"
+          >
+            {/* Logo & Badge */}
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5 }}
-              className="hero-badge-dark animate-badge-pulse inline-block mb-8"
+              transition={{ delay: 0.2 }}
+              className="inline-flex items-center gap-4"
             >
-              ⚡ {brandName} Fitness Evolution
+              {logoUrl && (
+                <img src={logoUrl} alt={brandName} className="h-12 w-auto" />
+              )}
+              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-orange-100 to-rose-100 border border-orange-200">
+                <Zap className="w-4 h-4 text-orange-500" />
+                <span className="text-sm font-semibold text-orange-600 uppercase tracking-wider">Premium Fitness</span>
+              </div>
             </motion.div>
 
-            <div className="flex flex-col mb-8">
-              <h1 className="text-4xl md:text-5xl lg:text-6xl font-black leading-[0.85] tracking-tighter uppercase">
-                {["FORGE", "YOUR", "ULTIMATE"].map((word, i) => (
-                  <motion.span
-                    key={i}
-                    initial={{ y: 60, opacity: 0 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{
-                      duration: 0.6,
-                      delay: 0.3 + (i * 0.1),
-                      ease: [0.25, 0.46, 0.45, 0.94]
-                    }}
-                    className="block text-white"
-                  >
-                    {word}
-                  </motion.span>
-                ))}
-                <motion.span
-                  initial={{ y: 60, opacity: 0 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{
-                    duration: 0.6,
-                    delay: 0.6,
-                    ease: [0.25, 0.46, 0.45, 0.94]
-                  }}
-                  className="block text-[#e8521a] drop-shadow-[0_0_80px_rgba(232,82,26,0.5)]"
-                >
-                  LEGACY.
-                </motion.span>
-              </h1>
-            </div>
+            {/* Heading */}
+            <h1 className="heading-xl text-charcoal">
+              <motion.span 
+                initial={{ opacity: 0, y: 40 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.3, duration: 0.6 }}
+                className="block"
+              >
+                BUILD YOUR
+              </motion.span>
+              <motion.span 
+                initial={{ opacity: 0, y: 40 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.4, duration: 0.6 }}
+                className="block"
+              >
+                PERFECT
+              </motion.span>
+              <motion.span 
+                initial={{ opacity: 0, y: 40 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.5, duration: 0.6 }}
+                className="block text-gradient"
+              >
+                BODY TODAY
+              </motion.span>
+            </h1>
 
-            <motion.p
+            {/* Description */}
+            <motion.p 
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              transition={{ delay: 0.9, duration: 0.8 }}
-              className="text-lg md:text-xl text-white/75 max-w-[480px] mb-12 leading-[1.75] font-medium"
+              transition={{ delay: 0.6 }}
+              className="text-lg text-muted max-w-lg leading-relaxed"
             >
-              {publicAppConfig?.description || `Experience the pinnacle of fitness at ${brandName}. We combine elite coaching, cutting-edge equipment, and a powerful community to help you break through your limits.`}
+              Experience world-class fitness at {brandName}. Join thousands who have transformed their lives with our premium facilities and expert guidance.
             </motion.p>
 
-            <div className="flex flex-wrap gap-6 mb-16">
-              <motion.div
+            {/* CTA Buttons */}
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.7 }}
+              className="flex flex-wrap gap-4"
+            >
+              <Link to="/contact">
+                <button className="btn-premium btn-primary">
+                  Start Free Trial
+                  <ArrowRight className="w-5 h-5" />
+                </button>
+              </Link>
+              <Link to="/pricing">
+                <button className="btn-premium btn-ghost">
+                  <Play className="w-5 h-5" />
+                  View Plans
+                </button>
+              </Link>
+            </motion.div>
+
+            {/* Stats */}
+            <motion.div 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.8 }}
+              className="grid grid-cols-2 md:grid-cols-4 gap-6 pt-8 border-t border-gold"
+            >
+              {stats.map((stat, index) => (
+                <div key={index} className="text-center">
+                  <AnimatedCounter value={stat.number} />
+                  <p className="text-sm text-light-muted uppercase tracking-wider mt-2">{stat.label}</p>
+                </div>
+              ))}
+            </motion.div>
+          </motion.div>
+
+          {/* Right Image */}
+          <motion.div 
+            initial={{ opacity: 0, x: 50 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.8 }}
+            className="relative"
+          >
+            <div className="relative aspect-[4/5] max-w-lg mx-auto">
+              {/* Glow */}
+              <div className="absolute inset-10 bg-gradient-to-r from-orange-300/30 to-rose-300/30 rounded-full blur-3xl" />
+              
+              {/* Image */}
+              <div className="relative rounded-3xl overflow-hidden border-4 border-white shadow-premium">
+                <img 
+                  src="https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=800&q=80"
+                  alt="Fitness"
+                  className="w-full h-full object-cover"
+                />
+                
+                {/* Overlay Gradient */}
+                <div className="absolute inset-0 bg-gradient-to-t from-white/30 via-transparent to-transparent" />
+              </div>
+
+              {/* Floating Card 1 */}
+              <motion.div 
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 1.1 }}
+                transition={{ delay: 1 }}
+                className="absolute -bottom-6 -left-6 bg-white border border-gold rounded-2xl p-4 shadow-lg"
               >
-                <Link to="/contact">
-                  <button className="bg-[#e8521a] text-white font-bold uppercase tracking-[0.08em] rounded-full px-10 py-5 transition-all duration-250 hover:brightness-110 hover:scale-[1.03] shimmer-sweep group flex items-center gap-3 shadow-xl shadow-orange-950/20">
-                    JOIN THE ELITE
-                    <span className="text-2xl transition-transform group-hover:translate-x-1">→</span>
-                  </button>
-                </Link>
+                <div className="flex items-center gap-3">
+                  <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-orange-100 to-rose-100 flex items-center justify-center">
+                    <Flame className="w-6 h-6 text-orange-500" />
+                  </div>
+                  <div>
+                    <p className="text-lg font-bold text-charcoal">500+</p>
+                    <p className="text-sm text-muted">Calories Burned</p>
+                  </div>
+                </div>
               </motion.div>
 
-              <motion.div
+              {/* Floating Card 2 */}
+              <motion.div 
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 1.2 }}
+                className="absolute -top-4 -right-4 bg-white border border-gold rounded-2xl p-4 shadow-lg"
               >
-                <Link to="/services">
-                  <button className="bg-transparent border-[1.5px] border-white/40 text-white font-bold uppercase tracking-[0.08em] rounded-full px-10 py-5 transition-all hover:bg-white/10 hover:border-white backdrop-blur-sm">
-                    EXPLORE PROGRAMS
-                  </button>
-                </Link>
+                <div className="flex items-center gap-3">
+                  <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-amber-100 to-yellow-100 flex items-center justify-center">
+                    <Award className="w-6 h-6 text-gold-500" />
+                  </div>
+                  <div>
+                    <p className="text-lg font-bold text-charcoal">#1 Rated</p>
+                    <p className="text-sm text-muted">In The City</p>
+                  </div>
+                </div>
               </motion.div>
             </div>
+          </motion.div>
+        </div>
+      </div>
 
+      {/* Scroll Indicator */}
+      <motion.div 
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 1.5 }}
+        className="absolute bottom-8 left-1/2 -translate-x-1/2"
+      >
+        <motion.div 
+          animate={{ y: [0, 10, 0] }}
+          transition={{ duration: 2, repeat: Infinity }}
+          className="w-6 h-10 rounded-full border-2 border-charcoal/20 flex items-start justify-center p-2"
+        >
+          <motion.div className="w-1 h-2 bg-orange-500 rounded-full" />
+        </motion.div>
+      </motion.div>
+    </section>
+  );
+}
+
+function FeaturesSection() {
+  return (
+    <section className="section-padding bg-white relative">
+      {/* Background Elements */}
+      <div className="absolute inset-0">
+        <div className="absolute top-1/2 left-0 w-[400px] h-[400px] rounded-full glow-blob-light glow-orange-light opacity-20" />
+        <div className="absolute bottom-0 right-0 w-[300px] h-[300px] rounded-full glow-blob-light glow-gold-light opacity-15" />
+      </div>
+
+      <div className="relative z-10 container mx-auto">
+        {/* Section Header */}
+        <motion.div 
+          initial={{ opacity: 0, y: 40 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          className="text-center mb-16"
+        >
+          <span className="badge-premium mb-4">
+            <Star className="w-4 h-4 text-gold-500" />
+            Why Choose Us
+          </span>
+          <h2 className="heading-lg text-charcoal mt-4">
+            PREMIUM <span className="text-gradient">FACILITIES</span>
+          </h2>
+          <p className="text-muted mt-4 max-w-2xl mx-auto">
+            Experience world-class amenities designed to elevate your fitness journey to unprecedented heights.
+          </p>
+        </motion.div>
+
+        {/* Features Grid */}
+        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+          {premiumFeatures.map((feature, index) => (
             <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 1.3 }}
-              className="flex items-center gap-8 border-t border-white/10"
+              key={index}
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: index * 0.1 }}
+              className="card-premium group hover-lift"
             >
-              <div className="grid grid-cols-2 sm:flex sm:items-center gap-6 sm:gap-8 w-full sm:w-auto">
-                <div className="relative">
-                  <p className="text-3xl sm:text-4xl font-extrabold text-white"><Counter to={20} suffix="+" duration={1200} /></p>
-                  <p className="text-[10px] sm:text-[11px] text-white/50 uppercase tracking-[0.08em] mt-1 sm:mt-2 font-bold">Membership Plans</p>
-                </div>
-                <div className="hidden sm:block w-[1px] h-8 bg-white/15" />
-                <div className="relative">
-                  <p className="text-3xl sm:text-4xl font-extrabold text-white"><Counter to={200} suffix="+" duration={1200} /></p>
-                  <p className="text-[10px] sm:text-[11px] text-white/50 uppercase tracking-[0.08em] mt-1 sm:mt-2 font-bold">Trainers</p>
-                </div>
-                <div className="hidden sm:block w-[1px] h-8 bg-white/15" />
-                <div className="relative col-span-2 sm:col-auto">
-                  <p className="text-3xl sm:text-4xl font-extrabold text-white"><Counter to={5} suffix="+" duration={1200} /></p>
-                  <p className="text-[10px] sm:text-[11px] text-white/50 uppercase tracking-[0.08em] mt-1 sm:mt-2 font-bold">Experience</p>
+              <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-orange-100 to-rose-100 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                <feature.icon className="w-8 h-8 text-orange-500" />
+              </div>
+              <h3 className="text-xl font-bold text-charcoal mb-3">{feature.title}</h3>
+              <p className="text-muted">{feature.desc}</p>
+            </motion.div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function PricingSection() {
+  const { publicSubscriptionPlans, isLoadingPublicData } = useGymStore();
+  
+  const plans = isLoadingPublicData ? [] : (publicSubscriptionPlans?.length > 0 
+    ? publicSubscriptionPlans.map((plan, idx) => ({
+        name: plan.name,
+        price: plan.price?.toString() || "0",
+        period: "/month",
+        features: plan.features || [],
+        popular: idx === 1,
+      }))
+    : [
+        { name: "Basic", price: "999", period: "/month", features: ["Gym Access", "Basic Equipment", "Locker Room"], popular: false },
+        { name: "Pro", price: "1,999", period: "/month", features: ["All Basic Features", "Personal Trainer", "Group Classes"], popular: true },
+        { name: "Elite", price: "3,499", period: "/month", features: ["All Pro Features", "VIP Lounge", "Private Trainer"], popular: false },
+      ]);
+
+  return (
+    <section className="section-padding bg-cream relative">
+      <div className="absolute inset-0">
+        <div className="absolute bottom-0 right-0 w-[500px] h-[500px] rounded-full glow-blob-light glow-gold-light opacity-15" />
+      </div>
+
+      <div className="relative z-10 container mx-auto">
+        <motion.div 
+          initial={{ opacity: 0, y: 40 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          className="text-center mb-16"
+        >
+          <span className="badge-premium badge-gold mb-4">
+            <Star className="w-4 h-4" />
+            Membership Plans
+          </span>
+          <h2 className="heading-lg text-charcoal mt-4">
+            CHOOSE YOUR <span className="text-gold-gradient">PLAN</span>
+          </h2>
+          <p className="text-muted mt-4 max-w-2xl mx-auto">
+            Flexible plans designed to fit your lifestyle and fitness goals.
+          </p>
+        </motion.div>
+
+        <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+          {plans.map((plan, index) => (
+            <motion.div
+              key={index}
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: index * 0.15 }}
+              className={`pricing-card ${plan.popular ? 'pricing-card-featured' : ''}`}
+            >
+              <h3 className="text-xl font-bold text-charcoal mb-2">{plan.name}</h3>
+              <div className="flex items-baseline mb-6">
+                <span className="text-4xl font-black text-charcoal">₹{plan.price}</span>
+                <span className="text-muted ml-2">{plan.period}</span>
+              </div>
+              <ul className="space-y-4 mb-8">
+                {plan.features.map((feature, i) => (
+                  <li key={i} className="flex items-center gap-3 text-muted">
+                    <Check className="w-5 h-5 text-gold-500" />
+                    {feature}
+                  </li>
+                ))}
+              </ul>
+              <button className={`btn-premium w-full ${plan.popular ? 'btn-gold' : 'btn-secondary'}`}>
+                Get Started
+              </button>
+            </motion.div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function TestimonialsSection() {
+  const { publicTestimonials, isLoadingPublicData } = useGymStore();
+  
+  const testimonials = isLoadingPublicData ? [] : (publicTestimonials?.length > 0 
+    ? publicTestimonials.map((t) => ({
+        name: t.name,
+        role: "Member",
+        text: t.note || t.content || "",
+        image: t.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(t.name)}&background=random`,
+        rating: 5,
+      }))
+    : [
+        { name: "Sarah Mitchell", role: "Fitness Enthusiast", text: "This gym changed my life. The trainers are incredible!", image: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=200", rating: 5 },
+        { name: "James Rodriguez", role: "Professional Athlete", text: "Best training facility in the city.", image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200", rating: 5 },
+        { name: "Emily Chen", role: "Model", text: "The personalized training helped me achieve my goals.", image: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=200", rating: 5 },
+      ]);
+
+  if (testimonials.length === 0) return null;
+
+  return (
+    <section className="section-padding bg-white relative">
+      <div className="container mx-auto">
+        <motion.div 
+          initial={{ opacity: 0, y: 40 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          className="text-center mb-16"
+        >
+          <span className="badge-premium mb-4">
+            <Star className="w-4 h-4 text-orange-500" />
+            Testimonials
+          </span>
+          <h2 className="heading-lg text-charcoal mt-4">
+            WHAT MEMBERS <span className="text-gradient">SAY</span>
+          </h2>
+        </motion.div>
+
+        <div className="grid md:grid-cols-3 gap-8">
+          {testimonials.map((testimonial, index) => (
+            <motion.div
+              key={index}
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: index * 0.15 }}
+              className="testimonial-card"
+            >
+              <div className="flex gap-1 mb-4">
+                {[...Array(testimonial.rating)].map((_, i) => (
+                  <Star key={i} className="w-5 h-5 text-gold-500 fill-gold-500" />
+                ))}
+              </div>
+              <p className="text-muted mb-6 text-lg">"{testimonial.text}"</p>
+              <div className="testimonial-author">
+                <img src={testimonial.image} alt={testimonial.name} className="testimonial-avatar" />
+                <div>
+                  <p className="font-bold text-charcoal">{testimonial.name}</p>
+                  <p className="text-sm text-muted">{testimonial.role}</p>
                 </div>
               </div>
             </motion.div>
-            {mainLocation && (
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 1.45 }}
-                className="mt-6 sm:mt-8 grid grid-cols-1 sm:grid-cols-3 gap-4"
-              >
-                <div className="rounded-2xl border border-white/10 bg-white/5 px-5 py-4 backdrop-blur-md">
-                  <p className="text-[10px] uppercase tracking-[0.2em] text-white/45 font-bold mb-2">Location</p>
-                  <p className="text-sm text-white/85">{mainLocation.address}</p>
-                </div>
-                <div className="rounded-2xl border border-white/10 bg-white/5 px-5 py-4 backdrop-blur-md">
-                  <p className="text-[10px] uppercase tracking-[0.2em] text-white/45 font-bold mb-2">Hours</p>
-                  <p className="text-sm text-white/85">{mainLocation.working_hours_from_time} - {mainLocation.working_hours_to_time}</p>
-                </div>
-                <div className="rounded-2xl border border-white/10 bg-white/5 px-5 py-4 backdrop-blur-md">
-                  <p className="text-[10px] uppercase tracking-[0.2em] text-white/45 font-bold mb-2">Contact</p>
-                  <p className="text-sm text-white/85">{mainLocation.phone}</p>
-                </div>
-              </motion.div>
-            )}
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function CTASection() {
+  return (
+    <section className="section-padding relative overflow-hidden bg-gradient-to-r from-orange-50 via-rose-50 to-amber-50">
+      <div className="absolute inset-0">
+        <div className="absolute top-0 left-1/4 w-[400px] h-[400px] rounded-full glow-blob-light glow-orange-light opacity-30" />
+        <div className="absolute bottom-0 right-1/4 w-[300px] h-[300px] rounded-full glow-blob-light glow-gold-light opacity-25" />
+      </div>
+
+      <div className="relative z-10 container mx-auto text-center">
+        <motion.div
+          initial={{ opacity: 0, y: 40 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+        >
+          <h2 className="heading-xl text-charcoal mb-6">
+            READY TO <span className="text-gradient">TRANSFORM</span>?
+          </h2>
+          <p className="text-xl text-muted mb-8 max-w-2xl mx-auto">
+            Join thousands of members who have already started their fitness journey. Your transformation begins today.
+          </p>
+          <div className="flex flex-wrap justify-center gap-4">
+            <Link to="/contact">
+              <button className="btn-premium btn-primary">
+                Start Free Trial
+                <ArrowRight className="w-5 h-5" />
+              </button>
+            </Link>
+            <Link to="/pricing">
+              <button className="btn-premium btn-gold">
+                View Membership Plans
+              </button>
+            </Link>
           </div>
+        </motion.div>
+      </div>
+    </section>
+  );
+}
 
-          {/* Scroll Indicator */}
-          {/* <motion.div
-            animate={{ y: [0, 8, 0] }}
-            transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
-            className="absolute bottom-8 sm:bottom-12 left-1/2 -translate-x-1/2 z-20 flex flex-col items-center gap-2 opacity-50 hidden xl:flex"
-          >
-            <div className="w-[1.5px] h-10 bg-gradient-to-b from-[#e8521a] to-transparent" />
-            <span className="text-[9px] uppercase tracking-[0.4em] font-black text-white">SCROLL</span>
-          </motion.div> */}
-        </section>
-
-        {featuredPlans.length > 0 && (
-          <section className="py-16 sm:py-24 border-t border-white/5">
-            <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-              <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-6 mb-12">
-                <div>
-                  <span className="hero-badge">Memberships</span>
-                  <h2 className="text-3xl sm:text-4xl md:text-5xl font-black text-white mt-4 uppercase">PLANS BUILT FOR REAL GOALS</h2>
-                </div>
-                <Link to="/pricing">
-                  <button className="text-orange-400 font-bold uppercase tracking-widest text-sm hover:text-orange-300 transition-colors">
-                    View Pricing
-                  </button>
-                </Link>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                {featuredPlans.map((plan) => (
-                  <div key={plan.id} className="glass-panel p-8">
-                    <p className="text-orange-400 text-xs font-black uppercase tracking-[0.2em] mb-3">{plan.name}</p>
-                    <div className="flex items-end gap-2 mb-4">
-                      <p className="text-4xl font-black text-white">{formatCurrency(plan.price, publicAppConfig?.currency || "INR")}</p>
-                      <p className="text-slate-500 text-xs uppercase tracking-widest">/ {plan.duration_in_months} month{plan.duration_in_months > 1 ? "s" : ""}</p>
-                    </div>
-                    <p className="text-slate-400 text-sm leading-relaxed">{plan.description}</p>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </section>
-        )}
-
-        {/* Features Bento Section */}
-        <section className="py-16 sm:py-24 bg-slate-950/50 relative">
-          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-            <div className="text-center mb-12 sm:mb-16">
-              <span className="hero-badge">Our Pillars</span>
-              <h2 className="text-3xl sm:text-4xl md:text-5xl font-black text-white mt-4">DESIGNED FOR PERFORMANCE</h2>
-            </div>
-
-            <div className="bento-grid">
-              <div className="bento-item bento-item-1 glass-panel p-6 sm:p-8 flex flex-col justify-between group">
-                <div>
-                  <div className="w-12 sm:w-16 h-12 sm:h-16 rounded-2xl bg-indigo-500/10 flex items-center justify-center text-indigo-400 mb-6 group-hover:bg-indigo-500 group-hover:text-white transition-all">
-                    <Trophy size={32} />
-                  </div>
-                  <h3 className="text-xl sm:text-2xl font-bold text-white mb-4 uppercase">ELITE FACILITIES</h3>
-                  <p className="text-slate-400 text-sm sm:text-base leading-relaxed">Train in a space that inspires greatness at {brandName}. Our facility features premium equipment from top global brands, specialized recovery zones, and an atmosphere that screams high-performance.</p>
-                </div>
-              </div>
-
-              <div className="bento-item bento-item-2 glass-panel p-6 sm:p-8 group">
-                <div className="flex flex-col md:flex-row gap-6 sm:gap-8 items-center">
-                  <div className="flex-1">
-                    <div className="w-10 sm:w-12 h-10 sm:h-12 rounded-xl bg-orange-500/10 flex items-center justify-center text-orange-400 mb-4">
-                      <Users size={24} />
-                    </div>
-                    <h3 className="text-lg sm:text-xl font-bold text-white mb-2 uppercase">PRO COMMUNITY</h3>
-                    <p className="text-slate-400 text-sm">Join the {brandName} community of athletes dedicated to mutual growth and relentless pursuit of excellence.</p>
-                  </div>
-                  <div className="flex-1 grid grid-cols-2 gap-4 w-full">
-                    <div className="stat-card py-4">
-                      <p className="text-xl sm:text-2xl font-black text-white">500+</p>
-                      <p className="text-[9px] sm:text-[10px] text-slate-500 uppercase tracking-tighter">Daily Active</p>
-                    </div>
-                    <div className="stat-card py-4">
-                      <p className="text-xl sm:text-2xl font-black text-white">12+</p>
-                      <p className="text-[9px] sm:text-[10px] text-slate-500 uppercase tracking-tighter">Events/Mo</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div className="bento-item bento-item-3 glass-panel p-6 sm:p-8 group hover:bg-orange-500/10 border-orange-500/20">
-                <div className="w-10 sm:w-12 h-10 sm:h-12 rounded-xl bg-orange-500/10 flex items-center justify-center text-orange-400 mb-6 group-hover:scale-110 transition-transform">
-                  <Dumbbell size={24} />
-                </div>
-                <h3 className="text-base sm:text-lg font-bold text-white mb-2 uppercase">EXPERT COACHING</h3>
-                <p className="text-slate-400 text-xs leading-relaxed">Personalized training plans crafted by certified professionals to ensure your path is efficient and safe.</p>
-              </div>
-
-              <div className="bento-item bento-item-4 glass-panel p-6 sm:p-8 group hover:bg-indigo-500/10 border-indigo-500/20">
-                <div className="w-10 sm:w-12 h-10 sm:h-12 rounded-xl bg-indigo-500/10 flex items-center justify-center text-indigo-400 mb-6 group-hover:scale-110 transition-transform">
-                  <Star size={24} />
-                </div>
-                <h3 className="text-base sm:text-lg font-bold text-white mb-2 uppercase">PROVEN RESULTS</h3>
-                <p className="text-slate-400 text-xs leading-relaxed">Data-driven progress tracking to celebrate every milestone in your fitness journey.</p>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* Coaches Section */}
-        <section className="py-16 sm:py-24">
-          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-            <div className="flex flex-col md:flex-row justify-between items-center md:items-end mb-12 sm:mb-16 gap-6">
-              <div className="max-w-2xl text-center md:text-left">
-                <span className="hero-badge">Elite Team</span>
-                <h2 className="text-3xl sm:text-4xl md:text-5xl font-black text-white mt-4 uppercase">MEET THE ARCHITECTS OF TRANSFORMATION</h2>
-              </div>
-              <Link to="/about" className="hidden sm:block">
-                <button className="text-orange-400 font-bold uppercase tracking-widest text-sm hover:text-orange-300 transition-colors flex items-center gap-2">
-                  View All Coaches <span>→</span>
-                </button>
-              </Link>
-            </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
-              {isLoadingPublicData ? (
-                Array.from({ length: 3 }).map((_, idx) => (
-                  <div key={`skeleton-${idx}`} className="group relative overflow-hidden rounded-3xl h-[320px] md:h-[380px] bg-slate-900 animate-pulse">
-                    <div className="absolute bottom-0 left-0 p-6 sm:p-8 w-full">
-                      <div className="h-3 w-1/3 bg-slate-800 rounded mb-2"></div>
-                      <div className="h-6 w-2/3 bg-slate-800 rounded"></div>
-                    </div>
-                  </div>
-                ))
-              ) : trainerBanners.length > 0 ? (
-                trainerBanners.slice(0, 3).map((trainer, idx) => (
-                  <div key={trainer.id || idx} className="group relative overflow-hidden rounded-3xl h-[320px] md:h-[380px] bg-white/5 border border-white/10">
-                    <img
-                      src={trainer.file_path}
-                      alt={`Trainer ${idx + 1}`}
-                      className="w-full h-full object-contain p-4 transition-transform duration-700 group-hover:scale-105"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/20 to-transparent" />
-                    <div className="absolute bottom-0 left-0 p-6 sm:p-8 w-full transform transition-transform duration-500 translate-y-4 group-hover:translate-y-0">
-                      <p className="text-orange-400 text-[10px] sm:text-xs font-bold uppercase tracking-[0.2em] mb-1">Coaching Team</p>
-                    </div>
-                  </div>
-                ))
-              ) : (
-                <div className="lg:col-span-3">
-                  <NoDataFound title="No Trainer Images" subtitle="Upload trainer banners from the admin public pages to show them here." />
-                </div>
-              )}
-            </div>
-          </div>
-        </section>
-
-        <section className="py-16 sm:py-24 border-t border-white/5">
-          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-            <div className="text-center mb-12 sm:mb-16">
-              <span className="hero-badge">Before / After</span>
-              <h2 className="text-3xl sm:text-4xl md:text-5xl font-black text-white mt-4 uppercase">REAL TRANSFORMATION GALLERY</h2>
-            </div>
-
-            {inspirationalBanners.length > 0 ? (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {inspirationalBanners.map((banner, index) => (
-                  <div key={banner.id || index} className="overflow-hidden rounded-3xl border border-white/10 bg-white/5">
-                    <img
-                      src={banner.file_path}
-                      alt={`Transformation ${index + 1}`}
-                      className="h-[320px] w-full object-cover transition-transform duration-700 hover:scale-105"
-                    />
-                  </div>
-                ))}
-              </div>
-            ) : (
-              <NoDataFound title="No Before/After Images" subtitle="Upload inspirational banners to show transformation images here." />
-            )}
-          </div>
-        </section>
-
-        {featuredTestimonials.length > 0 && (
-          <section className="py-16 sm:py-24 border-t border-white/5">
-            <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-              <div className="text-center mb-12 sm:mb-16">
-                <span className="hero-badge">Testimonials</span>
-                <h2 className="text-3xl sm:text-4xl md:text-5xl font-black text-white mt-4 uppercase">VOICES FROM THE FLOOR</h2>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                {featuredTestimonials.map((item) => (
-                  <div key={item.id} className="glass-panel p-8">
-                    {item.note && (
-                      <p className="text-slate-300 text-base leading-relaxed mb-6">"{item.note}"</p>
-                    )}
-                    <p className="text-orange-400 text-sm font-bold uppercase tracking-widest">{item.name}</p>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </section>
-        )}
-
-        <section className="py-16 sm:py-24 border-t border-white/5">
-          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-            <div className="text-center mb-12 sm:mb-16">
-              <span className="hero-badge">Offers</span>
-              <h2 className="text-3xl sm:text-4xl md:text-5xl font-black text-white mt-4 uppercase">CURRENT OFFERS & PROMOTIONS</h2>
-            </div>
-
-            {offersBanners.length > 0 ? (
-              <div className="relative h-[320px] sm:h-[420px] lg:h-[520px] overflow-hidden rounded-[2rem] border border-white/10 bg-slate-950/40">
-                <BannerCarousel banners={offersBanners} isLoading={isLoadingPublicData} imageFit="contain" />
-                <div className="absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-slate-950/35 to-transparent pointer-events-none z-10" />
-              </div>
-            ) : (
-              <NoDataFound title="No Offer Banners" subtitle="Upload offer banners to show the offers carousel here." />
-            )}
-          </div>
-        </section>
-
-        <section className="py-16 sm:py-24 relative px-4 overflow-hidden">
-          <div className="mx-auto max-w-5xl">
-            <div className="relative glass-panel p-8 sm:p-12 md:p-20 text-center overflow-hidden border-orange-500/30">
-              <div className="absolute inset-0 bg-slate-950/70" />
-              <div className="absolute top-0 right-0 -mr-20 -mt-20 w-48 sm:w-64 h-48 sm:h-64 bg-orange-500/20 blur-[100px] rounded-full" />
-              <div className="absolute bottom-0 left-0 -ml-20 -mb-20 w-48 sm:w-64 h-48 sm:h-64 bg-indigo-500/20 blur-[100px] rounded-full" />
-
-              <div className="relative z-10">
-                <h2 className="text-3xl sm:text-5xl md:text-6xl font-black text-white mb-6 uppercase leading-tight">READY TO UNLEASH <br /><span className="text-cinematic">YOUR POWER?</span></h2>
-                <p className="text-base sm:text-lg text-slate-400 mb-8 sm:mb-10 max-w-2xl mx-auto">Stop waiting for the perfect time. Join {brandName} and start your next chapter today.</p>
-                <Link to="/contact">
-                  <button className="btn-premium px-8 sm:px-12 py-4 sm:py-5 text-lg sm:text-xl w-full sm:w-auto">
-                    JOIN THE ELITE NOW
-                  </button>
-                </Link>
-              </div>
-            </div>
-          </div>
-        </section>
+export function HomePage() {
+  return (
+    <PublicLayout>
+      <div className="bg-gradient-to-b from-white via-ivory to-cream">
+        <BannerCarousel />
+        <HeroSection />
+        <FeaturesSection />
+        <PricingSection />
+        <TestimonialsSection />
+        <CTASection />
       </div>
     </PublicLayout>
   );

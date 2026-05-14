@@ -29,16 +29,20 @@ import { useGymStore } from "../store/gymStore";
 import { api } from "../utils/httputils";
 import { API_ENDPOINTS } from "../utils/url";
 
-
-
-import { themeStyles, AnimatedBackground } from "../components/ui/AnimatedBackground";
+const themes = [
+  { id: 'elegant', name: 'Elegant Pearl', primary: 'from-indigo-500 to-violet-500', secondary: 'from-rose-400 to-pink-500', accent: '#d4a853' },
+  { id: 'rose', name: 'Rose Gold', primary: 'from-rose-400 to-pink-500', secondary: 'from-amber-400 to-orange-400', accent: '#e8c4b8' },
+  { id: 'sage', name: 'Sage Luxury', primary: 'from-emerald-400 to-teal-500', secondary: 'from-amber-400 to-yellow-500', accent: '#10b981' },
+  { id: 'violet', name: 'Violet Royale', primary: 'from-violet-500 to-purple-600', secondary: 'from-pink-400 to-rose-500', accent: '#8b5cf6' },
+  { id: 'gold', name: 'Golden Luxe', primary: 'from-amber-400 to-yellow-500', secondary: 'from-orange-400 to-amber-400', accent: '#f59e0b' },
+];
 
 export function Sidebar({
-  colorTheme,
+  currentTheme,
   isMobile,
   onClose,
 }: {
-  colorTheme: keyof typeof themeStyles;
+  currentTheme: typeof themes[0];
   isMobile: boolean;
   onClose?: () => void;
 }) {
@@ -47,88 +51,62 @@ export function Sidebar({
   const location = useLocation();
   const { t } = useTranslation();
   const [collapsed, setCollapsed] = useState(false);
+
   useEffect(() => {
     const handleResize = () => {
-      if (window.innerWidth >= 1024) {
-        setCollapsed(false);
-      }
+      if (window.innerWidth >= 1024) setCollapsed(false);
     };
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
-  const currentTheme = themeStyles[colorTheme];
 
-
-  const links =
-    role === "admin"
-      ? [
-        { name: "dashboard", icon: LayoutDashboard, label: t("dashboard") },
-        { name: "users", icon: Users, label: t("users") },
-        { name: "attendance", icon: Calendar, label: t("attendance") },
-        { name: "subscriptions", icon: CreditCard, label: t("subscription") },
-        { name: "payments", icon: CreditCard, label: t("payments") },
-        { name: "products", icon: Box, label: t("products") },
-        { name: "plans", icon: ClipboardList, label: t("plans") || "Plans" },
-        { name: "revenueops", icon: TrendingUp, label: "RevenueOps" },
-        { name: "settings", icon: Settings, label: t("settings") },
-        { name: "inquiries", icon: MessageSquare, label: t("inquiries") },
-      ]
-      : role === "trainer"
-        ? [
-          { name: "dashboard", icon: LayoutDashboard, label: t("dashboard") },
-          { name: "users", icon: Users, label: t("users") },
-          { name: "attendance", icon: Calendar, label: t("attendance") },
-        ]
-        : [
-          { name: "dashboard", icon: LayoutDashboard, label: t("dashboard") },
-          { name: "subscription", icon: CreditCard, label: t("subscription") },
-          { name: "attendance", icon: Users, label: t("attendance") },
-          { name: "payments", icon: CreditCard, label: t("payments") },
-          { name: "products", icon: Box, label: t("products") },
-        ];
+  const links = role === "admin" ? [
+    { name: "dashboard", icon: LayoutDashboard, label: t("dashboard") },
+    { name: "users", icon: Users, label: t("users") },
+    { name: "attendance", icon: Calendar, label: t("attendance") },
+    { name: "subscriptions", icon: CreditCard, label: t("subscription") },
+    { name: "payments", icon: CreditCard, label: t("payments") },
+    { name: "products", icon: Box, label: t("products") },
+    { name: "plans", icon: ClipboardList, label: t("plans") || "Plans" },
+    { name: "revenueops", icon: TrendingUp, label: "RevenueOps" },
+    { name: "settings", icon: Settings, label: t("settings") },
+    { name: "inquiries", icon: MessageSquare, label: t("inquiries") },
+  ] : role === "trainer" ? [
+    { name: "dashboard", icon: LayoutDashboard, label: t("dashboard") },
+    { name: "users", icon: Users, label: t("users") },
+    { name: "attendance", icon: Calendar, label: t("attendance") },
+  ] : [
+    { name: "dashboard", icon: LayoutDashboard, label: t("dashboard") },
+    { name: "subscription", icon: CreditCard, label: t("subscription") },
+    { name: "attendance", icon: Users, label: t("attendance") },
+    { name: "payments", icon: CreditCard, label: t("payments") },
+    { name: "products", icon: Box, label: t("products") },
+  ];
 
   const { publicAppConfig } = useGymStore();
 
   return (
     <motion.aside
-      animate={{
-        width: collapsed ? 80 : 240,
-      }}
+      animate={{ width: collapsed ? 80 : 260 }}
       initial={false}
-      className={`relative flex h-full flex-col rounded-2xl border ${currentTheme.borderColor} backdrop-blur-3xl p-4 overflow-x-hidden select-none transition-all duration-500`}
-      style={{
-        background: currentTheme.sidebarGradient,
-        boxShadow: `0 25px 50px -12px ${currentTheme.glow || 'rgba(0,0,0,0.5)'}`
-      }}
+      className="relative flex h-full flex-col rounded-3xl border border-gold-400/30 bg-white/80 backdrop-blur-xl p-4 overflow-x-hidden select-none shadow-elegant"
     >
-      {/* 🔥 LOGO */}
       <motion.div
         initial={{ opacity: 0, y: -10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5, delay: 0.1 }}
         className={`mb-8 flex ${collapsed ? "flex-col items-center gap-6" : "items-center justify-between gap-3"} transition-all duration-300`}
       >
-        <div className={`flex items-center ${collapsed ? "flex-col gap-2" : "gap-2"}`}>
-          <div
-            className={`h-11 w-11 flex items-center justify-center rounded-2xl bg-gradient-to-br ${currentTheme.accent} shadow-lg shadow-indigo-500/20 hover:shadow-indigo-500/40 transition-all duration-300 relative overflow-hidden`}
-          >
+        <div className={`flex items-center ${collapsed ? "flex-col gap-2" : "gap-3"}`}>
+          <div className="h-12 w-12 flex items-center justify-center rounded-2xl bg-gradient-to-br from-accent-indigo to-accent-violet shadow-lg overflow-hidden relative">
             {publicAppConfig?.logo_image_path ? (
               <img src={publicAppConfig.logo_image_path} alt={publicAppConfig.brand_name} className="h-full w-full object-cover" />
             ) : (
               <>
-                <motion.div
-                  animate={{ scale: [1, 1.1, 1] }}
-                  transition={{ duration: 2, repeat: Infinity }}
-                >
-                  <Dumbbell size={20} className="text-white" />
-                </motion.div>
-                <motion.div
-                  className="absolute -top-1 -right-1 text-yellow-300"
-                  animate={{ opacity: [0, 1, 0], scale: [0.5, 1.2, 0.5] }}
-                  transition={{ duration: 3, repeat: Infinity }}
-                >
+                <Dumbbell size={22} className="text-white relative z-10" />
+                <div className="absolute -top-1 -right-1 text-amber-400">
                   <Sparkles size={12} fill="currentColor" />
-                </motion.div>
+                </div>
               </>
             )}
           </div>
@@ -137,37 +115,25 @@ export function Sidebar({
               key="brand-name"
               initial={{ opacity: 0, x: -10 }}
               animate={{ opacity: 1, x: 0 }}
-              className={`font-black text-lg tracking-tight text-white`}
+              className="font-bold text-lg tracking-tight text-slate-800"
             >
               {publicAppConfig?.brand_name || "ForgeFit"}
             </motion.span>
           )}
         </div>
 
-        {/* COLLAPSE/CLOSE BUTTON */}
         <button
-          className={`${isMobile ? "inline-flex" : "hidden md:inline-flex"} h-9 w-9 items-center justify-center rounded-xl bg-slate-500/5 hover:bg-slate-500/10 text-slate-400 hover:text-white transition-all duration-200`}
+          className={`${isMobile ? "inline-flex" : "hidden md:inline-flex"} h-9 w-9 items-center justify-center rounded-xl bg-cream-100 hover:bg-cream-200 text-slate-600 hover:text-slate-800 transition-all duration-200`}
           onClick={() => {
-            if (isMobile && onClose) {
-              onClose();
-            } else {
-              setCollapsed(!collapsed);
-            }
+            if (isMobile && onClose) onClose();
+            else setCollapsed(!collapsed);
           }}
         >
-          {isMobile ? (
-            <X className="h-6 w-6" />
-          ) : (
-            <ChevronLeft
-              size={20}
-              className={`transition-transform duration-300 ${collapsed ? "rotate-180" : ""}`}
-            />
-          )}
+          {isMobile ? <X className="h-6 w-6" /> : <ChevronLeft size={20} className={`transition-transform duration-300 ${collapsed ? "rotate-180" : ""}`} />}
         </button>
       </motion.div>
 
-      {/* NAV */}
-      <div className="flex-1 min-h-0 overflow-y-auto overflow-x-hidden space-y-1 pr-1 custom-scrollbar">
+      <div className="flex-1 min-h-0 overflow-y-auto overflow-x-hidden space-y-2 pr-1 custom-scrollbar">
         {links.map(({ name, icon: Icon, label }) => {
           const path = `/${role}/${name}`;
           const isActive = location.pathname === path;
@@ -176,34 +142,26 @@ export function Sidebar({
             <NavLink
               key={name}
               to={path}
-              onClick={() => {
-                if (isMobile && onClose) onClose();
-              }}
-              className={`relative flex ${collapsed ? "justify-center" : "items-center gap-3 px-3"} py-2.5 rounded-xl transition-all duration-200 hover:scale-105 group overflow-hidden ${isActive ? "text-white" : "text-slate-400 hover:text-white"}`}
+              onClick={() => { if (isMobile && onClose) onClose(); }}
+              className={`relative flex ${collapsed ? "justify-center" : "items-center gap-3 px-4"} py-3 rounded-2xl transition-all duration-200 group overflow-hidden ${isActive ? "text-white" : "text-slate-600 hover:text-slate-800"}`}
             >
-              {/* ACTIVE BG */}
               {isActive && (
                 <motion.div
                   layoutId="active-pill"
-                  className={`absolute inset-0 rounded-xl bg-gradient-to-r ${currentTheme.accent} shadow-lg shadow-indigo-500/20`}
+                  className={`absolute inset-0 rounded-2xl bg-gradient-to-r ${currentTheme.primary} shadow-gold`}
                 />
               )}
 
-              <Icon size={18} className="relative z-10 shrink-0" />
+              <Icon size={20} className="relative z-10 shrink-0" />
 
               {!collapsed && (
-                <motion.span
-                  initial={{ opacity: 0, x: -10 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  className="relative z-10 capitalize text-sm font-black tracking-tight whitespace-nowrap"
-                >
+                <motion.span initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} className="relative z-10 capitalize text-sm font-semibold whitespace-nowrap">
                   {label}
                 </motion.span>
               )}
 
-              {/* TOOLTIP (Only for desktop collapsed) */}
               {collapsed && !isMobile && (
-                <div className="fixed left-20 bg-slate-900 text-white text-[10px] font-black uppercase tracking-widest px-3 py-2 rounded-lg opacity-0 group-hover:opacity-100 transition-all pointer-events-none z-[1000] border border-white/10 shadow-2xl translate-x-2 group-hover:translate-x-0">
+                <div className="fixed left-24 bg-white text-slate-700 text-xs font-semibold px-3 py-2 rounded-lg opacity-0 group-hover:opacity-100 transition-all pointer-events-none z-[1000] shadow-elegant border border-gold-400/20 translate-x-2 group-hover:translate-x-0">
                   {label}
                 </div>
               )}
@@ -212,30 +170,18 @@ export function Sidebar({
         })}
       </div>
 
-      {/* LOGOUT */}
       <motion.div
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5, delay: 0.3 }}
-        className="mt-4 pt-4 border-t border-slate-200 dark:border-white/10"
+        className="mt-4 pt-4 border-t border-cream-200"
       >
         <button
-          onClick={() => {
-            logout();
-            navigate("/");
-          }}
-          className={`group w-full flex ${collapsed ? "justify-center px-0" : "items-center gap-3 px-4"} py-3 rounded-xl transition-all duration-300 hover:scale-[1.02] border border-transparent text-red-400 hover:bg-red-500/10 hover:border-red-500/20 shadow-lg shadow-red-500/0 hover:shadow-red-500/5 shadow-sm`}
+          onClick={() => { logout(); navigate("/"); }}
+          className="group w-full flex items-center gap-3 px-4 py-3 rounded-2xl transition-all duration-300 hover:bg-red-50 text-slate-600 hover:text-red-600"
         >
           <LogOut size={20} className="shrink-0 transition-transform group-hover:-translate-x-1" />
-          {!collapsed && (
-            <motion.span
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              className="text-xs font-black uppercase tracking-widest"
-            >
-              {t("logout")}
-            </motion.span>
-          )}
+          {!collapsed && <span className="text-sm font-semibold uppercase tracking-wider">{t("logout")}</span>}
         </button>
       </motion.div>
     </motion.aside>
@@ -244,15 +190,17 @@ export function Sidebar({
 
 function DashboardLayout({ children }: { children: React.ReactNode }) {
   const { role, name: authName, id: userId, setUserData } = useAuthStore();
-  const { dashboardColorTheme: colorTheme, setDashboardColorTheme: setColorTheme, publicAppConfig } = useGymStore();
+  const { publicAppConfig } = useGymStore();
 
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [isMobile, setIsMobile] = useState(window.innerWidth < 1024);
-
+  const [isMobile, setIsMobile] = useState(false);
+  const [currentThemeIndex, setCurrentThemeIndex] = useState(0);
   const [profileMenuOpen, setProfileMenuOpen] = useState(false);
   const { t } = useTranslation();
   const { logout } = useAuthStore();
   const navigate = useNavigate();
+
+  const currentTheme = themes[currentThemeIndex];
 
   useEffect(() => {
     if (!userId) return;
@@ -268,12 +216,12 @@ function DashboardLayout({ children }: { children: React.ReactNode }) {
   }, [userId]);
 
   useEffect(() => {
-    const handleResize = () => setIsMobile(window?.innerWidth < 1024);
-    window?.addEventListener("resize", handleResize);
-    return () => window?.removeEventListener("resize", handleResize);
+    const handleResize = () => setIsMobile(window.innerWidth < 1024);
+    handleResize();
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  // Close menus on clicks outside
   useEffect(() => {
     if (!profileMenuOpen) return;
     const closeMenu = () => setProfileMenuOpen(false);
@@ -281,197 +229,134 @@ function DashboardLayout({ children }: { children: React.ReactNode }) {
     return () => window.removeEventListener("click", closeMenu);
   }, [profileMenuOpen]);
 
-  const currentTheme = themeStyles?.[colorTheme];
-
-  const colorThemeKeys = Object?.keys?.(themeStyles) as Array<
-    keyof typeof themeStyles
-  >;
-
-  const nextColorTheme = () => {
-    const nextIndex =
-      (colorThemeKeys.indexOf(colorTheme) + 1) % colorThemeKeys.length;
-    setColorTheme(colorThemeKeys[nextIndex]);
+  const cycleTheme = () => {
+    setCurrentThemeIndex((prev) => (prev + 1) % themes.length);
   };
 
   return (
-    <div
-      className={`relative h-screen min-h-screen overflow-hidden overflow-x-hidden text-white`}
-      style={{
-        // Inject theme tokens as CSS custom properties so ALL descendants
-        // (GlassCard, Table, inputs, etc.) pick them up without needing props.
-        "--theme-card-bg": currentTheme.cardBgRaw,
-        "--theme-border": currentTheme.borderRaw,
-        "--theme-shadow": currentTheme.shadowRaw,
-        "--theme-glow": currentTheme.glow,
-        "--theme-accent": currentTheme.accentRaw,
-      } as React.CSSProperties}
-    >
+    <div className="relative h-screen min-h-screen overflow-hidden overflow-x-hidden text-slate-800">
       <Helmet>
         <title>{`${role === 'admin' ? 'Admin' : role === 'trainer' ? 'Trainer' : 'Member'} Portal | ${publicAppConfig?.brand_name || 'ForgeFit'}`}</title>
       </Helmet>
-      {/* 🔥 ENHANCED ANIMATED BACKGROUND */}
-      <AnimatedBackground colorTheme={colorTheme} />
 
-      {/* MOBILE SIDEBAR OVERLAY */}
+      {/* Elegant Background */}
+      <div className="absolute inset-0 -z-10 bg-gradient-to-br from-cream-50 via-pearl-100 to-cream-200" />
+
       {sidebarOpen && (
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           onClick={() => setSidebarOpen(false)}
-          className="fixed inset-0 z-[90] bg-slate-950/40 backdrop-blur-sm lg:hidden"
+          className="fixed inset-0 z-[90] bg-slate-900/20 backdrop-blur-sm lg:hidden"
         />
       )}
 
-      <div className="flex h-full gap-0 lg:gap-6 p-1.5 md:p-3 lg:p-6">
-        <div
-          className={`fixed inset-y-0 left-0 z-[100] w-[260px] md:w-[280px] transform transition-transform duration-300 lg:relative lg:w-auto lg:translate-x-0 ${sidebarOpen ? "translate-x-0" : "-translate-x-full"}`}
-        >
-          <div className="h-full p-2 md:p-4 lg:p-0">
-            <Sidebar
-              colorTheme={colorTheme}
-              isMobile={isMobile}
-              onClose={() => setSidebarOpen(false)}
-            />
+      <div className="flex h-full gap-4 p-3 lg:p-6">
+        <div className={`fixed inset-y-0 left-0 z-[100] w-[280px] transform transition-transform duration-300 lg:relative lg:w-auto lg:translate-x-0 ${sidebarOpen ? "translate-x-0" : "-translate-x-full"}`}>
+          <div className="h-full p-2 lg:p-0">
+            <Sidebar currentTheme={currentTheme} isMobile={isMobile} onClose={() => setSidebarOpen(false)} />
           </div>
         </div>
 
-        {/* 📊 MAIN CONTENT */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
           className="flex flex-1 flex-col gap-4 min-w-0 overflow-hidden"
         >
-          {/* 🔝 TOP BAR */}
           <motion.div
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.1 }}
-            className={`relative z-[60] rounded-xl lg:rounded-3xl border p-1.5 md:p-2.5 lg:p-4 backdrop-blur-xl mx-0 mt-1 lg:mx-0 lg:mt-0`}
-            style={{
-              background: currentTheme.cardBgRaw,
-              borderColor: currentTheme.borderRaw,
-              boxShadow: `0 0 50px -12px ${currentTheme.shadowRaw}`,
-            }}
+            className="relative z-[60] rounded-2xl border border-gold-400/20 bg-white/80 backdrop-blur-xl p-2 md:p-3 shadow-elegant"
           >
-            <div className="flex items-center justify-between gap-2 lg:gap-3">
-              <div className="flex items-center gap-2 lg:gap-3">
-                {/* HAMBURGER FOR MOBILE */}
+            <div className="flex items-center justify-between gap-3">
+              <div className="flex items-center gap-3">
                 <button
                   onClick={() => setSidebarOpen(true)}
-                  className="flex h-9 w-9 md:h-10 md:w-10 items-center justify-center rounded-xl bg-white/5 border border-white/10 hover:bg-white/10 lg:hidden shrink-0 transition-colors"
+                  className="flex h-10 w-10 items-center justify-center rounded-xl bg-cream-100 border border-cream-200 hover:bg-cream-200 lg:hidden shrink-0 transition-colors"
                 >
-                  <Menu size={18} />
+                  <Menu size={20} className="text-slate-600" />
                 </button>
 
-                <div
-                  className={`flex items-center gap-1.5 lg:gap-3 rounded-2xl lg:rounded-3xl ${currentTheme.borderColor} bg-slate-950/70 px-2 lg:px-3 py-1.5 lg:py-2`}
-                  style={{ boxShadow: `inset 0 2px 10px 0 ${currentTheme.glow}11` }}
-                >
+                <div className="flex items-center gap-2 rounded-2xl bg-cream-50 px-3 py-2 border border-cream-200">
                   <button
                     type="button"
-                    onClick={nextColorTheme}
-                    className={`inline-flex h-8 w-8 md:h-9 md:w-9 lg:h-10 lg:w-10 items-center justify-center rounded-full border transition-all hover:scale-110 border-white/15 bg-white/5 text-slate-100 hover:bg-white/10`}
-                    title={`Switch color palette`}
+                    onClick={cycleTheme}
+                    className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-gold-400/30 bg-gradient-to-r from-gold-400 to-gold-500 text-white hover:scale-110 transition-all shadow-gold"
+                    title={`Switch to ${themes[(currentThemeIndex + 1) % themes.length].name}`}
                   >
-                    <Palette size={isMobile ? 14 : 18} />
+                    <Palette size={16} />
                   </button>
                 </div>
               </div>
 
-              <div className="flex items-center gap-2 lg:gap-4 overflow-visible shrink-0 relative">
+              <div className="flex items-center gap-3 overflow-visible shrink-0">
                 <div className="flex shrink-0">
                   <LanguageSwitcher />
                 </div>
 
                 <div className="relative">
                   <motion.div
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setProfileMenuOpen(!profileMenuOpen);
-                    }}
+                    onClick={(e) => { e.stopPropagation(); setProfileMenuOpen(!profileMenuOpen); }}
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
-                    className={`group relative inline-flex items-center gap-1.5 md:gap-2 lg:gap-3 rounded-xl lg:rounded-2xl border ${currentTheme.borderColor} bg-slate-900/60 border-white/5 shadow-2xl pl-1.5 pr-2 md:pl-2 md:pr-3 lg:pl-2 lg:pr-4 py-1 backdrop-blur-2xl cursor-pointer transition-all duration-500 hover:border-indigo-500/50`}
-                    style={{ boxShadow: profileMenuOpen ? `0 0 25px -5px ${currentTheme.glow}44` : '' }}
+                    className="group relative inline-flex items-center gap-2 rounded-2xl border border-gold-400/20 bg-white shadow-md pl-2 pr-4 py-1.5 cursor-pointer transition-all duration-300 hover:border-gold-400/40 hover:shadow-gold"
                   >
-                    {/* Premium Avatar Circle */}
-                    <div className="relative h-7 w-7 md:h-8 md:w-8 lg:h-9 lg:w-9 rounded-lg lg:rounded-xl bg-gradient-to-br from-indigo-500 to-emerald-400 p-[1px] md:p-[2px] shadow-lg shadow-indigo-500/20 group-hover:shadow-indigo-500/40 transition-shadow">
-                      <div className="flex h-full w-full items-center justify-center rounded-[7px] md:rounded-[10px] bg-slate-950">
-                        <User size={isMobile ? 14 : 16} className="text-white" />
-                      </div>
-                      {/* Online Status Dot */}
-                      <span className="absolute -bottom-0.5 -right-0.5 h-2.5 w-2.5 rounded-full border-2 border-slate-950 bg-emerald-500 shadow-lg" />
+                    <div className="h-9 w-9 rounded-xl bg-gradient-to-br from-accent-indigo to-accent-violet flex items-center justify-center shadow-md">
+                      <User size={18} className="text-white" />
                     </div>
-
-                    <div className="flex flex-col items-start leading-none gap-0.5 overflow-hidden">
-                      <span
-                        className={`text-[9px] md:text-[10px] lg:text-[11px] font-black uppercase tracking-tighter bg-gradient-to-r from-indigo-400 to-emerald-400 bg-clip-text text-transparent group-hover:from-white group-hover:to-white transition-all duration-500 truncate max-w-[40px] xs:max-w-[80px] sm:max-w-[120px]`}
-                      >
+                    <div className="flex flex-col items-start leading-none">
+                      <span className="text-sm font-semibold text-slate-700 truncate max-w-[100px]">
                         {authName || role || "Account"}
                       </span>
-                      <span className="text-[6px] md:text-[7px] font-black uppercase tracking-tight md:tracking-[0.2em] text-slate-500 group-hover:text-amber-400 transition-colors whitespace-nowrap">
-                        {role === "admin" ? "Master" : "Active"}
+                      <span className="text-xs font-medium text-slate-400 uppercase">
+                        {role === "admin" ? "Admin" : "Active"}
                       </span>
                     </div>
-
-                    {/* Subtle Glow Effect */}
-                    <div className="absolute inset-0 rounded-2xl bg-indigo-500/0 group-hover:bg-indigo-500/5 transition-all duration-300 -z-10" />
                   </motion.div>
 
-                  {/* 💎 USER POPUP MENU */}
                   <AnimatePresence>
                     {profileMenuOpen && (
                       <motion.div
                         initial={{ opacity: 0, y: 10, scale: 0.95 }}
                         animate={{ opacity: 1, y: 0, scale: 1 }}
                         exit={{ opacity: 0, y: 10, scale: 0.95 }}
-                        className={`absolute right-0 mt-2 w-64 rounded-2xl border-2 ${currentTheme.borderColor} bg-slate-950 text-white shadow-[0_20px_50px_rgba(0,0,0,0.8)] p-3 z-[1000] ring-1 ring-white/10`}
+                        className="absolute right-0 mt-3 w-56 rounded-2xl bg-white border border-gold-400/20 shadow-elegant-lg p-3 z-[1000]"
                         onClick={(e) => e.stopPropagation()}
                       >
-                        <div className="px-3 py-3 border-b border-white/10 mb-2">
-                          <p className="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-1 leading-none">Accessing Account</p>
-                          <p className={`text-[13px] font-black truncate uppercase tracking-tight text-indigo-400`}>
-                            {authName || "User Account"}
-                          </p>
+                        <div className="px-3 py-3 border-b border-cream-200 mb-2">
+                          <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">Account</p>
+                          <p className="text-sm font-semibold text-slate-800 truncate">{authName || "User Account"}</p>
                         </div>
 
-                        <div className="space-y-1 relative">
+                        <div className="space-y-1">
                           <button
-                            onClick={() => {
-                              navigate(`/${role}/profile`);
-                              setProfileMenuOpen(false);
-                            }}
-                            className={`w-full flex items-center gap-3 px-3 py-3 rounded-xl hover:bg-indigo-500/10 transition-all group text-slate-300 hover:text-white`}
+                            onClick={() => { navigate(`/${role}/profile`); setProfileMenuOpen(false); }}
+                            className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-cream-50 text-slate-600 hover:text-slate-800 transition-colors"
                           >
-                            <User size={16} className={`text-indigo-400`} />
-                            <span className="text-[11px] font-black uppercase tracking-widest">My Profile</span>
+                            <User size={16} className="text-accent-indigo" />
+                            <span className="text-sm font-semibold">My Profile</span>
                           </button>
 
                           <button
-                            onClick={() => {
-                              navigate(`/${role}/change-password`);
-                              setProfileMenuOpen(false);
-                            }}
-                            className={`w-full flex items-center gap-3 px-3 py-3 rounded-xl hover:bg-amber-500/10 transition-all group text-slate-300 hover:text-white`}
+                            onClick={() => { navigate(`/${role}/change-password`); setProfileMenuOpen(false); }}
+                            className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-cream-50 text-slate-600 hover:text-slate-800 transition-colors"
                           >
-                            <Settings size={16} className={`text-amber-400`} />
-                            <span className="text-[11px] font-black uppercase tracking-widest">Change Password</span>
+                            <Settings size={16} className="text-gold-500" />
+                            <span className="text-sm font-semibold">Change Password</span>
                           </button>
                         </div>
 
-                        <div className="h-px bg-white/10 my-3" />
+                        <div className="h-px bg-cream-200 my-3" />
 
                         <button
-                          onClick={() => {
-                            logout();
-                            navigate("/");
-                          }}
-                          className="w-full flex items-center gap-3 px-3 py-3 rounded-xl bg-red-500/10 hover:bg-red-500 text-red-500 hover:text-white transition-all group shadow-inner"
+                          onClick={() => { logout(); navigate("/"); }}
+                          className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-red-50 text-red-500 transition-colors"
                         >
                           <LogOut size={16} />
-                          <span className="text-[11px] font-black uppercase tracking-widest">Log Out</span>
+                          <span className="text-sm font-semibold">Log Out</span>
                         </button>
                       </motion.div>
                     )}
@@ -481,12 +366,11 @@ function DashboardLayout({ children }: { children: React.ReactNode }) {
             </div>
           </motion.div>
 
-          {/* 📦 CONTENT AREA */}
           <motion.div
             initial={{ opacity: 0, scale: 0.98 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.5, delay: 0.2 }}
-            className={`flex-1 min-h-0 overflow-hidden rounded-2xl lg:rounded-3xl ${currentTheme.borderColor} bg-gradient-to-b from-white/5 to-white/0 backdrop-blur-xl shadow-inner`}
+            className="flex-1 min-h-0 overflow-hidden rounded-2xl border border-gold-400/20 bg-white/60 backdrop-blur-xl shadow-inner"
           >
             <div className="custom-scrollbar h-full min-h-0 overflow-y-auto p-4 lg:p-6">
               {children}

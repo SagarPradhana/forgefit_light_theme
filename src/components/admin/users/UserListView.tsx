@@ -92,11 +92,21 @@ export const UserListView = ({
       return;
     }
     const rect = e.currentTarget.getBoundingClientRect();
-    // Position below the button, aligned to its right edge
-    setMenuPos({
-      top: rect.bottom + 8,
-      left: Math.min(rect.right - 224, window.innerWidth - 236),
-    });
+    const menuWidth = 240;
+    const menuHeight = 400; // Estimated max height
+    
+    let top = rect.bottom + 8;
+    let left = rect.right - menuWidth;
+
+    // Viewport overflow checks
+    if (left < 16) left = 16;
+    if (left + menuWidth > window.innerWidth - 16) left = window.innerWidth - menuWidth - 16;
+    if (top + menuHeight > window.innerHeight - 16) {
+      top = rect.top - menuHeight - 8;
+      if (top < 16) top = 16; // Fallback to top if no space either way
+    }
+
+    setMenuPos({ top, left });
     setOpenMenuId(userId);
   };
 
@@ -233,8 +243,14 @@ export const UserListView = ({
             initial={{ opacity: 0, scale: 0.93, y: -6 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             transition={{ duration: 0.15, ease: "easeOut" }}
-            style={{ position: "fixed", top: menuPos.top, left: menuPos.left, zIndex: 9999 }}
-            className="w-60 rounded-2xl border border-white/15 bg-slate-950 shadow-[0_20px_60px_rgba(0,0,0,0.9)] overflow-hidden"
+            style={{ 
+              position: "fixed", 
+              top: menuPos.top, 
+              left: menuPos.left, 
+              zIndex: 9999,
+              maxHeight: "calc(100vh - 40px)"
+            }}
+            className="w-60 rounded-2xl border border-white/15 bg-slate-950 shadow-[0_20px_60px_rgba(0,0,0,0.9)] overflow-y-auto custom-scrollbar"
           >
             {/* Header */}
             <div className="px-4 py-3 border-b border-white/10 bg-gradient-to-r from-indigo-600/10 to-transparent">
@@ -567,7 +583,7 @@ export const UserListView = ({
                 <div className="h-3 w-48 bg-white/5 rounded-md animate-pulse" />
               </div>
            </div>
-           <SkeletonRows n={8} />
+           <SkeletonRows count={8} />
         </div>
       ) : (
         <div className="text-center py-32 bg-slate-900/60 rounded-[3rem] border border-white/10 backdrop-blur-3xl shadow-2xl">

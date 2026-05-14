@@ -154,7 +154,7 @@ type GymState = {
   publicPageConfig: PublicPageConfig;
   designThemes: DesignTheme[];
   currentDesignTheme: string;
-  dashboardColorTheme: "theme1" | "theme2" | "theme3" | "theme4" | "theme5";
+  dashboardColorTheme: "theme1" | "theme2" | "theme3" | "theme4" | "theme5" | "theme6" | "theme7" | "theme8" | "theme9" | "theme10";
 
   // Actions
   addUser: (user: Omit<User, "id">) => void;
@@ -387,7 +387,7 @@ export const useGymStore = create<GymState>((set) => ({
   updateAppConfig: (config) => set((state) => ({ appConfig: { ...state.appConfig, ...config } })),
   updatePublicPageConfig: (config) => set((state) => ({ publicPageConfig: { ...state.publicPageConfig, ...config } })),
   setDesignTheme: (themeId) => set(() => ({ currentDesignTheme: themeId })),
-  dashboardColorTheme: "theme1",
+  dashboardColorTheme: "theme6",
   setDashboardColorTheme: (themeId) => set(() => ({ dashboardColorTheme: themeId })),
 
   // Public Data Initial State

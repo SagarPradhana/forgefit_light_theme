@@ -1,18 +1,19 @@
 import { motion } from "framer-motion";
 import clsx from "clsx";
 
-export function Card({ children, className }: any) {
+export function Card({ children, className, hover = false, padding = "md", ...props }: any) {
+  const paddings = { none: "", sm: "p-4", md: "p-6", lg: "p-8" };
+
   return (
     <motion.div
-      whileHover={{ y: -6, scale: 1.02 }}
+      whileHover={hover ? { y: -4, scale: 1.01 } : undefined}
       className={clsx(
-        "rounded-2xl p-6",
-        "bg-gradient-to-b from-white/10 to-white/5",
-        "border border-white/10",
-        "backdrop-blur-xl",
-        "shadow-[0_10px_40px_rgba(0,0,0,0.4)]",
+        "rounded-2xl bg-white border border-gold-400/20 shadow-elegant",
+        paddings[padding as keyof typeof paddings] || paddings.md,
+        hover && "hover:shadow-elegant-lg hover:border-gold-400/40 cursor-pointer transition-all duration-300",
         className,
       )}
+      {...props}
     >
       {children}
     </motion.div>

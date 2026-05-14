@@ -30,7 +30,7 @@ export function ManualAttendanceModal({
   const { t } = useTranslation();
   return (
     <Modal
-      open={isOpen}
+      isOpen={isOpen}
       onClose={onClose}
       title={editingRecord ? t("editAttendanceLog") : t("manualCheckIn")}
       footer={

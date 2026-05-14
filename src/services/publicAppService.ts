@@ -35,6 +35,8 @@ export interface Testimonial {
   id: string;
   name: string;
   note: string;
+  content?: string;
+  avatar?: string;
   created_date: number;
   updated_date: number;
 }
@@ -74,6 +76,7 @@ export interface SubscriptionPlan {
   actual_price: number;
   price: number;
   duration_in_months: number;
+  features?: string[];
   status: boolean;
   is_deleted: boolean;
   created_date: number;

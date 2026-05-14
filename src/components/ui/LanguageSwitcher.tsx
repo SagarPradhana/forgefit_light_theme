@@ -21,37 +21,28 @@ const LanguageSwitcher: React.FC = () => {
 
   return (
     <div className="relative inline-block">
-      {/* 🔥 BUTTON */}
       <button
         onClick={() => setOpen(!open)}
-        className="flex items-center gap-2 px-3 py-2 rounded-xl bg-white/10 border border-white/20 backdrop-blur hover:bg-white/15 transition text-white font-medium text-sm"
+        className="flex items-center gap-2 px-4 py-2.5 rounded-2xl bg-white border border-gold-400/20 shadow-sm hover:shadow-gold hover:border-gold-400/40 transition-all text-slate-700 font-medium text-sm"
       >
-        <Languages size={15} />
-        <span className="text-sm font-bold">
-          {currentLang?.flag} {currentLang?.name}
-        </span>
-        <ChevronDown
-          size={13}
-          className={`transition ${open ? "rotate-180" : ""}`}
-        />
+        <Languages size={16} className="text-gold-500" />
+        <span className="text-sm font-semibold">{currentLang?.flag} {currentLang?.name}</span>
+        <ChevronDown size={14} className={`transition ${open ? "rotate-180" : ""}`} />
       </button>
 
-      {/* 💎 DROPDOWN */}
       {open && (
-        <div className="absolute right-0 mt-2 w-44 rounded-xl bg-slate-900 border border-white/20 shadow-[0_8px_32px_rgba(0,0,0,0.8)] z-[200] overflow-hidden">
+        <div className="absolute right-0 mt-3 w-48 rounded-2xl bg-white border border-gold-400/20 shadow-elegant-lg z-[200] overflow-hidden">
           {languages.map((lang) => (
             <button
               key={lang.code}
               onClick={() => changeLanguage(lang.code)}
-              className={`w-full flex items-center gap-3 px-4 py-2.5 text-sm font-semibold transition-all
-                ${
-                  i18n.language === lang.code
-                    ? "bg-indigo-600 text-white"
-                    : "text-slate-200 hover:bg-slate-800 hover:text-white"
-                }
-              `}
+              className={`w-full flex items-center gap-3 px-4 py-3 text-sm font-semibold transition-all ${
+                i18n.language === lang.code
+                  ? "bg-gradient-to-r from-gold-400/10 to-amber-400/10 text-gold-600"
+                  : "text-slate-600 hover:bg-cream-50 hover:text-slate-800"
+              }`}
             >
-              <span className="text-base">{lang.flag}</span>
+              <span className="text-lg">{lang.flag}</span>
               {lang.name}
             </button>
           ))}

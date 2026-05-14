@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:wght@400;500;600;700&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -28,173 +30,229 @@ body,
   -moz-osx-font-smoothing: grayscale;
 }
 
-h1,
-h2,
-h3,
-h4,
-h5,
-h6 {
-  font-family: 'Outfit', sans-serif;
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Playfair Display', serif;
 }
 
 body {
-  background: #020617;
+  background: linear-gradient(135deg, #fdfbfb 0%, #f8f5f2 50%, #f5f0eb 100%);
   overflow-x: hidden;
+  color: #1a1a2e;
 }
 
-/* Cursor Glow with Lag */
-.cursor-glow {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 800px;
-  height: 800px;
-  pointer-events: none;
-  z-index: 9999;
-  background: radial-gradient(circle,
-      rgba(249, 115, 22, 0.08) 0%,
-      transparent 70%);
-  border-radius: 50%;
-  transform: translate(calc(var(--mouse-x, -1000px) - 50%), calc(var(--mouse-y, -1000px) - 50%));
-  transition: transform 0.1s ease-out;
-  will-change: transform;
+.light-glamour-gradient {
+  background: linear-gradient(135deg, #fff9f5 0%, #fef6f0 40%, #fdf8f3 70%, #faf5ef 100%);
 }
 
-/* Nav Underline */
-.nav-link-underline {
-  position: relative;
-}
-
-.nav-link-underline::after {
-  content: '';
-  position: absolute;
-  bottom: -4px;
-  left: 0;
-  width: 100%;
-  height: 2px;
-  background-color: #F97316;
-  transform: scaleX(0);
-  transform-origin: left;
-  transition: transform 0.3s cubic-bezier(0.25, 0.1, 0.25, 1);
-}
-
-.nav-link-underline:hover::after {
-  transform: scaleX(1);
-}
-
-/* Pulse Glow Animation */
-@keyframes pulse-glow {
-  0% {
-    box-shadow: 0 0 0 0 rgba(249, 115, 22, 0.4);
-  }
-
-  70% {
-    box-shadow: 0 0 0 10px rgba(249, 115, 22, 0);
-  }
-
-  100% {
-    box-shadow: 0 0 0 0 rgba(249, 115, 22, 0);
-  }
-}
-
-.pulse-glow-hover:hover {
-  animation: pulse-glow 1.5s infinite;
-}
-
-/* Background Blobs */
-.bg-blob {
-  position: absolute;
-  width: 600px;
-  height: 600px;
-  border-radius: 50%;
-  filter: blur(120px);
-  z-index: -1;
-  opacity: 0.12;
-  pointer-events: none;
-}
-
-/* Theme Variables */
+/* ─────────────────────────────────────────────────────────────────
+   RICH GLAMOROUS THEME COLORS
+   ───────────────────────────────────────────────────────────────── */
 :root {
-  --theme-primary: #3B82F6;
-  --theme-secondary: #1F2937;
-  --theme-accent: #F59E0B;
-  --theme-background: #FFFFFF;
-  --theme-text: #111827;
+  --glamour-cream: #fdf9f6;
+  --glamour-pearl: #faf7f4;
+  --glamour-ivory: #f5f0eb;
+  --glamour-champagne: #f8e8dc;
+  --glamour-rose: #fdf2f0;
+  --glamour-gold: linear-gradient(135deg, #d4a853 0%, #c9a045 50%, #b8953f 100%);
+  --glamour-rose-gold: linear-gradient(135deg, #e8c4b8 0%, #d4a593 100%);
+  --glamour-sage: #e8efe8;
+  --glamour-lavender: #f3f0f8;
+  
+  /* Rich accent colors */
+  --accent-indigo: #4f46e5;
+  --accent-rose: #ec4899;
+  --accent-amber: #f59e0b;
+  --accent-emerald: #10b981;
+  --accent-violet: #8b5cf6;
+  
+  /* Text colors */
+  --text-primary: #1a1a2e;
+  --text-secondary: #4a4a5a;
+  --text-muted: #8a8a9a;
 }
 
-/* Theme-aware styles */
-[data-theme-layout="centered"] .container {
-  max-width: 1200px;
-  margin: 0 auto;
-}
-
-[data-theme-layout="wide"] .container {
-  max-width: 1600px;
-  margin: 0 auto;
-}
-
-[data-theme-layout="minimal"] .container {
-  max-width: 1000px;
-  margin: 0 auto;
-}
-
-[data-theme-typography="modern"] h1,
-[data-theme-typography="modern"] h2,
-[data-theme-typography="modern"] h3 {
-  font-weight: 600;
-  letter-spacing: -0.025em;
-}
-
-[data-theme-typography="bold"] h1,
-[data-theme-typography="bold"] h2,
-[data-theme-typography="bold"] h3 {
-  font-weight: 700;
-  letter-spacing: -0.02em;
-}
-
-[data-theme-typography="classic"] h1,
-[data-theme-typography="classic"] h2,
-[data-theme-typography="classic"] h3 {
-  font-weight: 500;
-  letter-spacing: 0;
-}
-
-[data-theme-button="rounded"] .btn {
-  border-radius: 0.5rem;
-}
-
-[data-theme-button="square"] .btn {
-  border-radius: 0.25rem;
-}
-
-[data-theme-button="pill"] .btn {
-  border-radius: 9999px;
-}
-
+/* Custom Scrollbar - Glamorous */
 .custom-scrollbar {
   scrollbar-width: auto;
-  scrollbar-color: rgba(99, 102, 241, 0.8) rgba(15, 23, 42, 0.3);
+  scrollbar-color: rgba(79, 70, 229, 0.3) rgba(245, 240, 235, 0.5);
   scrollbar-gutter: stable;
 }
 
 .custom-scrollbar::-webkit-scrollbar {
-  width: 12px;
-  height: 12px;
+  width: 10px;
+  height: 10px;
 }
 
 .custom-scrollbar::-webkit-scrollbar-track {
-  background: rgba(15, 23, 42, 0.2);
-  border-radius: 10px;
+  background: rgba(245, 240, 235, 0.5);
+  border-radius: 8px;
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb {
-  background: linear-gradient(180deg, #6366f1, #a855f7);
-  border-radius: 10px;
-  border: 3px solid rgba(15, 23, 42, 0.1);
+  background: linear-gradient(180deg, #d4a853 0%, #c9a045 100%);
+  border-radius: 8px;
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(180deg, rgba(99, 102, 241, 1), rgba(249, 168, 212, 1));
+  background: linear-gradient(180deg, #c9a045 0%, #b8953f 100%);
+}
+
+/* ─────────────────────────────────────────────────────────────────
+   ELEGANT BUTTONS
+   ───────────────────────────────────────────────────────────────── */
+.btn-glamour {
+  background: linear-gradient(135deg, #4f46e5 0%, #6366f1 100%);
+  color: white;
+  border-radius: 16px;
+  padding: 14px 28px;
+  font-weight: 600;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 4px 15px rgba(79, 70, 229, 0.3);
+}
+
+.btn-glamour:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(79, 70, 229, 0.4);
+}
+
+.btn-gold {
+  background: var(--glamour-gold);
+  color: white;
+  border-radius: 16px;
+  padding: 14px 28px;
+  font-weight: 600;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 4px 15px rgba(212, 168, 83, 0.4);
+}
+
+.btn-gold:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(212, 168, 83, 0.5);
+}
+
+/* ─────────────────────────────────────────────────────────────────
+   ELEGANT CARDS
+   ───────────────────────────────────────────────────────────────── */
+.card-glamour {
+  background: white;
+  border-radius: 24px;
+  border: 1px solid rgba(212, 168, 83, 0.2);
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.06);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.card-glamour:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+  border-color: rgba(212, 168, 83, 0.4);
+}
+
+/* ─────────────────────────────────────────────────────────────────
+   LUXURY INPUTS
+   ───────────────────────────────────────────────────────────────── */
+.input-glamour {
+  background: #faf7f4;
+  border: 1px solid #e8e4df;
+  border-radius: 14px;
+  color: #1a1a2e;
+  padding: 14px 18px;
+  transition: all 0.2s;
+}
+
+.input-glamour:focus {
+  outline: none;
+  border-color: #d4a853;
+  box-shadow: 0 0 0 3px rgba(212, 168, 83, 0.15);
+}
+
+.input-glamour::placeholder {
+  color: #a0a0b0;
+}
+
+/* ─────────────────────────────────────────────────────────────────
+   NAVIGATION ELEMENTS
+   ───────────────────────────────────────────────────────────────── */
+.nav-glamour {
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid rgba(212, 168, 83, 0.15);
+}
+
+.nav-link-elegant {
+  position: relative;
+  color: #4a4a5a;
+  font-weight: 500;
+  transition: color 0.3s;
+}
+
+.nav-link-elegant::after {
+  content: '';
+  position: absolute;
+  bottom: -4px;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background: linear-gradient(90deg, #d4a853, #c9a045);
+  transition: width 0.3s;
+}
+
+.nav-link-elegant:hover::after {
+  width: 100%;
+}
+
+/* ─────────────────────────────────────────────────────────────────
+   LUXURY BORDERS & ACCENTS
+   ───────────────────────────────────────────────────────────────── */
+.border-gold {
+  border: 1px solid rgba(212, 168, 83, 0.3);
+}
+
+.border-rose-gold {
+  border: 1px solid rgba(232, 196, 184, 0.4);
+}
+
+.gold-gradient-text {
+  background: linear-gradient(135deg, #d4a853 0%, #c9a045 50%, #b8953f 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.rose-gradient-text {
+  background: linear-gradient(135deg, #ec4899 0%, #f472b6 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.indigo-gradient-text {
+  background: linear-gradient(135deg, #4f46e5 0%, #6366f1 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ─────────────────────────────────────────────────────────────────
+   ELEGANT ANIMATIONS
+   ───────────────────────────────────────────────────────────────── */
+@keyframes float-gentle {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+@keyframes shimmer-gold {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+.animate-float-gentle {
+  animation: float-gentle 3s ease-in-out infinite;
+}
+
+.shimmer-gold {
+  background: linear-gradient(90deg, transparent, rgba(212, 168, 83, 0.3), transparent);
+  background-size: 200% 100%;
+  animation: shimmer-gold 2s infinite;
 }
 
 @layer utilities {
@@ -208,55 +266,111 @@ body {
   }
 }
 
-/* ─────────────────────────────────────────────────────────────────────────────
-   SYSTEM-WIDE THEME INHERITANCE
-   When the DashboardLayout sets --theme-* CSS custom properties on its root
-   div, ALL descendant components inherit the colours automatically.
-   The rules below map common hardcoded Tailwind patterns to the theme vars.
-   ───────────────────────────────────────────────────────────────────────────── */
+/* ─────────────────────────────────────────────────────────────────
+   GLOBAL DARK THEME OVERRIDES FOR LIGHT THEME
+   ───────────────────────────────────────────────────────────────── */
 
-/* Smooth theme colour transitions for every element inside the layout */
-[style*="--theme-card-bg"] * {
-  transition:
-    background-color 0.4s ease,
-    border-color 0.4s ease,
-    box-shadow 0.4s ease;
+/* Override all hardcoded dark backgrounds */
+[class*="bg-slate-950"],
+[class*="bg-slate-900"],
+[class*="bg-[#0a"],
+[class*="bg-[#0"] {
+  background: linear-gradient(135deg, #fdf9f6 0%, #f8f5f2 50%, #f5f0eb 100%) !important;
 }
 
-/* ── Card / Panel containers that use hardcoded slate backgrounds ── */
-[style*="--theme-card-bg"] .bg-slate-900\/40,
-[style*="--theme-card-bg"] .bg-slate-900\/60,
-[style*="--theme-card-bg"] .bg-slate-900\/70,
-[style*="--theme-card-bg"] .bg-slate-900\/80,
-[style*="--theme-card-bg"] .bg-slate-900 {
-  background: var(--theme-card-bg, rgba(15, 23, 42, 0.4)) !important;
+/* Override dark text to light text */
+[class*="text-white"],
+[class*="text-slate-50"],
+[class*="text-slate-100"],
+.text-white {
+  color: #1a1a2e !important;
 }
 
-[style*="--theme-card-bg"] .bg-slate-800\/40,
-[style*="--theme-card-bg"] .bg-slate-800\/60,
-[style*="--theme-card-bg"] .bg-slate-800 {
-  background: color-mix(in srgb, var(--theme-card-bg, rgba(15,23,42,0.4)) 60%, rgba(30,41,59,0.6)) !important;
+/* Dark text for white backgrounds - override light text on light backgrounds */
+.bg-white .text-white,
+.bg-slate-900\/40 .text-white,
+.bg-slate-900\/60 .text-white {
+  color: #1a1a2e !important;
 }
 
-/* ── Semi-transparent white overlays (used for card rows, list items) ── */
-[style*="--theme-card-bg"] .bg-white\/5 {
-  background: color-mix(in srgb, var(--theme-card-bg, rgba(255,255,255,0.05)) 50%, rgba(255,255,255,0.03)) !important;
-}
-[style*="--theme-card-bg"] .bg-white\/10 {
-  background: color-mix(in srgb, var(--theme-card-bg, rgba(255,255,255,0.1)) 80%, rgba(255,255,255,0.05)) !important;
+/* Fix specific dark elements */
+.bg-gradient-to-r.from-black\/90,
+.bg-gradient-to-r.from-black\/60 {
+  background: linear-gradient(to right, rgba(253,249,246,0.9), rgba(253,249,246,0.6)) !important;
 }
 
-/* ── Theme-coloured borders ── */
-[style*="--theme-border"] .border-white\/10,
-[style*="--theme-border"] .border-white\/15,
-[style*="--theme-border"] .border-white\/20 {
-  border-color: var(--theme-border, rgba(255,255,255,0.12)) !important;
+/* Fix black overlays */
+[class*="from-black\/"],
+[class*="via-black\/"],
+[class*="to-black\/"] {
+  all: unset;
 }
 
-/* ── Header topbar uses currentTheme.cardBg class — override it too ── */
-[style*="--theme-card-bg"] [class*="bg-purple-950"],
-[style*="--theme-card-bg"] [class*="bg-emerald-950"],
-[style*="--theme-card-bg"] [class*="bg-orange-950"],
-[style*="--theme-card-bg"] [class*="bg-amber-950"] {
-  background: var(--theme-card-bg, rgba(15, 23, 42, 0.4)) !important;
-}
+/* Fix text with white background */
+.text-white\/75 {
+  color: #4a4a5a !important;
+}
+
+/* Fix orange text to gold */
+.text-\[\#e8521a\] {
+  background: linear-gradient(135deg, #d4a853 0%, #c9a045 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Fix buttons */
+.bg-\[\#e8521a\] {
+  background: linear-gradient(135deg, #4f46e5 0%, #6366f1 100%) !important;
+}
+
+/* Fix borders */
+.border-white\/40,
+.border-white\/20,
+.border-white\/10 {
+  border-color: rgba(212, 168, 83, 0.3) !important;
+}
+
+/* Fix overlay gradients */
+.absolute.inset-0.bg-gradient-to-r.from-black\/90,
+.absolute.inset-0.bg-gradient-to-t.from-\[#0a0a0c\] {
+  display: none !important;
+}
+
+/* Fix section backgrounds in public pages */
+section[class*="bg-"],
+section[class*="from-"] {
+  background: linear-gradient(135deg, #ffffff 0%, #fdf9f6 100%) !important;
+}
+
+/* Fix carousel dark background */
+.relative.inset-0.z-0 {
+  background: linear-gradient(135deg, #fdf9f6 0%, #f8f5f2 100%) !important;
+}
+
+/* Fix dark card backgrounds */
+.bg-slate-900\/40,
+.bg-slate-900\/60,
+.bg-slate-900\/70,
+.bg-slate-900\/80,
+.bg-slate-800\/40,
+.bg-slate-800\/60 {
+  background: rgba(255, 255, 255, 0.9) !important;
+  border: 1px solid rgba(212, 168, 83, 0.2);
+}
+
+/* Fix dark input backgrounds */
+input[type="text"],
+input[type="email"],
+input[type="password"],
+textarea {
+  background: #faf7f4 !important;
+  border: 1px solid #e8e4df !important;
+  color: #1a1a2e !important;
+}
+
+/* Fix footer dark background */
+footer[class*="bg-black"],
+footer[class*="from-black"],
+footer[class*="bg-slate"] {
+  background: linear-gradient(to bottom, #ffffff, #fdf9f6) !important;
+}

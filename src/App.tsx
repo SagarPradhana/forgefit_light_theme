@@ -47,7 +47,6 @@ const AdminPortalPages = lazy(() =>
   })),
 );
 
-// Admin Pages
 const AdminDashboard = lazy(() => import("./pages/AdminDashboard"));
 const UserManagement = lazy(() => import("./components/admin/UserManagement").then(m => ({ default: m.UserManagement })));
 const AttendanceManagement = lazy(() => import("./components/admin/AttendanceManagement").then(m => ({ default: m.AttendanceManagement })));
@@ -73,14 +72,12 @@ const TrainerPortalPages = lazy(() =>
   })),
 );
 
-// Trainer Pages
 const TrainerDashboard = lazy(() => import("./pages/trainer/TrainerDashboard").then(m => ({ default: m.TrainerDashboard })));
 const TrainerAttendance = lazy(() => import("./components/trainer/TrainerAttendance").then(m => ({ default: m.TrainerAttendance })));
 const TrainerProfile = lazy(() => import("./pages/trainer/TrainerProfile").then(m => ({ default: m.TrainerProfile })));
 const TrainerWorkouts = lazy(() => import("./pages/trainer/TrainerWorkouts").then(m => ({ default: m.TrainerWorkouts })));
 const TrainerDiets = lazy(() => import("./pages/trainer/TrainerDiets").then(m => ({ default: m.TrainerDiets })));
 
-// User Pages
 const UserDashboard = lazy(() => import("./pages/UserDashboard"));
 const UserProfile = lazy(() => import("./pages/user/UserProfile").then(m => ({ default: m.UserProfile })));
 const UserSubscription = lazy(() => import("./pages/user/UserSubscription").then(m => ({ default: m.UserSubscription })));
@@ -89,22 +86,16 @@ const UserPayments = lazy(() => import("./pages/user/UserPayments").then(m => ({
 const UserProducts = lazy(() => import("./pages/user/UserProducts").then(m => ({ default: m.UserProducts })));
 const SettingsPanel = lazy(() => import("./pages/SettingPanel").then(m => ({ default: m.SettingsPanel })));
 
-/** Returns true if the stored JWT token exists and has not expired. */
 function isTokenValid(token: string | null): boolean {
   if (!token) return false;
   try {
     const payload = JSON.parse(atob(token.split(".")[1].replace(/-/g, "+").replace(/_/g, "/")));
-    // exp is in seconds; Date.now() is in ms
     return typeof payload.exp === "number" && payload.exp * 1000 > Date.now();
   } catch {
     return false;
   }
 }
 
-/**
- * Wraps public pages. If the user already has a valid session they are
- * redirected straight to their dashboard — same experience as a native app.
- */
 function AuthRedirect({ children }: { children: React.ReactNode }) {
   const { isAuthenticated, role, token } = useAuthStore();
   if (isAuthenticated && isTokenValid(token)) {
@@ -130,13 +121,12 @@ function ProtectedRole({
   return <>{children}</>;
 }
 
-
 const LoadingScreen = () => (
   <motion.div
     initial={{ opacity: 1 }}
     exit={{ opacity: 0 }}
     transition={{ duration: 0.5 }}
-    className="fixed inset-0 z-[100] flex flex-col items-center justify-center bg-slate-950"
+    className="fixed inset-0 z-[100] flex flex-col items-center justify-center bg-gradient-to-br from-cream-50 via-pearl-50 to-cream-100"
   >
     <motion.div
       initial={{ scale: 0.8, opacity: 0 }}
@@ -144,12 +134,14 @@ const LoadingScreen = () => (
       transition={{ duration: 0.5, ease: "easeOut" }}
       className="flex flex-col items-center gap-6"
     >
-      <div className="relative flex h-20 w-20 items-center justify-center">
-        <div className="absolute inset-0 animate-spin rounded-full border-[3px] border-indigo-500/20 border-t-indigo-500"></div>
-        <div className="absolute inset-2 animate-spin rounded-full border-[3px] border-orange-500/20 border-t-orange-500" style={{ animationDirection: 'reverse', animationDuration: '1.5s' }}></div>
+      <div className="relative flex h-24 w-24 items-center justify-center">
+        <div className="absolute inset-0 rounded-3xl bg-gradient-to-br from-gold-400 to-gold-500 shadow-gold-lg animate-pulse"></div>
+        <div className="absolute inset-2 rounded-2xl bg-white flex items-center justify-center">
+          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-accent-indigo to-accent-violet"></div>
+        </div>
       </div>
-      <div className="text-xs font-black tracking-[0.3em] text-white/50 uppercase animate-pulse">
-        Initializing...
+      <div className="text-sm font-semibold tracking-[0.2em] text-slate-500 uppercase animate-pulse">
+        Loading...
       </div>
     </motion.div>
   </motion.div>
@@ -178,7 +170,6 @@ export default function App() {
     });
   }, [location.pathname, fetchPublicData]);
 
-  // Update app config based on public data
   useEffect(() => {
     if (publicAppConfig) {
       updateAppConfig({
@@ -192,7 +183,6 @@ export default function App() {
         language: publicAppConfig.language,
       });
 
-      // Synchronize i18n
       if (publicAppConfig.language) {
         import("./i18n").then(({ default: i18n }) => {
           i18n.changeLanguage(publicAppConfig.language);
@@ -202,26 +192,15 @@ export default function App() {
   }, [publicAppConfig]);
 
   useEffect(() => {
-    const timer = setTimeout(() => setIsLoading(false), 1200);
-
-    const handleMouseMove = (e: MouseEvent) => {
-      document.documentElement.style.setProperty("--mouse-x", `${e.clientX}px`);
-      document.documentElement.style.setProperty("--mouse-y", `${e.clientY}px`);
-    };
-
-    window.addEventListener("mousemove", handleMouseMove);
-    return () => {
-      clearTimeout(timer);
-      window.removeEventListener("mousemove", handleMouseMove);
-    };
+    const timer = setTimeout(() => setIsLoading(false), 1500);
+    return () => clearTimeout(timer);
   }, []);
 
   return (
-    <div className="relative min-h-screen bg-slate-950 overflow-x-hidden">
+    <div className="relative min-h-screen bg-gradient-to-br from-cream-50 via-pearl-50 to-cream-100 overflow-x-hidden">
       <AnimatePresence>
         {isLoading && <LoadingScreen key="loader" />}
       </AnimatePresence>
-      <div className="cursor-glow" />
       <ToastContainer />
       <Suspense fallback={<LoadingSpinner />}>
         <Routes>
