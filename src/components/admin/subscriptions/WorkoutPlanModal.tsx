@@ -31,7 +31,7 @@ export function WorkoutPlanModal({
       footer={
         <div className="flex gap-3 justify-end w-full">
           <button
-            className="px-6 py-2.5 rounded-xl text-sm font-bold text-slate-400 hover:text-white hover:bg-white/5 transition-all"
+            className="px-6 py-2.5 rounded-xl text-sm font-bold text-[var(--text-muted)] hover:text-[var(--accent-orange)] hover:bg-[var(--bg-card-hover)] transition-all"
             onClick={onClose}
             disabled={saving}
           >
@@ -48,7 +48,7 @@ export function WorkoutPlanModal({
           <div className="space-y-2">
             <label className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] ml-1">{t("planIdentity")}</label>
             <input
-              className="w-full rounded-2xl bg-slate-950 border border-white/5 p-4 text-white focus:border-indigo-500/50 outline-none transition duration-300 text-sm font-bold shadow-inner"
+              className="w-full rounded-2xl bg-[var(--bg-secondary)] border border-[var(--border-subtle)] p-4 text-[var(--text-primary)] focus:border-[var(--accent-orange)]/50 outline-none transition duration-300 text-sm font-bold"
               value={workoutForm.name}
               onChange={(e) => setWorkoutForm({ ...workoutForm, name: e.target.value })}
               placeholder={t("planIdentityPlaceholder")}
@@ -57,7 +57,7 @@ export function WorkoutPlanModal({
           <div className="space-y-2">
             <label className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] ml-1">{t("protocolType")}</label>
             <input
-              className="w-full rounded-2xl bg-slate-950 border border-white/5 p-4 text-white focus:border-indigo-500/50 outline-none transition duration-300 text-sm font-bold shadow-inner"
+              className="w-full rounded-2xl bg-[var(--bg-secondary)] border border-[var(--border-subtle)] p-4 text-[var(--text-primary)] focus:border-[var(--accent-orange)]/50 outline-none transition duration-300 text-sm font-bold"
               value={workoutForm.type}
               onChange={(e) => setWorkoutForm({ ...workoutForm, type: e.target.value })}
               placeholder={t("protocolTypePlaceholder")}
@@ -66,7 +66,7 @@ export function WorkoutPlanModal({
           <div className="space-y-2 md:col-span-2">
             <label className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] ml-1">{t("primaryFocus")}</label>
             <input
-              className="w-full rounded-2xl bg-slate-950 border border-white/5 p-4 text-white focus:border-indigo-500/50 outline-none transition duration-300 text-sm font-bold shadow-inner"
+              className="w-full rounded-2xl bg-[var(--bg-secondary)] border border-[var(--border-subtle)] p-4 text-[var(--text-primary)] focus:border-[var(--accent-orange)]/50 outline-none transition duration-300 text-sm font-bold"
               value={workoutForm.focus}
               onChange={(e) => setWorkoutForm({ ...workoutForm, focus: e.target.value })}
               placeholder={t("primaryFocusPlaceholder")}
@@ -75,7 +75,7 @@ export function WorkoutPlanModal({
           <div className="space-y-2 md:col-span-2">
             <label className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] ml-1">{t("strategyDescription")}</label>
             <textarea
-              className="w-full rounded-2xl bg-slate-950 border border-white/5 p-4 text-white focus:border-indigo-500/50 outline-none transition duration-300 text-sm font-medium resize-none h-24 shadow-inner"
+              className="w-full rounded-2xl bg-[var(--bg-secondary)] border border-[var(--border-subtle)] p-4 text-[var(--text-primary)] focus:border-[var(--accent-orange)]/50 outline-none transition duration-300 text-sm font-medium resize-none h-24"
               value={workoutForm.description}
               onChange={(e) => setWorkoutForm({ ...workoutForm, description: e.target.value })}
               placeholder={t("strategyDescriptionPlaceholder")}
@@ -84,11 +84,11 @@ export function WorkoutPlanModal({
         </div>
 
         <div className="space-y-6">
-          <div className="flex items-center justify-between border-b border-white/10 pb-4">
-            <div className="flex flex-col gap-1">
-              <h3 className="text-sm font-black text-white uppercase tracking-widest">{t("trainingCycles")}</h3>
-              <p className="text-[10px] text-slate-500 font-bold uppercase tracking-tight">{t("trainingCyclesSub")}</p>
-            </div>
+            <div className="flex items-center justify-between border-b border-[var(--border-subtle)] pb-4">
+              <div className="flex flex-col gap-1">
+                <h3 className="text-sm font-black text-[var(--text-primary)] uppercase tracking-widest">{t("trainingCycles")}</h3>
+                <p className="text-[10px] text-[var(--text-muted)] font-bold uppercase tracking-tight">{t("trainingCyclesSub")}</p>
+              </div>
             <button
               onClick={() => setWorkoutForm({
                 ...workoutForm,
@@ -103,14 +103,14 @@ export function WorkoutPlanModal({
 
           <div className="space-y-4">
             {workoutForm.workout_details.map((dayDetail, dIndex) => (
-              <div key={dIndex} className="bg-slate-900/40 rounded-2xl p-6 border border-white/5 space-y-6 relative group transition-all hover:border-white/10 hover:bg-slate-900/60">
+                <div key={dIndex} className="bg-[var(--bg-secondary)] rounded-2xl p-6 border border-[var(--border-subtle)] space-y-6 relative group transition-all hover:border-[var(--accent-orange)]/20 hover:bg-[var(--bg-card-hover)]">
                 <button
                   onClick={() => {
                     const newDetails = [...workoutForm.workout_details];
                     newDetails.splice(dIndex, 1);
                     setWorkoutForm({ ...workoutForm, workout_details: newDetails });
                   }}
-                  className="absolute top-4 right-4 text-slate-600 hover:text-red-400 transition-colors bg-white/5 hover:bg-red-500/10 p-1.5 rounded-lg"
+                  className="absolute top-4 right-4 text-[var(--text-muted)] hover:text-red-500 transition-colors bg-[var(--bg-card-hover)] hover:bg-red-500/10 p-1.5 rounded-lg"
                 >
                   <Trash2 size={14} />
                 </button>
@@ -118,7 +118,7 @@ export function WorkoutPlanModal({
                 <div className="w-full md:w-1/2">
                   <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">{t("dayIdentifier")}</label>
                   <select
-                    className="w-full bg-transparent border-b border-white/10 py-2 text-white focus:border-indigo-500 outline-none text-base font-black mt-1 transition-colors"
+                    className="w-full bg-transparent border-b border-[var(--border-subtle)] py-2 text-[var(--text-primary)] focus:border-[var(--accent-orange)] outline-none text-base font-black mt-1 transition-colors"
                     value={dayDetail.day || ""}
                     onChange={(e) => {
                       const newDetails = [...workoutForm.workout_details];
@@ -126,14 +126,14 @@ export function WorkoutPlanModal({
                       setWorkoutForm({ ...workoutForm, workout_details: newDetails });
                     }}
                   >
-                    <option value="" className="bg-slate-900 text-slate-500">{t("selectDay")}</option>
-                    <option value="1" className="bg-slate-900 text-white">{t("monday")}</option>
-                    <option value="2" className="bg-slate-900 text-white">{t("tuesday")}</option>
-                    <option value="3" className="bg-slate-900 text-white">{t("wednesday")}</option>
-                    <option value="4" className="bg-slate-900 text-white">{t("thursday")}</option>
-                    <option value="5" className="bg-slate-900 text-white">{t("friday")}</option>
-                    <option value="6" className="bg-slate-900 text-white">{t("saturday")}</option>
-                    <option value="7" className="bg-slate-900 text-white">{t("sunday")}</option>
+                      <option value="" className="bg-white text-[var(--text-muted)]">{t("selectDay")}</option>
+                      <option value="1" className="bg-white text-[var(--text-primary)]">{t("monday")}</option>
+                      <option value="2" className="bg-white text-[var(--text-primary)]">{t("tuesday")}</option>
+                      <option value="3" className="bg-white text-[var(--text-primary)]">{t("wednesday")}</option>
+                      <option value="4" className="bg-white text-[var(--text-primary)]">{t("thursday")}</option>
+                      <option value="5" className="bg-white text-[var(--text-primary)]">{t("friday")}</option>
+                      <option value="6" className="bg-white text-[var(--text-primary)]">{t("saturday")}</option>
+                      <option value="7" className="bg-white text-[var(--text-primary)]">{t("sunday")}</option>
                   </select>
                 </div>
 
@@ -154,12 +154,12 @@ export function WorkoutPlanModal({
                   
                   <div className="grid gap-2">
                     {dayDetail.workouts.map((ex, eIndex) => (
-                      <div key={eIndex} className="flex gap-2 items-center bg-slate-950/80 p-3 rounded-xl border border-white/5 group/row hover:border-indigo-500/20 transition-all">
+                      <div key={eIndex} className="flex gap-2 items-center bg-[var(--bg-primary)] p-3 rounded-xl border border-[var(--border-subtle)] group/row hover:border-[var(--accent-orange)]/20 transition-all">
                         <div className="flex-1 grid grid-cols-2 md:grid-cols-4 gap-3">
                           <div className="space-y-1">
-                            <span className="text-[9px] font-black text-slate-600 uppercase tracking-wider ml-1">{t("target")}</span>
+                            <span className="text-[9px] font-black text-[var(--text-muted)] uppercase tracking-wider ml-1">{t("target")}</span>
                             <input
-                              className="bg-slate-900 border border-white/5 rounded-lg px-3 py-2 text-xs text-white w-full outline-none focus:border-indigo-500/30"
+                              className="bg-white border border-[var(--border-subtle)] rounded-lg px-3 py-2 text-xs text-[var(--text-primary)] w-full outline-none focus:border-[var(--accent-orange)]/30"
                               placeholder={t("bodyPart")}
                               value={ex.target_body_part}
                               onChange={(e) => {
@@ -170,9 +170,9 @@ export function WorkoutPlanModal({
                             />
                           </div>
                           <div className="space-y-1">
-                            <span className="text-[9px] font-black text-slate-600 uppercase tracking-wider ml-1">{t("exercise")}</span>
+                            <span className="text-[9px] font-black text-[var(--text-muted)] uppercase tracking-wider ml-1">{t("exercise")}</span>
                             <input
-                              className="bg-slate-900 border border-white/5 rounded-lg px-3 py-2 text-xs text-white w-full outline-none focus:border-indigo-500/30"
+                              className="bg-white border border-[var(--border-subtle)] rounded-lg px-3 py-2 text-xs text-[var(--text-primary)] w-full outline-none focus:border-[var(--accent-orange)]/30"
                               placeholder={t("name")}
                               value={ex.name}
                               onChange={(e) => {
@@ -183,10 +183,10 @@ export function WorkoutPlanModal({
                             />
                           </div>
                           <div className="space-y-1">
-                            <span className="text-[9px] font-black text-slate-600 uppercase tracking-wider ml-1">{t("sets")}</span>
+                            <span className="text-[9px] font-black text-[var(--text-muted)] uppercase tracking-wider ml-1">{t("sets")}</span>
                             <input
                               type="number"
-                              className="bg-slate-900 border border-white/5 rounded-lg px-3 py-2 text-xs text-white w-full outline-none focus:border-indigo-500/30"
+                              className="bg-white border border-[var(--border-subtle)] rounded-lg px-3 py-2 text-xs text-[var(--text-primary)] w-full outline-none focus:border-[var(--accent-orange)]/30"
                               value={ex.no_of_sets}
                               onChange={(e) => {
                                 const newDetails = [...workoutForm.workout_details];
@@ -196,9 +196,9 @@ export function WorkoutPlanModal({
                             />
                           </div>
                           <div className="space-y-1">
-                            <span className="text-[9px] font-black text-slate-600 uppercase tracking-wider ml-1">{t("reps")}</span>
+                            <span className="text-[9px] font-black text-[var(--text-muted)] uppercase tracking-wider ml-1">{t("reps")}</span>
                             <input
-                              className="bg-slate-900 border border-white/5 rounded-lg px-3 py-2 text-xs text-white w-full outline-none focus:border-indigo-500/30"
+                              className="bg-white border border-[var(--border-subtle)] rounded-lg px-3 py-2 text-xs text-[var(--text-primary)] w-full outline-none focus:border-[var(--accent-orange)]/30"
                               placeholder={t("repsPlaceholder")}
                               value={ex.reps}
                               onChange={(e) => {
@@ -215,7 +215,7 @@ export function WorkoutPlanModal({
                             newDetails[dIndex].workouts.splice(eIndex, 1);
                             setWorkoutForm({ ...workoutForm, workout_details: newDetails });
                           }}
-                          className="text-slate-700 hover:text-red-400 transition-colors mt-4 p-1.5"
+                          className="text-[var(--text-muted)] hover:text-red-500 transition-colors mt-4 p-1.5"
                         >
                           <Trash2 size={12} />
                         </button>

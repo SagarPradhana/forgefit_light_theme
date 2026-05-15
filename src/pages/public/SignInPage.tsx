@@ -75,173 +75,168 @@ export function SignInPage() {
 
   return (
     <PublicLayout>
-      <div className="min-h-[80vh] grid md:grid-cols-2 items-center gap-10 overflow-hidden">
-        {/* 🔥 LEFT SIDE (VISUAL SECTION) */}
-        <motion.div
-          initial={{ x: -60, opacity: 0 }}
-          animate={{ x: 0, opacity: 1 }}
-          transition={{ duration: 0.8, ease: "easeOut" }}
-          className="hidden md:grid justify-center space-y-6"
-        >
-          <div className="flex flex-col space-y-2">
-            <span className="badge-premium w-fit">
+      <div className="grid grid-cols-1 md:grid-cols-2 min-h-[calc(100vh-80px)]">
+        {/* LEFT SIDE */}
+        <div className="hidden md:flex items-center justify-center p-10 bg-gradient-to-br from-[var(--bg-primary)] to-[var(--bg-secondary)]">
+          <motion.div
+            initial={{ opacity: 0, x: -40 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.8, ease: "easeOut" }}
+            className="space-y-8 max-w-md"
+          >
+            <div className="badge-premium-light inline-flex">
               <Sparkles className="w-4 h-4" />
               Member Exclusive
-            </span>
-          </div>
-
-          <motion.h1
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2, duration: 0.6 }}
-            className="text-5xl md:text-7xl font-display font-bold leading-[0.95] text-charcoal"
-          >
-            TRANSFORM <br />
-            <span className="text-gradient">
-              YOUR BODY
-            </span>
-          </motion.h1>
-
-          <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3, duration: 0.6 }}
-            className="text-muted max-w-md"
-          >
-            Join thousands of members achieving their fitness goals with
-            personalized training, smart tracking, and expert coaching.
-          </motion.p>
-
-          {/* STATS */}
-          <div className="flex gap-8 text-sm pt-4">
-            {[
-              { label: "Members", value: "500+" },
-              { label: "Trainers", value: "50+" },
-              { label: "Transformations", value: "1200+" },
-            ].map((stat, i) => (
-              <motion.div
-                key={stat.label}
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.4 + i * 0.1 }}
-              >
-                <p className="text-charcoal font-bold text-xl">{stat.value}</p>
-                <p className="text-[10px] uppercase tracking-widest text-muted font-bold">{stat.label}</p>
-              </motion.div>
-            ))}
-          </div>
-        </motion.div>
-
-        {/* 💎 RIGHT SIDE (FORM) */}
-        <motion.div
-          initial={{ x: 60, opacity: 0 }}
-          animate={{ x: 0, opacity: 1 }}
-          transition={{ duration: 0.8, ease: "easeOut" }}
-          className="w-full max-w-md mx-auto"
-        >
-          <CommonCard className="p-8 md:p-12 bg-white border border-[var(--border-subtle)] shadow-2xl relative overflow-hidden group rounded-3xl">
-            <div className="absolute top-0 right-0 p-6 opacity-5 group-hover:opacity-20 transition-opacity">
-              <Sparkles className="text-[var(--accent-orange)] h-16 w-16" />
             </div>
 
-            <motion.div
-              initial={{ opacity: 0, y: 10 }}
+            <motion.h1
+              initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.2 }}
+              transition={{ delay: 0.2, duration: 0.6 }}
+              className="heading-premium-xl"
             >
-              <h2 className="text-3xl font-display font-bold mb-3 text-charcoal">Welcome Back 👋</h2>
-              <p className="text-muted mb-10">
-                Sign in to continue your journey
-              </p>
-            </motion.div>
+              TRANSFORM <br />
+              <span className="text-gradient-premium">
+                YOUR BODY
+              </span>
+            </motion.h1>
 
-            {/* FORM */}
-            <form onSubmit={handleFormSubmit} className="space-y-5" noValidate>
-              <motion.div
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.3 }}
-              >
-                <InputField
-                  placeholder="Username / Email / Phone"
-                  value={email}
-                  onChange={(e: any) => { setEmail(e); if (errors.email) setErrors(prev => ({ ...prev, email: undefined })); }}
-                  className={`bg-cream-50 focus:bg-white transition-all border-[var(--border-subtle)] focus:border-[var(--accent-orange)] ${errors.email ? "!border-red-500" : ""}`}
-                />
-                {errors.email && (
-                  <p className="mt-1.5 text-xs text-red-500 font-medium">{errors.email}</p>
-                )}
-              </motion.div>
+            <motion.p
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.3, duration: 0.6 }}
+              className="text-[var(--text-muted)] max-w-md leading-relaxed"
+            >
+              Join thousands of members achieving their fitness goals with
+              personalized training, smart tracking, and expert coaching.
+            </motion.p>
 
-              <motion.div
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.4 }}
-                className="relative"
-              >
-                <InputField
-                  placeholder="Password"
-                  type={showPassword ? "text" : "password"}
-                  value={password}
-                  onChange={(e: any) => { setPassword(e); if (errors.password) setErrors(prev => ({ ...prev, password: undefined })); }}
-                  className={`pr-12 bg-cream-50 focus:bg-white transition-all border-[var(--border-subtle)] focus:border-[var(--accent-orange)] ${errors.password ? "!border-red-500" : ""}`}
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 text-muted hover:text-charcoal transition-colors p-1"
+            <div className="flex gap-8 pt-4">
+              {[
+                { label: "Members", value: "500+" },
+                { label: "Trainers", value: "50+" },
+                { label: "Transformations", value: "1200+" },
+              ].map((stat, i) => (
+                <motion.div
+                  key={stat.label}
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.4 + i * 0.1 }}
                 >
-                  {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-                </button>
-                {errors.password && (
-                  <p className="mt-1.5 text-xs text-red-500 font-medium">{errors.password}</p>
-                )}
-              </motion.div>
+                  <p className="text-[var(--text-primary)] font-bold text-2xl">{stat.value}</p>
+                  <p className="text-[10px] uppercase tracking-widest text-[var(--text-muted)] font-bold">{stat.label}</p>
+                </motion.div>
+              ))}
+            </div>
+          </motion.div>
+        </div>
 
-              {/* FORGOT */}
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.5 }}
-                className="flex justify-end"
-              >
-                <Link to="/forgot-password">
-                  <button type="button" className="text-sm text-[var(--accent-orange)] hover:text-[var(--accent-gold)] transition-colors font-bold uppercase tracking-wider">
-                    Forgot password?
-                  </button>
-                </Link>
-              </motion.div>
-
+        {/* RIGHT SIDE (FORM) */}
+        <div className="flex items-center justify-center p-6 md:p-10">
+          <motion.div
+            initial={{ opacity: 0, x: 40 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.8, ease: "easeOut" }}
+            className="w-full max-w-md mx-auto"
+          >
+            <div className="bg-[var(--bg-card)] border border-[var(--border-subtle)] rounded-3xl p-8 md:p-10 shadow-[var(--shadow-hover)]">
               <motion.div
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.6 }}
+                transition={{ delay: 0.2 }}
               >
-                <CommonButton
-                  type="submit"
-                  className="w-full h-12 text-base font-semibold transition-all hover:scale-[1.02] active:scale-[0.98] pulse-glow-hover"
-                  disabled={loading}
-                  onClick={handleRealSignIn}
+                <h2 className="text-3xl font-bold text-[var(--text-primary)] mb-3">Welcome Back</h2>
+                <p className="text-[var(--text-muted)] mb-10">
+                  Sign in to continue your journey
+                </p>
+              </motion.div>
+
+              <form onSubmit={handleFormSubmit} className="space-y-5" noValidate>
+                <motion.div
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.3 }}
                 >
-                  {loading ? (
-                    <Loader2 className="animate-spin" size={20} />
-                  ) : (
-                    "Sign In"
+                  <input
+                    placeholder="Username / Email / Phone"
+                    value={email}
+                    onChange={(e) => { setEmail(e.target.value); if (errors.email) setErrors(prev => ({ ...prev, email: undefined })); }}
+                    className={`input-premium ${errors.email ? "!border-red-500" : ""}`}
+                  />
+                  {errors.email && (
+                    <p className="mt-1.5 text-xs text-red-500 font-medium">{errors.email}</p>
                   )}
-                </CommonButton>
-              </motion.div>
+                </motion.div>
 
-              <motion.p
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.7 }}
-                className="text-center text-muted text-sm pt-2"
-              >
-                Don't have an account? <Link to="/contact" className="text-[var(--accent-orange)] hover:underline font-bold">Join us</Link>
-              </motion.p>
-            </form>
-          </CommonCard>
-        </motion.div>
+                <motion.div
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.4 }}
+                  className="relative"
+                >
+                  <input
+                    placeholder="Password"
+                    type={showPassword ? "text" : "password"}
+                    value={password}
+                    onChange={(e) => { setPassword(e.target.value); if (errors.password) setErrors(prev => ({ ...prev, password: undefined })); }}
+                    className={`input-premium pr-12 ${errors.password ? "!border-red-500" : ""}`}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-4 top-1/2 -translate-y-1/2 text-[var(--text-muted)] hover:text-[var(--text-primary)] transition-colors p-1"
+                  >
+                    {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                  </button>
+                  {errors.password && (
+                    <p className="mt-1.5 text-xs text-red-500 font-medium">{errors.password}</p>
+                  )}
+                </motion.div>
+
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 0.5 }}
+                  className="flex justify-end"
+                >
+                  <Link to="/forgot-password">
+                    <button type="button" className="text-sm text-[var(--accent-orange)] hover:text-[var(--accent-gold)] transition-colors font-bold uppercase tracking-wider">
+                      Forgot password?
+                    </button>
+                  </Link>
+                </motion.div>
+
+                <motion.div
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.6 }}
+                >
+                  <button
+                    type="submit"
+                    disabled={loading}
+                    onClick={handleRealSignIn}
+                    className="btn-premium-primary w-full justify-center h-12 text-sm"
+                  >
+                    {loading ? (
+                      <Loader2 className="animate-spin" size={20} />
+                    ) : (
+                      "Sign In"
+                    )}
+                  </button>
+                </motion.div>
+
+                <motion.p
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 0.7 }}
+                  className="text-center text-[var(--text-muted)] text-sm pt-2"
+                >
+                  Don&apos;t have an account? <Link to="/contact" className="text-[var(--accent-orange)] hover:underline font-bold">Join us</Link>
+                </motion.p>
+              </form>
+            </div>
+          </motion.div>
+        </div>
       </div>
     </PublicLayout>
   );

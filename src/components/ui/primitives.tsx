@@ -169,8 +169,23 @@ export function Pagination({ currentPage, totalPages, onPageChange }: { currentP
 }
 
 export function LoadingSpinner({ size = "md" }: { size?: "sm" | "md" | "lg" }) {
-  const sizes = { sm: "w-4 h-4", md: "w-8 h-8", lg: "w-12 h-12" };
-  return <div className={clsx("animate-spin rounded-full border-2 border-[var(--border-subtle)] border-t-[var(--accent-orange)]", sizes[size])} />;
+  const px = { sm: 16, md: 32, lg: 48 };
+  const borderPx = { sm: 2, md: 3, lg: 4 };
+  const s = px[size];
+  const bp = borderPx[size];
+  return (
+    <div
+      className="animate-spin rounded-full"
+      style={{
+        width: s,
+        height: s,
+        background: `conic-gradient(from 0deg, transparent 60%, var(--accent-orange) 85%, var(--accent-gold) 100%)`,
+        WebkitMask: `radial-gradient(farthest-side, transparent calc(100% - ${bp}px), #fff calc(100% - ${bp - 0.5}px))`,
+        mask: `radial-gradient(farthest-side, transparent calc(100% - ${bp}px), #fff calc(100% - ${bp - 0.5}px))`,
+        boxShadow: `0 0 15px var(--glow-orange)`,
+      }}
+    />
+  );
 }
 
 export function NotFound404() {
@@ -268,7 +283,7 @@ export function Modal({
         initial={{ opacity: 0 }} 
         animate={{ opacity: 1 }} 
         exit={{ opacity: 0 }} 
-        className="absolute inset-0 bg-black/40 backdrop-blur-sm" 
+        className="absolute inset-0 bg-black/70 backdrop-blur-lg" 
         onClick={onClose} 
       />
       <motion.div 
@@ -276,29 +291,29 @@ export function Modal({
         animate={{ opacity: 1, scale: 1, y: 0 }} 
         exit={{ opacity: 0, scale: 0.95, y: 20 }} 
         className={clsx(
-          "relative w-full bg-[var(--bg-card)] rounded-3xl overflow-hidden border border-[var(--border-subtle)]",
+          "relative w-full bg-white rounded-3xl overflow-hidden border border-gray-200",
           sizes[size]
         )}
-        style={{ boxShadow: "var(--shadow-card)" }}
+        style={{ boxShadow: "0 10px 40px rgba(0,0,0,0.12)" }}
       >
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-5 border-b border-[var(--border-subtle)] bg-[var(--bg-secondary)]">
-          <h2 className="text-xl font-bold text-[var(--text-primary)]">{title}</h2>
+        <div className="flex items-center justify-between px-6 py-5 border-b border-gray-200 bg-gray-50">
+          <h2 className="text-xl font-bold text-gray-800">{title}</h2>
           <button 
             onClick={onClose} 
-            className="p-2.5 text-[var(--text-muted)] hover:text-[var(--accent-orange)] hover:bg-[var(--bg-card-hover)] rounded-xl transition-all"
+            className="p-2.5 text-gray-400 hover:text-orange-600 hover:bg-orange-50 rounded-xl transition-all"
           >
             <X className="w-5 h-5" />
           </button>
         </div>
-        <div className="p-6 bg-[var(--bg-card)] overflow-y-auto max-h-[calc(100vh-200px)] custom-scrollbar">{children}</div>
+        <div className="p-6 bg-white overflow-y-auto max-h-[calc(100vh-200px)] custom-scrollbar">{children}</div>
         {footer && (
-          <div className="px-6 py-4 border-t border-[var(--border-subtle)] bg-[var(--bg-secondary)] flex justify-end gap-3">
+          <div className="px-6 py-4 border-t border-gray-200 bg-gray-50 flex justify-end gap-3">
             {footer}
           </div>
         )}
         {/* Bottom accent line */}
-        <div className="h-1 bg-gradient-to-r from-[var(--accent-orange)] via-[var(--accent-gold)] to-[var(--accent-orange)]" />
+        <div className="h-1 bg-gradient-to-r from-orange-600 via-amber-500 to-orange-600" />
       </motion.div>
     </div>,
     document.body,
@@ -459,7 +474,16 @@ export function ButtonLoader({ label, loadingLabel, loading, className, spinnerC
   if (loading) {
     return (
       <div className="flex items-center justify-center gap-2">
-        <div className={clsx("w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin", spinnerClassName)} />
+        <div
+          className={clsx("animate-spin rounded-full", spinnerClassName)}
+          style={{
+            width: 20,
+            height: 20,
+            background: "conic-gradient(from 0deg, transparent 60%, rgba(255,255,255,0.8) 85%, #fff 100%)",
+            WebkitMask: "radial-gradient(farthest-side, transparent calc(100% - 2px), #fff calc(100% - 1.5px))",
+            mask: "radial-gradient(farthest-side, transparent calc(100% - 2px), #fff calc(100% - 1.5px))",
+          }}
+        />
         {loadingLabel && <span>{loadingLabel}</span>}
       </div>
     );
@@ -468,7 +492,18 @@ export function ButtonLoader({ label, loadingLabel, loading, className, spinnerC
 }
 
 export function InlineSpinner({ className }: { className?: string }) {
-  return <div className={clsx("w-4 h-4 border-2 border-[var(--border-subtle)] border-t-[var(--accent-orange)] rounded-full animate-spin", className)} />;
+  return (
+    <div
+      className={clsx("animate-spin rounded-full", className)}
+      style={{
+        width: 16,
+        height: 16,
+        background: "conic-gradient(from 0deg, transparent 60%, var(--accent-orange) 85%, var(--accent-gold) 100%)",
+        WebkitMask: "radial-gradient(farthest-side, transparent calc(100% - 2px), #fff calc(100% - 1.5px))",
+        mask: "radial-gradient(farthest-side, transparent calc(100% - 2px), #fff calc(100% - 1.5px))",
+      }}
+    />
+  );
 }
 
 export function SkeletonRows({ count = 5, n }: { count?: number; n?: number }) {
@@ -488,9 +523,19 @@ export function SkeletonRows({ count = 5, n }: { count?: number; n?: number }) {
 export function LoadingOverlay({ show, message }: { show?: boolean; message?: string }) {
   if (!show) return null;
   return (
-    <div className="absolute inset-0 bg-[var(--bg-card)]/80 backdrop-blur-sm flex items-center justify-center z-50 rounded-2xl">
+    <div className="absolute inset-0 bg-white/80 backdrop-blur-sm flex items-center justify-center z-50 rounded-2xl">
       <div className="text-center">
-        <div className="w-12 h-12 border-4 border-[var(--border-subtle)] border-t-[var(--accent-orange)] rounded-full animate-spin mx-auto mb-3" />
+        <div className="relative w-14 h-14 mx-auto mb-3">
+          <div
+            className="absolute inset-0 rounded-full animate-spin"
+            style={{
+              background: "conic-gradient(from 0deg, transparent 60%, var(--accent-orange) 85%, var(--accent-gold) 100%)",
+              WebkitMask: "radial-gradient(farthest-side, transparent calc(100% - 3px), #fff calc(100% - 2.5px))",
+              mask: "radial-gradient(farthest-side, transparent calc(100% - 3px), #fff calc(100% - 2.5px))",
+              boxShadow: "0 0 20px var(--glow-orange)",
+            }}
+          />
+        </div>
         <p className="text-sm font-medium text-[var(--text-muted)]">{message || "Loading..."}</p>
       </div>
     </div>

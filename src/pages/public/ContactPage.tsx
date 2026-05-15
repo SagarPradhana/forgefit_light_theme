@@ -224,7 +224,7 @@ export function ContactPage() {
 
           {/* Map / Visual Section */}
           <section className="mb-24">
-            <div className="relative h-[400px] rounded-[2.5rem] overflow-hidden group">
+            <div className="relative h-[250px] md:h-[400px] rounded-[2.5rem] overflow-hidden group">
               <img 
                 src={contactBanner} 
                 alt="Gym Map" 

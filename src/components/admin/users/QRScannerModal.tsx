@@ -166,15 +166,15 @@ export function QRScannerModal({ isOpen, onClose }: { isOpen: boolean; onClose: 
           </div>
           
           <div className="flex items-center justify-between w-full max-w-lg mt-6">
-            <p className="text-sm font-bold text-slate-400 flex items-center gap-2">
-              <Camera size={16} /> Align QR Code within frame
-            </p>
-            <button 
-              onClick={toggleCamera}
-              className="flex items-center gap-2 bg-white/10 hover:bg-white/20 text-white px-3 py-1.5 rounded-lg text-xs font-bold uppercase tracking-widest transition-all shadow-sm"
-            >
-              <RefreshCcw size={14} /> Flip Camera
-            </button>
+             <p className="text-sm font-bold text-[var(--text-muted)] flex items-center gap-2">
+               <Camera size={16} /> Align QR Code within frame
+             </p>
+             <button 
+               onClick={toggleCamera}
+               className="flex items-center gap-2 bg-[var(--bg-secondary)] hover:bg-[var(--bg-card-hover)] text-[var(--text-primary)] px-3 py-1.5 rounded-lg text-xs font-bold uppercase tracking-widest transition-all shadow-sm border border-[var(--border-subtle)]"
+             >
+               <RefreshCcw size={14} /> Flip Camera
+             </button>
           </div>
         </div>
 

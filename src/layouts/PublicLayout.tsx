@@ -2,7 +2,7 @@ import type { ReactNode } from "react";
 import { useState, useEffect } from "react";
 import { Link, NavLink, useLocation } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { Dumbbell, Home, Info, Briefcase, CreditCard, MessageSquare, Phone, Menu, X, MessageCircle, ArrowRight } from "lucide-react";
+import { Dumbbell, Home, Info, Briefcase, CreditCard, MessageSquare, Phone, Menu, MessageCircle, ArrowRight } from "lucide-react";
 import { ThemeProvider } from "../components/ui/ThemeProvider";
 import LanguageSwitcher from "../components/ui/LanguageSwitcher";
 import { useGymStore } from "../store/gymStore";
@@ -34,15 +34,8 @@ function PremiumNav({ onMobileOpen }: { onMobileOpen: () => void }) {
   ];
 
   return (
-    <nav className={`navbar fixed top-0 left-0 right-0 w-full z-50 transition-all duration-500 ${scrolled ? 'navbar-solid-light py-3' : 'navbar-transparent-light py-5'}`}>
-      {/* Dynamic Accent Line */}
-      <motion.div 
-        initial={{ scaleX: 0 }}
-        animate={{ scaleX: scrolled ? 1 : 0 }}
-        className="absolute bottom-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-[var(--accent-orange)] to-transparent opacity-30" 
-      />
-      
-      <div className="container mx-auto px-6">
+    <nav className={`fixed top-0 left-0 right-0 w-full z-50 transition-all duration-500 ${scrolled ? 'navbar-light-premium scrolled py-3' : 'navbar-light-premium py-5'}`}>
+      <div className="container mx-auto px-4 sm:px-6">
         <div className="flex items-center justify-between">
           {/* Logo Section */}
           <Link to="/" className="flex items-center gap-3 group">
@@ -52,33 +45,32 @@ function PremiumNav({ onMobileOpen }: { onMobileOpen: () => void }) {
                 <div className="absolute inset-0 bg-[var(--accent-orange)] opacity-0 group-hover:opacity-10 blur-xl transition-opacity duration-500" />
               </div>
             ) : (
-              <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-[var(--accent-orange)] to-[var(--accent-gold)] flex items-center justify-center shadow-lg group-hover:scale-110 transition-all duration-500 group-hover:rotate-6">
+              <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-[var(--accent-orange)] to-[var(--accent-gold)] flex items-center justify-center shadow-lg group-hover:scale-110 transition-all duration-500">
                 <Dumbbell className="w-6 h-6 text-white" />
               </div>
             )}
-            <div className="flex flex-col justify-center">
-              <span className="text-xl md:text-2xl font-display font-bold tracking-tight text-charcoal leading-none">
+            <div className="flex flex-col">
+              <span className="text-xl md:text-2xl font-bold tracking-tight text-[var(--text-primary)] leading-none">
                 {brandName.split(' ').map((word, i) => (
                   <span key={i} className={i === brandName.split(' ').length - 1 ? 'text-[var(--accent-orange)]' : ''}>
                     {word}{' '}
                   </span>
                 ))}
               </span>
-              <span className="text-[10px] uppercase tracking-[0.3em] text-[var(--text-muted)] font-black opacity-60">Elite Fitness</span>
+              <span className="text-[9px] uppercase tracking-[0.25em] text-[var(--text-muted)] font-bold">Elite Fitness</span>
             </div>
           </Link>
 
           {/* Desktop Navigation */}
-          <div className="hidden lg:flex items-center gap-2">
+          <div className="hidden lg:flex items-center gap-1">
             {navItems.map((item) => (
               <NavLink
                 key={item.path}
                 to={item.path}
                 end={item.path === "/"}
-                className={({ isActive }) => `
-                  nav-link-premium relative px-4 py-2 text-[13px] font-bold tracking-widest uppercase transition-all duration-300
-                  ${isActive ? 'active text-[var(--accent-orange)]' : 'text-[var(--text-muted)] hover:text-[var(--text-primary)]'}
-                `}
+                className={({ isActive }) =>
+                  `nav-link-light px-4 py-2 ${isActive ? 'active' : ''}`
+                }
               >
                 {item.label}
               </NavLink>
@@ -86,30 +78,26 @@ function PremiumNav({ onMobileOpen }: { onMobileOpen: () => void }) {
           </div>
 
           {/* Right Action Side */}
-          <div className="hidden lg:flex items-center gap-6">
-            <div className="flex items-center h-full">
+          <div className="hidden lg:flex items-center gap-5">
+            <div className="flex items-center">
               <LanguageSwitcher />
             </div>
             
-            <Link to="/signin" className="text-[11px] uppercase tracking-[0.2em] font-black text-[var(--text-muted)] hover:text-[var(--accent-orange)] transition-all duration-300 relative group flex items-center h-full">
+            <Link to="/signin" className="text-xs uppercase tracking-[0.12em] font-bold text-[var(--text-muted)] hover:text-[var(--accent-orange)] transition-all duration-300">
               Sign In
-              <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-[var(--accent-orange)] transition-all duration-300 group-hover:w-full" />
             </Link>
 
-            <Link to="/contact" className="flex items-center h-full">
-              <button className="btn-premium btn-primary !py-2.5 !px-6 !text-[11px] group relative overflow-hidden shadow-none hover:shadow-lg">
-                <span className="relative z-10 flex items-center gap-2">
-                  Join Now
-                  <ArrowRight className="w-3.5 h-3.5 transition-transform duration-300 group-hover:translate-x-1" />
-                </span>
-                <div className="absolute inset-0 bg-white/20 -translate-x-full group-hover:translate-x-0 transition-transform duration-500 skew-x-12" />
+            <Link to="/contact">
+              <button className="btn-premium-primary !py-2.5 !px-5 !text-[10px]">
+                Join Now
+                <ArrowRight className="w-3.5 h-3.5" />
               </button>
             </Link>
           </div>
 
           {/* Mobile Toggle Button */}
           <button 
-            className="lg:hidden p-2 rounded-xl hover:bg-cream-100 transition-colors text-charcoal" 
+            className="lg:hidden p-2 rounded-xl hover:bg-[var(--bg-card-hover)] transition-colors text-[var(--text-secondary)]" 
             onClick={onMobileOpen}
           >
             <Menu className="w-8 h-8" />
@@ -150,14 +138,14 @@ function MobileMenu({ isOpen, onClose }: { isOpen: boolean; onClose: () => void 
             animate={{ x: 0 }}
             exit={{ x: "100%" }}
             transition={{ type: "spring", damping: 30, stiffness: 300 }}
-            className="fixed right-0 top-0 h-full w-[85%] max-w-md bg-white z-[70] lg:hidden shadow-2xl border-l border-cream-200"
+            className="fixed right-0 top-0 h-full w-[85%] max-w-md bg-white z-[70] lg:hidden shadow-2xl border-l border-[var(--border-accent)] mobile-menu-premium"
           >
             <div className="p-8 pt-24">
               <div className="flex items-center gap-3 mb-12">
-                <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-[var(--accent-orange)] to-[var(--accent-gold)] flex items-center justify-center shadow-lg">
+                <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-[var(--accent-orange)] to-[var(--accent-gold)] flex items-center justify-center shadow-lg">
                   <Dumbbell className="w-6 h-6 text-white" />
                 </div>
-                <span className="text-2xl font-display font-bold tracking-tight text-charcoal">{brandName}</span>
+                <span className="text-2xl font-bold tracking-tight text-[var(--text-primary)]">{brandName}</span>
               </div>
               {navItems.map((item, idx) => {
                 const isActive = location.pathname === item.path;
@@ -187,7 +175,7 @@ function MobileMenu({ isOpen, onClose }: { isOpen: boolean; onClose: () => void 
               })}
             </div>
 
-            <div className="mt-8 pt-8 border-t border-[var(--border-subtle)]">
+            <div className="px-8 mt-6 pt-6 border-t border-[var(--border-subtle)]">
               <div className="flex gap-3">
                 <Link to="/signin" onClick={onClose} className="flex-1 text-center py-4 rounded-xl border border-[var(--border-subtle)] text-[var(--text-secondary)] font-semibold hover:border-[var(--accent-orange)] hover:text-[var(--accent-orange)] transition-colors">
                   Sign In
@@ -231,7 +219,7 @@ export function PublicLayout({ children }: { children: ReactNode }) {
 
   return (
     <ThemeProvider>
-      <div className="min-h-screen bg-gradient-to-b from-white via-ivory to-cream text-charcoal">
+      <div className="min-h-screen bg-[var(--bg-primary)] text-[var(--text-primary)]">
         <PremiumNav onMobileOpen={() => setMobileMenuOpen(true)} />
         <MobileMenu isOpen={mobileMenuOpen} onClose={() => setMobileMenuOpen(false)} />
 
@@ -266,27 +254,27 @@ function PremiumFooter() {
   ];
 
   return (
-    <footer className="bg-cream border-t border-pearl pt-16 pb-8">
-      <div className="container mx-auto px-6">
-        <div className="grid md:grid-cols-2 lg:grid-cols-5 gap-12 mb-16">
+    <footer className="bg-[var(--bg-secondary)] border-t border-[var(--border-subtle)] pt-16 pb-8">
+      <div className="container mx-auto px-4 sm:px-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-12 mb-16">
           {/* Brand */}
           <div className="lg:col-span-2">
             <Link to="/" className="flex items-center gap-3 mb-6">
               {logoUrl ? (
                 <img src={logoUrl} alt={brandName} className="h-10 w-auto" />
               ) : (
-                <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-[var(--accent-orange)] to-[var(--accent-gold)] flex items-center justify-center">
+                <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-[var(--accent-orange)] to-[var(--accent-gold)] flex items-center justify-center">
                   <Dumbbell className="w-6 h-6 text-white" />
                 </div>
               )}
-              <span className="text-2xl font-display font-bold text-charcoal">{brandName}</span>
+              <span className="text-2xl font-bold text-[var(--text-primary)]">{brandName}</span>
             </Link>
-            <p className="text-muted mb-6 max-w-sm">
+            <p className="text-[var(--text-muted)] mb-6 max-w-sm leading-relaxed">
               {description || "Transform your body and mind with premium fitness facilities and expert guidance. Join the movement today."}
             </p>
             <div className="flex gap-3">
               {socials.map((social) => (
-                <a key={social.label} href={social.href} className="social-icon-light" aria-label={social.label}>
+                <a key={social.label} href={social.href} className="w-10 h-10 rounded-xl bg-[var(--bg-card)] border border-[var(--border-subtle)] flex items-center justify-center text-[var(--text-muted)] hover:text-[var(--accent-orange)] hover:border-[var(--accent-orange)] transition-all" aria-label={social.label}>
                   <social.icon className="w-5 h-5" />
                 </a>
               ))}
@@ -295,47 +283,47 @@ function PremiumFooter() {
 
           {/* Links */}
           <div>
-            <h4 className="font-bold text-charcoal mb-4">Company</h4>
+            <h4 className="font-bold text-[var(--text-primary)] mb-4 text-sm uppercase tracking-wider">Company</h4>
             <ul className="space-y-3">
               {footerLinks.company.map((link) => (
-                <li key={link}><a href="#" className="text-muted hover:text-[var(--accent-orange)] transition-colors">{link}</a></li>
+                <li key={link}><a href="#" className="text-[var(--text-muted)] hover:text-[var(--accent-orange)] transition-colors text-sm">{link}</a></li>
               ))}
             </ul>
           </div>
 
           <div>
-            <h4 className="font-bold text-charcoal mb-4">Support</h4>
+            <h4 className="font-bold text-[var(--text-primary)] mb-4 text-sm uppercase tracking-wider">Support</h4>
             <ul className="space-y-3">
               {footerLinks.support.map((link) => (
-                <li key={link}><a href="#" className="text-muted hover:text-[var(--accent-orange)] transition-colors">{link}</a></li>
+                <li key={link}><a href="#" className="text-[var(--text-muted)] hover:text-[var(--accent-orange)] transition-colors text-sm">{link}</a></li>
               ))}
             </ul>
           </div>
 
           <div>
-            <h4 className="font-bold text-charcoal mb-4">Legal</h4>
+            <h4 className="font-bold text-[var(--text-primary)] mb-4 text-sm uppercase tracking-wider">Legal</h4>
             <ul className="space-y-3">
               {footerLinks.legal.map((link) => (
-                <li key={link}><a href="#" className="text-muted hover:text-[var(--accent-orange)] transition-colors">{link}</a></li>
+                <li key={link}><a href="#" className="text-[var(--text-muted)] hover:text-[var(--accent-orange)] transition-colors text-sm">{link}</a></li>
               ))}
             </ul>
           </div>
         </div>
 
         {/* Newsletter */}
-        <div className="bg-white rounded-2xl p-6 md:p-8 mb-12 shadow-soft">
+        <div className="bg-[var(--bg-card)] border border-[var(--border-subtle)] rounded-2xl p-6 md:p-8 mb-12">
           <div className="flex flex-col md:flex-row items-center justify-between gap-6">
             <div>
-              <h3 className="text-xl font-bold text-charcoal mb-2">Stay Updated</h3>
-              <p className="text-muted">Get the latest fitness tips and exclusive offers.</p>
+              <h3 className="text-xl font-bold text-[var(--text-primary)] mb-2">Stay Updated</h3>
+              <p className="text-[var(--text-muted)]">Get the latest fitness tips and exclusive offers.</p>
             </div>
             <div className="flex gap-3 w-full md:w-auto">
               <input
                 type="email"
                 placeholder="Enter your email"
-                className="input-light flex-1 md:w-64"
+                className="input-premium flex-1 md:w-64"
               />
-              <button className="btn-premium btn-primary !px-6">
+              <button className="btn-premium-primary !px-6">
                 Subscribe
               </button>
             </div>
@@ -343,8 +331,8 @@ function PremiumFooter() {
         </div>
 
         {/* Bottom */}
-        <div className="divider-gold mb-8" />
-        <div className="flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-muted">
+        <div className="divider-premium mb-8" />
+        <div className="flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-[var(--text-muted)]">
           <p>&copy; {new Date().getFullYear()} {brandName.toUpperCase()}. All rights reserved.</p>
           <div className="flex gap-6">
             <a href="#" className="hover:text-[var(--accent-orange)] transition-colors">Privacy Policy</a>

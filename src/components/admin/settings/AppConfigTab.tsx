@@ -219,7 +219,7 @@ export function AppConfigTab() {
           <div>
             <label className="block text-sm font-medium text-slate-300 mb-1">Timezone (UTC Offset)</label>
             <select
-              className="w-full rounded bg-white/10 p-2 text-white border border-white/10 [&>option]:bg-slate-900"
+              className="w-full rounded bg-white p-2 text-gray-700 border border-gray-200 [&>option]:bg-white"
               value={config.timezone || ""}
               onChange={(e) => setConfig({ ...config, timezone: e.target.value })}
             >
@@ -232,7 +232,7 @@ export function AppConfigTab() {
           <div>
             <label className="block text-sm font-medium text-slate-300 mb-1">Currency</label>
             <select
-              className="w-full rounded bg-white/10 p-2 text-white border border-white/10 [&>option]:bg-slate-900"
+              className="w-full rounded bg-white p-2 text-gray-700 border border-gray-200 [&>option]:bg-white"
               value={config.currency || ""}
               onChange={(e) => setConfig({ ...config, currency: e.target.value })}
             >
@@ -245,7 +245,7 @@ export function AppConfigTab() {
           <div>
             <label className="block text-sm font-medium text-slate-300 mb-1">Language</label>
             <select
-              className="w-full rounded bg-white/10 p-2 text-white border border-white/10 [&>option]:bg-slate-900"
+              className="w-full rounded bg-white p-2 text-gray-700 border border-gray-200 [&>option]:bg-white"
               value={config.language || ""}
               onChange={(e) => setConfig({ ...config, language: e.target.value })}
             >
@@ -258,7 +258,7 @@ export function AppConfigTab() {
           <div>
             <label className="block text-sm font-medium text-slate-300 mb-1">Country</label>
             <select
-              className="w-full rounded bg-white/10 p-2 text-white border border-white/10 [&>option]:bg-slate-900"
+              className="w-full rounded bg-white p-2 text-gray-700 border border-gray-200 [&>option]:bg-white"
               value={config.country || ""}
               onChange={(e) => setConfig({ ...config, country: e.target.value })}
             >

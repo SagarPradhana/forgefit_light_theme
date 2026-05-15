@@ -113,9 +113,9 @@ export function DateRangeFilter({ defaultPreset = "today", onChange, className =
       {/* Trigger */}
       <button
         onClick={() => setOpen((o) => !o)}
-        className="flex items-center gap-2 bg-white/5 border border-white/10 rounded-xl px-3.5 py-2.5 text-xs font-black uppercase tracking-widest text-white hover:border-indigo-500/50 hover:bg-white/10 transition-all min-w-[160px]"
+        className="flex items-center gap-2 bg-white border border-gray-200 rounded-xl px-3.5 py-2.5 text-xs font-black uppercase tracking-widest text-gray-700 hover:border-orange-400 hover:bg-orange-50 transition-all min-w-[160px]"
       >
-        <Calendar size={13} className="text-indigo-400 shrink-0" />
+        <Calendar size={13} className="text-orange-500 shrink-0" />
         <span className="flex-1 text-left truncate">{label}</span>
         {preset !== defaultPreset || customFrom ? (
           <X size={11} className="text-slate-500 hover:text-red-400 transition-colors shrink-0" onClick={clear} />
@@ -126,7 +126,7 @@ export function DateRangeFilter({ defaultPreset = "today", onChange, className =
 
       {/* Dropdown */}
       {open && (
-        <div className="absolute right-0 top-full mt-2 z-50 w-64 rounded-2xl bg-slate-950 border border-white/10 shadow-2xl shadow-black/50 overflow-hidden">
+        <div className="absolute right-0 top-full mt-2 z-50 w-64 rounded-2xl bg-white border border-gray-200 shadow-lg overflow-hidden">
           {/* Preset list */}
           <div className="p-2 space-y-0.5">
             {PRESETS.map(({ id, label: pl }) => (
@@ -135,8 +135,8 @@ export function DateRangeFilter({ defaultPreset = "today", onChange, className =
                 onClick={() => selectPreset(id)}
                 className={`w-full text-left px-3 py-2.5 rounded-xl text-xs font-black uppercase tracking-widest transition-all ${
                   preset === id
-                    ? "bg-indigo-500 text-white shadow-lg shadow-indigo-500/20"
-                    : "text-slate-400 hover:text-white hover:bg-white/5"
+                    ? "bg-gradient-to-r from-orange-500 to-amber-500 text-white"
+                    : "text-gray-500 hover:text-gray-900 hover:bg-gray-100"
                 }`}
               >
                 {pl}
@@ -146,36 +146,36 @@ export function DateRangeFilter({ defaultPreset = "today", onChange, className =
 
           {/* Custom date pickers */}
           {preset === "custom" && (
-            <div className="border-t border-white/10 p-3 space-y-2">
-              <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-3">Select Date Range</p>
+            <div className="border-t border-gray-200 p-3 space-y-2">
+              <p className="text-[10px] font-black text-gray-500 uppercase tracking-widest mb-3">Select Date Range</p>
               <div className="space-y-1">
-                <label className="text-[9px] font-black text-slate-600 uppercase tracking-widest">From</label>
+                <label className="text-[9px] font-black text-gray-500 uppercase tracking-widest">From</label>
                 <input
                   type="date"
                   value={customFrom}
                   onChange={(e) => setCustomFrom(e.target.value)}
-                  className="w-full bg-slate-900 border border-white/15 rounded-xl px-3 py-2.5 text-xs text-white outline-none focus:border-indigo-500 transition [color-scheme:dark] cursor-pointer hover:border-indigo-500/50"
+                  className="w-full bg-white border border-gray-200 rounded-xl px-3 py-2.5 text-xs text-gray-700 outline-none focus:border-orange-500 transition cursor-pointer"
                 />
               </div>
               <div className="space-y-1">
-                <label className="text-[9px] font-black text-slate-600 uppercase tracking-widest">To</label>
+                <label className="text-[9px] font-black text-gray-500 uppercase tracking-widest">To</label>
                 <input
                   type="date"
                   value={customTo}
                   min={customFrom}
                   onChange={(e) => setCustomTo(e.target.value)}
-                  className="w-full bg-slate-900 border border-white/15 rounded-xl px-3 py-2.5 text-xs text-white outline-none focus:border-indigo-500 transition [color-scheme:dark] cursor-pointer hover:border-indigo-500/50"
+                  className="w-full bg-white border border-gray-200 rounded-xl px-3 py-2.5 text-xs text-gray-700 outline-none focus:border-orange-500 transition cursor-pointer"
                 />
               </div>
               {customFrom && customTo && (
-                <p className="text-[9px] text-indigo-400 font-bold text-center py-1">
+                <p className="text-[9px] text-orange-600 font-bold text-center py-1">
                   {fmtShort(new Date(customFrom))} → {fmtShort(new Date(customTo))}
                 </p>
               )}
               <button
                 onClick={applyCustom}
                 disabled={!customFrom || !customTo}
-                className="w-full py-2.5 rounded-xl bg-indigo-500 text-white text-xs font-black uppercase tracking-widest disabled:opacity-40 hover:bg-indigo-400 transition mt-1"
+                className="w-full py-2.5 rounded-xl bg-gradient-to-r from-orange-500 to-amber-500 text-white text-xs font-black uppercase tracking-widest disabled:opacity-40 hover:opacity-90 transition mt-1"
               >
                 Apply Range
               </button>

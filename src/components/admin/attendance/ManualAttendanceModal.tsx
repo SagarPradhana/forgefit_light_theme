@@ -1,4 +1,5 @@
-import { CommonButton, Modal } from "../../ui/primitives";
+import { useState } from "react";
+import { CommonButton, Modal, ButtonLoader } from "../../ui/primitives";
 import { useTranslation } from "react-i18next";
 import { User, Calendar, Clock, CheckCircle2 } from "lucide-react";
 
@@ -16,7 +17,7 @@ interface ManualAttendanceModalProps {
   };
   setForm: (form: any) => void;
   members: any[];
-  onSave: () => void;
+  onSave: () => Promise<void> | void;
 }
 
 const inp = "w-full bg-white border border-amber-200/70 rounded-xl px-4 py-2.5 text-gray-800 outline-none focus:border-[var(--accent-orange)] focus:ring-2 focus:ring-[var(--glow-orange)] transition shadow-[inset_0_1px_3px_rgba(0,0,0,0.04)]";
@@ -33,6 +34,17 @@ export function ManualAttendanceModal({
   onSave
 }: ManualAttendanceModalProps) {
   const { t } = useTranslation();
+  const [saving, setSaving] = useState(false);
+
+  const handleSave = async () => {
+    setSaving(true);
+    try {
+      await onSave();
+    } finally {
+      setSaving(false);
+    }
+  };
+
   return (
     <Modal
       isOpen={isOpen}
@@ -40,8 +52,10 @@ export function ManualAttendanceModal({
       title={editingRecord ? t("editAttendanceLog") : t("manualCheckIn")}
       footer={
         <div className="flex gap-3">
-          <CommonButton variant="ghost" onClick={onClose}>{t("cancel")}</CommonButton>
-          <CommonButton onClick={onSave}>{t("submit")}</CommonButton>
+          <CommonButton variant="ghost" onClick={onClose} disabled={saving}>{t("cancel")}</CommonButton>
+          <CommonButton onClick={handleSave} disabled={saving}>
+            <ButtonLoader label={t("submit")} loadingLabel={t("loading")} loading={saving} />
+          </CommonButton>
         </div>
       }
     >

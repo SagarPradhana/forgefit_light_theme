@@ -140,16 +140,16 @@ export function TrainerAttendance() {
             />
           </div>
           <div className="relative">
-            <select
-              value={statusFilter}
-              onChange={(e) => setStatusFilter(e.target.value)}
-              className="bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white outline-none focus:border-indigo-500 transition cursor-pointer appearance-none min-w-[150px]"
-            >
-              <option value="" className="bg-slate-900">All Status</option>
-              <option value="present" className="bg-slate-900">Present</option>
-              <option value="absent" className="bg-slate-900">Absent</option>
-              <option value="late" className="bg-slate-900">Late</option>
-            </select>
+<select
+  value={statusFilter}
+  onChange={(e) => setStatusFilter(e.target.value)}
+  className="bg-white border border-gray-200 rounded-xl px-4 py-2.5 text-sm text-gray-700 outline-none focus:border-orange-500 transition cursor-pointer appearance-none min-w-[150px]"
+>
+  <option value="" className="bg-white">All Status</option>
+  <option value="present" className="bg-white">Present</option>
+  <option value="absent" className="bg-white">Absent</option>
+  <option value="late" className="bg-white">Late</option>
+</select>
           </div>
         </div>
 

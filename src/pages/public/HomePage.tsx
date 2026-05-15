@@ -32,7 +32,7 @@ function BannerCarousel() {
   if (isLoadingPublicData || banners.length === 0) return null;
 
   return (
-    <div className="relative h-[500px] w-full overflow-hidden">
+    <div className="relative h-[250px] md:h-[400px] lg:h-[500px] w-full overflow-hidden">
       <AnimatePresence mode="wait">
         <motion.div
           key={currentIndex}
@@ -107,21 +107,12 @@ function HeroSection() {
   ];
 
   return (
-    <section className="relative min-h-screen flex items-center bg-gradient-to-b from-white via-ivory to-cream overflow-hidden">
-      {/* Animated Background */}
-      <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute top-20 right-10 w-[500px] h-[500px] rounded-full glow-blob-light glow-orange-light animate-float" />
-        <div className="absolute bottom-20 left-10 w-[400px] h-[400px] rounded-full glow-blob-light glow-gold-light animate-float" style={{ animationDelay: '2s' }} />
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] rounded-full glow-blob-light glow-rose-light opacity-20" />
-        
-        {/* Subtle Pattern */}
-        <div className="absolute inset-0 opacity-[0.4]" style={{ 
-          backgroundImage: 'radial-gradient(circle at 1px 1px, rgba(212,168,83,0.1) 1px, transparent 0)',
-          backgroundSize: '40px 40px'
-        }} />
-      </div>
+    <section className="hero-premium">
+      <div className="orb orb-1" />
+      <div className="orb orb-2" />
+      <div className="pattern-dots" />
 
-      <div className="relative z-10 container mx-auto px-6 py-24">
+      <div className="relative z-10 container mx-auto px-4 sm:px-6 py-12 md:py-16 lg:py-24">
         <div className="grid lg:grid-cols-2 gap-12 items-center">
           {/* Left Content */}
           <motion.div 
@@ -140,14 +131,14 @@ function HeroSection() {
               {logoUrl && (
                 <img src={logoUrl} alt={brandName} className="h-12 w-auto" />
               )}
-              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-orange-100 to-rose-100 border border-orange-200">
-                <Zap className="w-4 h-4 text-orange-500" />
-                <span className="text-sm font-semibold text-orange-600 uppercase tracking-wider">Premium Fitness</span>
+              <div className="badge-premium-light">
+                <Zap className="w-4 h-4" />
+                Premium Fitness
               </div>
             </motion.div>
 
             {/* Heading */}
-            <h1 className="heading-xl text-charcoal">
+            <h1 className="heading-premium-xl">
               <motion.span 
                 initial={{ opacity: 0, y: 40 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -168,7 +159,7 @@ function HeroSection() {
                 initial={{ opacity: 0, y: 40 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.5, duration: 0.6 }}
-                className="block text-gradient"
+                className="block text-gradient-premium"
               >
                 BODY TODAY
               </motion.span>
@@ -179,7 +170,7 @@ function HeroSection() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.6 }}
-              className="text-lg text-muted max-w-lg leading-relaxed"
+              className="text-lg text-[var(--text-muted)] max-w-lg leading-relaxed"
             >
               Experience world-class fitness at {brandName}. Join thousands who have transformed their lives with our premium facilities and expert guidance.
             </motion.p>
@@ -192,13 +183,13 @@ function HeroSection() {
               className="flex flex-wrap gap-4"
             >
               <Link to="/contact">
-                <button className="btn-premium btn-primary">
+                <button className="btn-premium-primary">
                   Start Free Trial
                   <ArrowRight className="w-5 h-5" />
                 </button>
               </Link>
               <Link to="/pricing">
-                <button className="btn-premium btn-ghost">
+                <button className="btn-premium-secondary">
                   <Play className="w-5 h-5" />
                   View Plans
                 </button>
@@ -210,12 +201,12 @@ function HeroSection() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.8 }}
-              className="grid grid-cols-2 md:grid-cols-4 gap-6 pt-8 border-t border-gold"
+              className="grid grid-cols-2 md:grid-cols-4 gap-6 pt-8 border-t border-[var(--border-accent)]"
             >
               {stats.map((stat, index) => (
-                <div key={index} className="text-center">
+                <div key={index} className="stat-item">
                   <AnimatedCounter value={stat.number} />
-                  <p className="text-sm text-light-muted uppercase tracking-wider mt-2">{stat.label}</p>
+                  <p className="stat-label">{stat.label}</p>
                 </div>
               ))}
             </motion.div>
@@ -229,54 +220,44 @@ function HeroSection() {
             className="relative"
           >
             <div className="relative aspect-[4/5] max-w-lg mx-auto">
-              {/* Glow */}
-              <div className="absolute inset-10 bg-gradient-to-r from-orange-300/30 to-rose-300/30 rounded-full blur-3xl" />
+              <div className="absolute inset-10 bg-gradient-to-r from-[var(--accent-orange)]/20 to-[var(--accent-gold)]/15 rounded-full blur-3xl" />
               
-              {/* Image */}
-              <div className="relative rounded-3xl overflow-hidden border-4 border-white shadow-premium">
+              <div className="relative rounded-3xl overflow-hidden border border-[var(--border-subtle)] shadow-[var(--shadow-hover)]">
                 <img 
                   src="https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=800&q=80"
                   alt="Fitness"
                   className="w-full h-full object-cover"
                 />
-                
-                {/* Overlay Gradient */}
-                <div className="absolute inset-0 bg-gradient-to-t from-white/30 via-transparent to-transparent" />
+                <div className="absolute inset-0 bg-gradient-to-t from-white/40 via-transparent to-transparent" />
               </div>
 
-              {/* Floating Card 1 */}
               <motion.div 
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 1 }}
-                className="absolute -bottom-6 -left-6 bg-white border border-gold rounded-2xl p-4 shadow-lg"
+                className="absolute -bottom-6 -left-6 floating-card-premium"
               >
-                <div className="flex items-center gap-3">
-                  <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-orange-100 to-rose-100 flex items-center justify-center">
-                    <Flame className="w-6 h-6 text-orange-500" />
-                  </div>
-                  <div>
-                    <p className="text-lg font-bold text-charcoal">500+</p>
-                    <p className="text-sm text-muted">Calories Burned</p>
-                  </div>
+                <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[var(--accent-orange)]/10 to-[var(--accent-gold)]/10 flex items-center justify-center">
+                  <Flame className="w-6 h-6 text-[var(--accent-orange)]" />
+                </div>
+                <div>
+                  <p className="text-lg font-bold text-[var(--text-primary)]">500+</p>
+                  <p className="text-sm text-[var(--text-muted)]">Calories Burned</p>
                 </div>
               </motion.div>
 
-              {/* Floating Card 2 */}
               <motion.div 
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 1.2 }}
-                className="absolute -top-4 -right-4 bg-white border border-gold rounded-2xl p-4 shadow-lg"
+                className="absolute -top-4 -right-4 floating-card-premium"
               >
-                <div className="flex items-center gap-3">
-                  <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-amber-100 to-yellow-100 flex items-center justify-center">
-                    <Award className="w-6 h-6 text-gold-500" />
-                  </div>
-                  <div>
-                    <p className="text-lg font-bold text-charcoal">#1 Rated</p>
-                    <p className="text-sm text-muted">In The City</p>
-                  </div>
+                <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[var(--accent-gold)]/10 to-[var(--accent-orange)]/10 flex items-center justify-center">
+                  <Award className="w-6 h-6 text-[var(--accent-gold)]" />
+                </div>
+                <div>
+                  <p className="text-lg font-bold text-[var(--text-primary)]">#1 Rated</p>
+                  <p className="text-sm text-[var(--text-muted)]">In The City</p>
                 </div>
               </motion.div>
             </div>
@@ -284,20 +265,15 @@ function HeroSection() {
         </div>
       </div>
 
-      {/* Scroll Indicator */}
       <motion.div 
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 1.5 }}
-        className="absolute bottom-8 left-1/2 -translate-x-1/2"
+        className="scroll-indicator-light"
       >
-        <motion.div 
-          animate={{ y: [0, 10, 0] }}
-          transition={{ duration: 2, repeat: Infinity }}
-          className="w-6 h-10 rounded-full border-2 border-charcoal/20 flex items-start justify-center p-2"
-        >
-          <motion.div className="w-1 h-2 bg-orange-500 rounded-full" />
-        </motion.div>
+        <div className="mouse">
+          <div className="dot" />
+        </div>
       </motion.div>
     </section>
   );
@@ -305,35 +281,27 @@ function HeroSection() {
 
 function FeaturesSection() {
   return (
-    <section className="section-padding bg-white relative">
-      {/* Background Elements */}
-      <div className="absolute inset-0">
-        <div className="absolute top-1/2 left-0 w-[400px] h-[400px] rounded-full glow-blob-light glow-orange-light opacity-20" />
-        <div className="absolute bottom-0 right-0 w-[300px] h-[300px] rounded-full glow-blob-light glow-gold-light opacity-15" />
-      </div>
-
-      <div className="relative z-10 container mx-auto">
-        {/* Section Header */}
+    <section className="section-premium section-premium-white">
+      <div className="container mx-auto px-4 sm:px-6">
         <motion.div 
           initial={{ opacity: 0, y: 40 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="text-center mb-16"
+          className="text-center mb-12 md:mb-16"
         >
-          <span className="badge-premium mb-4">
-            <Star className="w-4 h-4 text-gold-500" />
+          <div className="badge-premium-light mb-4 inline-flex">
+            <Star className="w-4 h-4" />
             Why Choose Us
-          </span>
-          <h2 className="heading-lg text-charcoal mt-4">
-            PREMIUM <span className="text-gradient">FACILITIES</span>
+          </div>
+          <h2 className="heading-premium-lg mt-4">
+            PREMIUM <span className="text-gradient-premium">FACILITIES</span>
           </h2>
-          <p className="text-muted mt-4 max-w-2xl mx-auto">
+          <p className="text-[var(--text-muted)] mt-4 max-w-2xl mx-auto">
             Experience world-class amenities designed to elevate your fitness journey to unprecedented heights.
           </p>
         </motion.div>
 
-        {/* Features Grid */}
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {premiumFeatures.map((feature, index) => (
             <motion.div
               key={index}
@@ -341,13 +309,13 @@ function FeaturesSection() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: index * 0.1 }}
-              className="card-premium group hover-lift"
+              className="feature-card-light"
             >
-              <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-orange-100 to-rose-100 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
-                <feature.icon className="w-8 h-8 text-orange-500" />
+              <div className="icon-wrap">
+                <feature.icon className="w-7 h-7 text-[var(--accent-orange)]" />
               </div>
-              <h3 className="text-xl font-bold text-charcoal mb-3">{feature.title}</h3>
-              <p className="text-muted">{feature.desc}</p>
+              <h3 className="text-xl font-bold text-[var(--text-primary)] mb-3">{feature.title}</h3>
+              <p className="text-[var(--text-muted)] leading-relaxed">{feature.desc}</p>
             </motion.div>
           ))}
         </div>
@@ -374,31 +342,27 @@ function PricingSection() {
       ]);
 
   return (
-    <section className="section-padding bg-cream relative">
-      <div className="absolute inset-0">
-        <div className="absolute bottom-0 right-0 w-[500px] h-[500px] rounded-full glow-blob-light glow-gold-light opacity-15" />
-      </div>
-
-      <div className="relative z-10 container mx-auto">
+    <section className="section-premium section-premium-light">
+      <div className="container mx-auto px-4 sm:px-6">
         <motion.div 
           initial={{ opacity: 0, y: 40 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="text-center mb-16"
+          className="text-center mb-12 md:mb-16"
         >
-          <span className="badge-premium badge-gold mb-4">
+          <div className="badge-premium-light mb-4 inline-flex">
             <Star className="w-4 h-4" />
             Membership Plans
-          </span>
-          <h2 className="heading-lg text-charcoal mt-4">
-            CHOOSE YOUR <span className="text-gold-gradient">PLAN</span>
+          </div>
+          <h2 className="heading-premium-lg mt-4">
+            CHOOSE YOUR <span className="text-gradient-premium">PLAN</span>
           </h2>
-          <p className="text-muted mt-4 max-w-2xl mx-auto">
+          <p className="text-[var(--text-muted)] mt-4 max-w-2xl mx-auto">
             Flexible plans designed to fit your lifestyle and fitness goals.
           </p>
         </motion.div>
 
-        <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
           {plans.map((plan, index) => (
             <motion.div
               key={index}
@@ -406,22 +370,23 @@ function PricingSection() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: index * 0.15 }}
-              className={`pricing-card ${plan.popular ? 'pricing-card-featured' : ''}`}
+              className={`pricing-card-light ${plan.popular ? 'featured' : ''}`}
             >
-              <h3 className="text-xl font-bold text-charcoal mb-2">{plan.name}</h3>
+              {plan.popular && <div className="popular-badge">Most Popular</div>}
+              <h3 className="text-xl font-bold text-[var(--text-primary)] mb-2">{plan.name}</h3>
               <div className="flex items-baseline mb-6">
-                <span className="text-4xl font-black text-charcoal">₹{plan.price}</span>
-                <span className="text-muted ml-2">{plan.period}</span>
+                <span className="text-4xl font-black text-[var(--text-primary)]">₹{plan.price}</span>
+                <span className="text-[var(--text-muted)] ml-2">{plan.period}</span>
               </div>
               <ul className="space-y-4 mb-8">
                 {plan.features.map((feature, i) => (
-                  <li key={i} className="flex items-center gap-3 text-muted">
-                    <Check className="w-5 h-5 text-gold-500" />
+                  <li key={i} className="flex items-center gap-3 text-[var(--text-secondary)]">
+                    <Check className="w-5 h-5 text-[var(--accent-orange)]" />
                     {feature}
                   </li>
                 ))}
               </ul>
-              <button className={`btn-premium w-full ${plan.popular ? 'btn-gold' : 'btn-secondary'}`}>
+              <button className={`w-full ${plan.popular ? 'btn-premium-primary justify-center' : 'btn-premium-secondary justify-center'}`}>
                 Get Started
               </button>
             </motion.div>
@@ -452,24 +417,24 @@ function TestimonialsSection() {
   if (testimonials.length === 0) return null;
 
   return (
-    <section className="section-padding bg-white relative">
-      <div className="container mx-auto">
+    <section className="section-premium section-premium-white">
+      <div className="container mx-auto px-4 sm:px-6">
         <motion.div 
           initial={{ opacity: 0, y: 40 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="text-center mb-16"
+          className="text-center mb-12 md:mb-16"
         >
-          <span className="badge-premium mb-4">
-            <Star className="w-4 h-4 text-orange-500" />
+          <div className="badge-premium-light mb-4 inline-flex">
+            <Star className="w-4 h-4" />
             Testimonials
-          </span>
-          <h2 className="heading-lg text-charcoal mt-4">
-            WHAT MEMBERS <span className="text-gradient">SAY</span>
+          </div>
+          <h2 className="heading-premium-lg mt-4">
+            WHAT MEMBERS <span className="text-gradient-premium">SAY</span>
           </h2>
         </motion.div>
 
-        <div className="grid md:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {testimonials.map((testimonial, index) => (
             <motion.div
               key={index}
@@ -477,19 +442,19 @@ function TestimonialsSection() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: index * 0.15 }}
-              className="testimonial-card"
+              className="testimonial-card-light"
             >
               <div className="flex gap-1 mb-4">
                 {[...Array(testimonial.rating)].map((_, i) => (
-                  <Star key={i} className="w-5 h-5 text-gold-500 fill-gold-500" />
+                  <Star key={i} className="w-5 h-5 text-[var(--accent-gold)] fill-[var(--accent-gold)]" />
                 ))}
               </div>
-              <p className="text-muted mb-6 text-lg">"{testimonial.text}"</p>
-              <div className="testimonial-author">
-                <img src={testimonial.image} alt={testimonial.name} className="testimonial-avatar" />
+              <p className="text-[var(--text-secondary)] mb-6 text-lg leading-relaxed">"{testimonial.text}"</p>
+              <div className="flex items-center gap-3">
+                <img src={testimonial.image} alt={testimonial.name} className="avatar" />
                 <div>
-                  <p className="font-bold text-charcoal">{testimonial.name}</p>
-                  <p className="text-sm text-muted">{testimonial.role}</p>
+                  <p className="font-bold text-[var(--text-primary)]">{testimonial.name}</p>
+                  <p className="text-sm text-[var(--text-muted)]">{testimonial.role}</p>
                 </div>
               </div>
             </motion.div>
@@ -502,33 +467,28 @@ function TestimonialsSection() {
 
 function CTASection() {
   return (
-    <section className="section-padding relative overflow-hidden bg-gradient-to-r from-orange-50 via-rose-50 to-amber-50">
-      <div className="absolute inset-0">
-        <div className="absolute top-0 left-1/4 w-[400px] h-[400px] rounded-full glow-blob-light glow-orange-light opacity-30" />
-        <div className="absolute bottom-0 right-1/4 w-[300px] h-[300px] rounded-full glow-blob-light glow-gold-light opacity-25" />
-      </div>
-
-      <div className="relative z-10 container mx-auto text-center">
+    <section className="cta-premium">
+      <div className="container mx-auto px-4 sm:px-6 text-center">
         <motion.div
           initial={{ opacity: 0, y: 40 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
         >
-          <h2 className="heading-xl text-charcoal mb-6">
-            READY TO <span className="text-gradient">TRANSFORM</span>?
+          <h2 className="heading-premium-xl mb-6">
+            READY TO <span className="text-gradient-premium">TRANSFORM</span>?
           </h2>
-          <p className="text-xl text-muted mb-8 max-w-2xl mx-auto">
+          <p className="text-xl text-[var(--text-muted)] mb-8 max-w-2xl mx-auto leading-relaxed">
             Join thousands of members who have already started their fitness journey. Your transformation begins today.
           </p>
           <div className="flex flex-wrap justify-center gap-4">
             <Link to="/contact">
-              <button className="btn-premium btn-primary">
+              <button className="btn-premium-primary">
                 Start Free Trial
                 <ArrowRight className="w-5 h-5" />
               </button>
             </Link>
             <Link to="/pricing">
-              <button className="btn-premium btn-gold">
+              <button className="btn-premium-secondary">
                 View Membership Plans
               </button>
             </Link>
@@ -542,7 +502,7 @@ function CTASection() {
 export function HomePage() {
   return (
     <PublicLayout>
-      <div className="bg-gradient-to-b from-white via-ivory to-cream">
+      <div>
         <BannerCarousel />
         <HeroSection />
         <FeaturesSection />

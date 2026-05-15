@@ -647,7 +647,7 @@ export function UserManagement({ portalType = "admin" }: { portalType?: "admin" 
                   id="admin-user-role-filter"
                   value={roleFilter}
                   onChange={(e) => { setRoleFilter(e.target.value); }}
-                  className="h-10 bg-white/5 border border-white/10 rounded-xl pl-9 pr-4 text-xs font-bold text-white outline-none focus:ring-2 focus:ring-indigo-500/50 transition cursor-pointer appearance-none min-w-[140px] [&>option]:bg-slate-900"
+                  className="h-10 bg-white border border-gray-200 rounded-xl pl-9 pr-4 text-xs font-bold text-gray-700 outline-none focus:ring-2 focus:ring-orange-500/50 transition cursor-pointer appearance-none min-w-[140px] [&>option]:bg-white"
                 >
                   <option value="">{t("allRoles")}</option>
                   <option value="admin">{t("admins")}</option>
@@ -667,7 +667,7 @@ export function UserManagement({ portalType = "admin" }: { portalType?: "admin" 
                   id="admin-user-plan-status-filter"
                   value={planStatusFilter}
                   onChange={(e) => { setPlanStatusFilter(e.target.value); }}
-                  className="h-10 bg-white/5 border border-white/10 rounded-xl pl-9 pr-4 text-xs font-bold text-white outline-none focus:ring-2 focus:ring-indigo-500/50 transition cursor-pointer appearance-none min-w-[140px] [&>option]:bg-slate-900"
+                  className="h-10 bg-white border border-gray-200 rounded-xl pl-9 pr-4 text-xs font-bold text-gray-700 outline-none focus:ring-2 focus:ring-orange-500/50 transition cursor-pointer appearance-none min-w-[140px] [&>option]:bg-white"
                 >
                   <option value="">{t("allPlanStatus")}</option>
                   <option value="active">{t("activePlan")}</option>
@@ -687,7 +687,7 @@ export function UserManagement({ portalType = "admin" }: { portalType?: "admin" 
                   id="admin-user-active-status-filter"
                   value={isActiveFilter}
                   onChange={(e) => { setIsActiveFilter(e.target.value); }}
-                  className="h-10 bg-white/5 border border-white/10 rounded-xl pl-9 pr-4 text-xs font-bold text-white outline-none focus:ring-2 focus:ring-indigo-500/50 transition cursor-pointer appearance-none min-w-[140px] [&>option]:bg-slate-900"
+                  className="h-10 bg-white border border-gray-200 rounded-xl pl-9 pr-4 text-xs font-bold text-gray-700 outline-none focus:ring-2 focus:ring-orange-500/50 transition cursor-pointer appearance-none min-w-[140px] [&>option]:bg-white"
                 >
                   <option value="">{t("allAccounts")}</option>
                   <option value="true">{t("activeOnly")}</option>

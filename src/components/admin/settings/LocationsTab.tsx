@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { GlowButton, Table, EmptyState, Modal, Skeleton } from "../../ui/primitives";
+import { GlowButton, Table, EmptyState, Modal, Skeleton, ButtonLoader } from "../../ui/primitives";
 import { Search, Edit2, Trash2, Plus } from "lucide-react";
 import { adminLocationService, type LocationData } from "../../../services/adminLocationService";
 import { toast } from "../../../store/toastStore";
@@ -55,7 +55,10 @@ export function LocationsTab() {
     }
   };
 
+  const [saving, setSaving] = useState(false);
+
   const handleSave = async () => {
+    setSaving(true);
     try {
       if (editId) {
         await adminLocationService.updateLocation(editId, form);
@@ -68,7 +71,9 @@ export function LocationsTab() {
       fetchLocations(page);
     } catch (err) {
       console.error(err);
-      toast.error("Failed to save location.");
+      toast.error("Operation failed");
+    } finally {
+      setSaving(false);
     }
   };
 
@@ -186,72 +191,72 @@ export function LocationsTab() {
       )}
 
       {/* Location Modal */}
-      <Modal open={modalOpen} onClose={() => setModalOpen(false)} title={editId ? "Edit Location" : "Add Location"} footer={<><GlowButton className="bg-gray-600" onClick={() => setModalOpen(false)}>Cancel</GlowButton><GlowButton onClick={handleSave}>Submit</GlowButton></>}>
+      <Modal open={modalOpen} onClose={() => setModalOpen(false)} title={editId ? "Edit Location" : "Add Location"} footer={<><GlowButton variant="secondary" onClick={() => setModalOpen(false)} disabled={saving}>Cancel</GlowButton><GlowButton onClick={handleSave} disabled={saving}><ButtonLoader label="Submit" loadingLabel="Saving..." loading={saving} /></GlowButton></>}>
         <div className="space-y-4 pt-2 max-h-[60vh] overflow-y-auto pr-2 custom-scrollbar">
           <div className="space-y-1">
             <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Address</label>
-            <input className="w-full rounded-xl bg-slate-950 border border-white/10 p-3 text-white focus:border-indigo-500 outline-none transition" value={form.address} onChange={e => setForm({...form, address: e.target.value})} />
+            <input className="w-full rounded-xl bg-[var(--bg-secondary)] border border-[var(--border-subtle)] p-3 text-[var(--text-primary)] focus:border-[var(--accent-orange)] outline-none transition" value={form.address} onChange={e => setForm({...form, address: e.target.value})} />
           </div>
           
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-1">
               <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Latitude</label>
-              <input type="number" className="w-full rounded-xl bg-slate-950 border border-white/10 p-3 text-white focus:border-indigo-500 outline-none transition" value={form.latitude} onChange={e => setForm({...form, latitude: Number(e.target.value)})} />
+              <input type="number" className="w-full rounded-xl bg-[var(--bg-secondary)] border border-[var(--border-subtle)] p-3 text-[var(--text-primary)] focus:border-[var(--accent-orange)] outline-none transition" value={form.latitude} onChange={e => setForm({...form, latitude: Number(e.target.value)})} />
             </div>
             <div className="space-y-1">
               <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Longitude</label>
-              <input type="number" className="w-full rounded-xl bg-slate-950 border border-white/10 p-3 text-white focus:border-indigo-500 outline-none transition" value={form.longitude} onChange={e => setForm({...form, longitude: Number(e.target.value)})} />
+              <input type="number" className="w-full rounded-xl bg-[var(--bg-secondary)] border border-[var(--border-subtle)] p-3 text-[var(--text-primary)] focus:border-[var(--accent-orange)] outline-none transition" value={form.longitude} onChange={e => setForm({...form, longitude: Number(e.target.value)})} />
             </div>
             <div className="space-y-1">
               <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Radius</label>
-              <input type="number" className="w-full rounded-xl bg-slate-950 border border-white/10 p-3 text-white focus:border-indigo-500 outline-none transition" value={form.radius} onChange={e => setForm({...form, radius: Number(e.target.value)})} />
+              <input type="number" className="w-full rounded-xl bg-[var(--bg-secondary)] border border-[var(--border-subtle)] p-3 text-[var(--text-primary)] focus:border-[var(--accent-orange)] outline-none transition" value={form.radius} onChange={e => setForm({...form, radius: Number(e.target.value)})} />
             </div>
             <div className="space-y-1">
               <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Country</label>
-              <input className="w-full rounded-xl bg-slate-950 border border-white/10 p-3 text-white focus:border-indigo-500 outline-none transition" value={form.country} onChange={e => setForm({...form, country: e.target.value})} />
+              <input className="w-full rounded-xl bg-[var(--bg-secondary)] border border-[var(--border-subtle)] p-3 text-[var(--text-primary)] focus:border-[var(--accent-orange)] outline-none transition" value={form.country} onChange={e => setForm({...form, country: e.target.value})} />
             </div>
           </div>
 
-          <div className="flex items-center gap-3 p-3 rounded-xl bg-white/5 border border-white/10">
-            <input type="checkbox" id="gym_status" className="rounded border-white/20 bg-transparent text-indigo-500" checked={form.gym_open_status} onChange={e => setForm({...form, gym_open_status: e.target.checked})} />
-            <label htmlFor="gym_status" className="text-sm font-bold text-white cursor-pointer">Gym is currently Open</label>
+          <div className="flex items-center gap-3 p-3 rounded-xl bg-[var(--bg-secondary)] border border-[var(--border-subtle)]">
+            <input type="checkbox" id="gym_status" className="rounded border-[var(--border-subtle)] bg-transparent text-[var(--accent-orange)]" checked={form.gym_open_status} onChange={e => setForm({...form, gym_open_status: e.target.checked})} />
+            <label htmlFor="gym_status" className="text-sm font-bold text-[var(--text-primary)] cursor-pointer">Gym is currently Open</label>
           </div>
 
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-1">
               <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Working Hours (From)</label>
-              <input type="time" className="w-full rounded-xl bg-slate-950 border border-white/10 p-3 text-white focus:border-indigo-500 outline-none transition" value={form.working_hours_from_time} onChange={e => setForm({...form, working_hours_from_time: e.target.value})} />
+              <input type="time" className="w-full rounded-xl bg-[var(--bg-secondary)] border border-[var(--border-subtle)] p-3 text-[var(--text-primary)] focus:border-[var(--accent-orange)] outline-none transition" value={form.working_hours_from_time} onChange={e => setForm({...form, working_hours_from_time: e.target.value})} />
             </div>
             <div className="space-y-1">
               <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Working Hours (To)</label>
-              <input type="time" className="w-full rounded-xl bg-slate-950 border border-white/10 p-3 text-white focus:border-indigo-500 outline-none transition" value={form.working_hours_to_time} onChange={e => setForm({...form, working_hours_to_time: e.target.value})} />
+              <input type="time" className="w-full rounded-xl bg-[var(--bg-secondary)] border border-[var(--border-subtle)] p-3 text-[var(--text-primary)] focus:border-[var(--accent-orange)] outline-none transition" value={form.working_hours_to_time} onChange={e => setForm({...form, working_hours_to_time: e.target.value})} />
             </div>
           </div>
 
           <div className="grid grid-cols-2 gap-4">
              <div className="space-y-1">
                <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Email</label>
-               <input className="w-full rounded-xl bg-slate-950 border border-white/10 p-3 text-white focus:border-indigo-500" value={form.email} onChange={e => setForm({...form, email: e.target.value})} />
+               <input className="w-full rounded-xl bg-[var(--bg-secondary)] border border-[var(--border-subtle)] p-3 text-[var(--text-primary)] focus:border-[var(--accent-orange)] outline-none transition" value={form.email} onChange={e => setForm({...form, email: e.target.value})} />
              </div>
              <div className="space-y-1">
                <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Phone</label>
-               <input className="w-full rounded-xl bg-slate-950 border border-white/10 p-3 text-white focus:border-indigo-500" value={form.phone} onChange={e => setForm({...form, phone: e.target.value})} />
+               <input className="w-full rounded-xl bg-[var(--bg-secondary)] border border-[var(--border-subtle)] p-3 text-[var(--text-primary)] focus:border-[var(--accent-orange)] outline-none transition" value={form.phone} onChange={e => setForm({...form, phone: e.target.value})} />
              </div>
              <div className="space-y-1">
                <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest">WhatsApp</label>
-               <input className="w-full rounded-xl bg-slate-950 border border-white/10 p-3 text-white focus:border-indigo-500" value={form.whatsapp} onChange={e => setForm({...form, whatsapp: e.target.value})} />
+               <input className="w-full rounded-xl bg-[var(--bg-secondary)] border border-[var(--border-subtle)] p-3 text-[var(--text-primary)] focus:border-[var(--accent-orange)] outline-none transition" value={form.whatsapp} onChange={e => setForm({...form, whatsapp: e.target.value})} />
              </div>
              <div className="space-y-1">
                <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Website</label>
-               <input className="w-full rounded-xl bg-slate-950 border border-white/10 p-3 text-white focus:border-indigo-500" value={form.website_url} onChange={e => setForm({...form, website_url: e.target.value})} />
+               <input className="w-full rounded-xl bg-[var(--bg-secondary)] border border-[var(--border-subtle)] p-3 text-[var(--text-primary)] focus:border-[var(--accent-orange)] outline-none transition" value={form.website_url} onChange={e => setForm({...form, website_url: e.target.value})} />
              </div>
              <div className="space-y-1">
                <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Facebook</label>
-               <input className="w-full rounded-xl bg-slate-950 border border-white/10 p-3 text-white focus:border-indigo-500" value={form.facebook_url} onChange={e => setForm({...form, facebook_url: e.target.value})} />
+               <input className="w-full rounded-xl bg-[var(--bg-secondary)] border border-[var(--border-subtle)] p-3 text-[var(--text-primary)] focus:border-[var(--accent-orange)] outline-none transition" value={form.facebook_url} onChange={e => setForm({...form, facebook_url: e.target.value})} />
              </div>
              <div className="space-y-1">
                <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Instagram</label>
-               <input className="w-full rounded-xl bg-slate-950 border border-white/10 p-3 text-white focus:border-indigo-500" value={form.instagram_url} onChange={e => setForm({...form, instagram_url: e.target.value})} />
+               <input className="w-full rounded-xl bg-[var(--bg-secondary)] border border-[var(--border-subtle)] p-3 text-[var(--text-primary)] focus:border-[var(--accent-orange)] outline-none transition" value={form.instagram_url} onChange={e => setForm({...form, instagram_url: e.target.value})} />
              </div>
           </div>
         </div>

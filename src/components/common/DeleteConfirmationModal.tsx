@@ -42,7 +42,7 @@ export const DeleteConfirmationModal = ({
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={onClose}
-            className="absolute inset-0 bg-black/20 backdrop-blur-sm"
+            className="absolute inset-0 bg-black/70 backdrop-blur-lg"
           />
 
           <motion.div

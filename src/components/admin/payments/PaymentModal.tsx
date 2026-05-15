@@ -89,7 +89,7 @@ export function PaymentModal({
       title={editPaymentId ? t("financialAdjustment") : t("logTransaction")}
       footer={
         <>
-          <GlowButton className="bg-gray-600" onClick={onClose} disabled={submitting}>{t("cancel")}</GlowButton>
+          <GlowButton variant="secondary" onClick={onClose} disabled={submitting}>{t("cancel")}</GlowButton>
           <GlowButton onClick={handleSubmit} disabled={submitting}>
             <ButtonLoader label={t("submit")} loadingLabel={t("loading")} loading={submitting} />
           </GlowButton>
@@ -100,7 +100,7 @@ export function PaymentModal({
         <div className="space-y-1">
           <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest">{t("selectMember")}</label>
           <select
-            className={`w-full rounded-xl bg-slate-950 border p-4 text-white focus:border-indigo-500 outline-none transition font-bold ${errors.user_id ? "border-red-500" : "border-white/10"}`}
+            className={`w-full rounded-xl bg-[var(--bg-secondary)] border p-4 text-[var(--text-primary)] focus:border-[var(--accent-orange)] outline-none transition font-bold ${errors.user_id ? "border-red-500" : "border-[var(--border-subtle)]"}`}
             value={paymentForm.user_id}
             onChange={(e) => {
               setPaymentForm({ ...paymentForm, user_id: e.target.value });
@@ -118,7 +118,7 @@ export function PaymentModal({
         <div className="space-y-1">
           <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest">{t("purchaseType")}</label>
           <select
-            className="w-full rounded-xl bg-slate-950 border border-white/10 p-4 text-white focus:border-indigo-500 outline-none transition font-bold uppercase"
+            className="w-full rounded-xl bg-[var(--bg-secondary)] border border-[var(--border-subtle)] p-4 text-[var(--text-primary)] focus:border-[var(--accent-orange)] outline-none transition font-bold uppercase"
             value={paymentForm.purchase_type}
             onChange={(e) => setPaymentForm({ ...paymentForm, purchase_type: e.target.value as any, purchase_id: "", amount: "0" })}
           >
@@ -131,7 +131,7 @@ export function PaymentModal({
           <div className="space-y-1">
             <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest">{t("selectInventoryItem")}</label>
             <select
-              className={`w-full rounded-xl bg-slate-950 border p-4 text-white focus:border-indigo-500 outline-none transition font-bold ${errors.purchase_id ? "border-red-500" : "border-white/10"}`}
+              className={`w-full rounded-xl bg-[var(--bg-secondary)] border p-4 text-[var(--text-primary)] focus:border-[var(--accent-orange)] outline-none transition font-bold ${errors.purchase_id ? "border-red-500" : "border-[var(--border-subtle)]"}`}
               value={paymentForm.purchase_id}
               onChange={(e) => {
                 const product = fetchedProducts.find(p => p.id === e.target.value);
@@ -157,7 +157,7 @@ export function PaymentModal({
           <div className="space-y-1">
             <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest">{t("selectSubscriptionPlan")}</label>
             <select
-              className={`w-full rounded-xl bg-slate-950 border p-4 text-white focus:border-indigo-500 outline-none transition font-bold ${errors.purchase_id ? "border-red-500" : "border-white/10"}`}
+              className={`w-full rounded-xl bg-[var(--bg-secondary)] border p-4 text-[var(--text-primary)] focus:border-[var(--accent-orange)] outline-none transition font-bold ${errors.purchase_id ? "border-red-500" : "border-[var(--border-subtle)]"}`}
               value={paymentForm.purchase_id}
               onChange={(e) => {
                 const plan = subscriptionPlans.find(pl => pl.id === e.target.value);
@@ -183,7 +183,7 @@ export function PaymentModal({
           <div className="space-y-1">
             <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest">{t("transactionValue")} ({currencySymbol})</label>
             <input
-              className="w-full rounded-xl bg-slate-800 border border-white/10 p-4 text-slate-400 font-bold cursor-not-allowed"
+              className="w-full rounded-xl bg-[var(--bg-secondary)] border border-[var(--border-subtle)] p-4 text-[var(--text-muted)] font-bold cursor-not-allowed"
               type="text"
               value={paymentForm.amount}
               readOnly
@@ -192,7 +192,7 @@ export function PaymentModal({
           <div className="space-y-1">
             <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest">{t("entryDate")}</label>
             <input
-              className={`w-full rounded-xl bg-slate-950 border p-4 text-white focus:border-indigo-500 outline-none transition font-bold ${errors.payment_date ? "border-red-500" : "border-white/10"}`}
+              className={`w-full rounded-xl bg-[var(--bg-secondary)] border p-4 text-[var(--text-primary)] focus:border-[var(--accent-orange)] outline-none transition font-bold ${errors.payment_date ? "border-red-500" : "border-[var(--border-subtle)]"}`}
               type="date"
               max={new Date().toISOString().split('T')[0]}
               value={paymentForm.payment_date}
@@ -209,7 +209,7 @@ export function PaymentModal({
           <div className="space-y-1">
             <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest">{t("strategicMethod")}</label>
             <select
-              className="w-full rounded-xl bg-slate-950 border border-white/10 p-4 text-white focus:border-indigo-500 outline-none transition font-bold uppercase"
+              className="w-full rounded-xl bg-[var(--bg-secondary)] border border-[var(--border-subtle)] p-4 text-[var(--text-primary)] focus:border-[var(--accent-orange)] outline-none transition font-bold uppercase"
               value={paymentForm.payment_method}
               onChange={(e) => setPaymentForm({ ...paymentForm, payment_method: e.target.value as any })}
             >
@@ -222,7 +222,7 @@ export function PaymentModal({
           <div className="space-y-1">
             <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Status</label>
             <select
-              className="w-full rounded-xl bg-slate-950 border border-white/10 p-4 text-white focus:border-indigo-500 outline-none transition font-bold uppercase"
+              className="w-full rounded-xl bg-[var(--bg-secondary)] border border-[var(--border-subtle)] p-4 text-[var(--text-primary)] focus:border-[var(--accent-orange)] outline-none transition font-bold uppercase"
               value={paymentForm.status}
               onChange={(e) => setPaymentForm({ ...paymentForm, status: e.target.value as any })}
             >

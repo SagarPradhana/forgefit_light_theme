@@ -85,7 +85,7 @@ export function ServicesPage() {
           {/* Interior Visual Section */}
           <section className="mb-32">
             {servicesBanner ? (
-              <div className="relative h-[500px] rounded-[2.5rem] overflow-hidden group">
+              <div className="relative h-[250px] sm:h-[350px] md:h-[500px] rounded-[2.5rem] overflow-hidden group">
                 <img
                   src={servicesBanner}
                   alt="Services Banner"

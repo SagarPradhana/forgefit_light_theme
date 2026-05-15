@@ -45,25 +45,19 @@ export function PricingPage() {
 
   return (
     <PublicLayout>
-      <div className="relative isolate min-h-screen overflow-hidden bg-gradient-to-b from-[var(--bg-primary)] via-[var(--bg-secondary)] to-[var(--bg-card)]">
-        {/* Animated Background Orbs */}
-        <div className="absolute inset-0 overflow-hidden pointer-events-none">
-          <div className="absolute top-0 right-0 w-[600px] h-[600px] rounded-full bg-gradient-to-br from-[var(--accent-orange)]/10 to-transparent blur-3xl" />
-          <div className="absolute bottom-0 left-0 w-[400px] h-[400px] rounded-full bg-gradient-to-tr from-[var(--accent-gold)]/10 to-transparent blur-3xl" />
-        </div>
-
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-16 relative z-10">
+      <div className="overflow-hidden bg-gradient-to-b from-[var(--bg-primary)] via-[var(--bg-secondary)] to-[var(--bg-card)]">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-16">
           <div className="text-center mb-12 sm:mb-20">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-[var(--accent-orange)]/10 to-[var(--accent-gold)]/10 border border-[var(--border-accent)] mb-6"
+              className="badge-premium-light inline-flex mb-6"
             >
-              <Star className="w-4 h-4 text-[var(--accent-orange)]" />
-              <span className="text-sm font-semibold text-[var(--accent-orange)] uppercase tracking-wider">Elite Access Plans</span>
+              <Star className="w-4 h-4" />
+              Elite Access Plans
             </motion.div>
-            <h1 className="text-4xl sm:text-6xl md:text-7xl font-black text-[var(--text-primary)] mb-6 uppercase tracking-tight leading-[0.9]">
-              INVEST IN <br /><span className="text-gradient">YOUR EVOLUTION</span>
+            <h1 className="heading-premium-xl mb-6">
+              INVEST IN <br /><span className="text-gradient-premium">YOUR EVOLUTION</span>
             </h1>
             <p className="text-[var(--text-muted)] text-base sm:text-lg max-w-2xl mx-auto px-4 sm:px-0">
               Transparent pricing designed for every stage of your journey. No hidden fees, just pure performance.
@@ -82,16 +76,8 @@ export function PricingPage() {
                   transition={{ delay: index * 0.1, duration: 0.6 }}
                   className="relative group"
                 >
-                  {isPopular && (
-                    <div className="absolute -top-4 left-1/2 -translate-x-1/2 z-20">
-                      <div className="bg-gradient-to-r from-[var(--accent-orange)] to-[var(--accent-gold)] text-white text-[10px] font-black uppercase tracking-[0.2em] px-4 py-1.5 rounded-full shadow-[0_4px_15px_var(--glow-orange)]">
-                        Most Popular
-                      </div>
-                    </div>
-                  )}
-
-                  <div className={`bg-[var(--bg-card)] border rounded-3xl p-8 h-full flex flex-col relative overflow-hidden transition-all duration-500 hover:shadow-[var(--shadow-hover)] hover:-translate-y-2 ${isPopular ? "border-[var(--accent-orange)] ring-1 ring-[var(--border-accent)] shadow-[0_0_30px_var(--glow-orange)]" : "border-[var(--border-subtle)] shadow-[var(--shadow-card)]"}`}>
-                    {isPopular && <div className="absolute top-0 right-0 w-32 h-32 bg-[var(--accent-orange)]/5 blur-3xl -mr-16 -mt-16 rounded-full" />}
+                  <div className={`pricing-card-light h-full flex flex-col ${isPopular ? 'featured' : ''}`}>
+                    {isPopular && <div className="popular-badge">Most Popular</div>}
 
                     <div className="mb-8">
                       <p className="text-[var(--accent-orange)] text-xs font-black uppercase tracking-[0.2em] mb-4">{plan.name}</p>
@@ -117,8 +103,8 @@ export function PricingPage() {
 
                     <Link to="/signin">
                       <button className={`w-full py-4 rounded-xl font-black uppercase tracking-widest text-sm transition-all duration-300 ${isPopular 
-                        ? "bg-gradient-to-r from-[var(--accent-orange)] to-[var(--accent-gold)] text-white shadow-[0_4px_15px_var(--glow-orange)] hover:shadow-[0_10px_35px_var(--glow-orange)] hover:-translate-y-0.5" 
-                        : "bg-[var(--bg-card)] border-2 border-[var(--border-subtle)] text-[var(--text-primary)] hover:border-[var(--accent-orange)] hover:text-[var(--accent-orange)] hover:-translate-y-0.5"
+                        ? "btn-premium-primary justify-center" 
+                        : "btn-premium-secondary justify-center"
                       }`}>
                         Select Plan
                       </button>
@@ -131,17 +117,17 @@ export function PricingPage() {
 
           <section className="py-20 border-t border-[var(--border-subtle)]">
             <div className="text-center mb-16">
-              <h2 className="text-3xl md:text-4xl font-black text-[var(--text-primary)] uppercase tracking-tight">FEATURE COMPARISON</h2>
+              <h2 className="heading-premium-lg">FEATURE COMPARISON</h2>
             </div>
 
-            <div className="bg-[var(--bg-card)] border border-[var(--border-subtle)] rounded-2xl overflow-hidden shadow-[var(--shadow-card)]">
+            <div className="bg-[var(--bg-card)] border border-[var(--border-subtle)] rounded-2xl overflow-hidden">
               <div className="overflow-x-auto">
-                <table className="w-full text-left">
+                <table className="table-premium">
                   <thead>
                     <tr className="bg-gradient-to-r from-[var(--bg-secondary)] to-[var(--bg-card)]">
-                      <th className="px-8 py-6 text-xs font-black text-[var(--text-muted)] uppercase tracking-widest border-b border-[var(--border-subtle)]">Features</th>
+                      <th className="px-8 py-6">Features</th>
                       {plans.map((plan) => (
-                        <th key={plan.id} className="px-8 py-6 text-xs font-black text-[var(--text-primary)] uppercase tracking-widest border-b border-[var(--border-subtle)] text-center">{plan.name}</th>
+                        <th key={plan.id} className="px-8 py-6 text-center">{plan.name}</th>
                       ))}
                     </tr>
                   </thead>
@@ -169,17 +155,17 @@ export function PricingPage() {
           </section>
 
           <div className="mt-24 grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div className="bg-[var(--bg-card)] border border-[var(--border-subtle)] rounded-2xl p-8 text-center shadow-[var(--shadow-card)] hover:shadow-[var(--shadow-hover)] hover:-translate-y-1 transition-all">
+            <div className="card-premium-light text-center">
               <ShieldCheck className="h-8 w-8 text-[var(--accent-orange)] mx-auto mb-4" />
               <h3 className="text-[var(--text-primary)] font-bold mb-2">SECURE BILLING</h3>
               <p className="text-[var(--text-muted)] text-sm">Enterprise-grade encryption for all your transactions and data.</p>
             </div>
-            <div className="bg-[var(--bg-card)] border border-[var(--border-subtle)] rounded-2xl p-8 text-center shadow-[var(--shadow-card)] hover:shadow-[var(--shadow-hover)] hover:-translate-y-1 transition-all">
+            <div className="card-premium-light text-center">
               <Crown className="h-8 w-8 text-[var(--accent-gold)] mx-auto mb-4" />
               <h3 className="text-[var(--text-primary)] font-bold mb-2">ELITE PERKS</h3>
               <p className="text-[var(--text-muted)] text-sm">Members get exclusive access to events and premium recovery gear.</p>
             </div>
-            <div className="bg-[var(--bg-card)] border border-[var(--border-subtle)] rounded-2xl p-8 text-center shadow-[var(--shadow-card)] hover:shadow-[var(--shadow-hover)] hover:-translate-y-1 transition-all">
+            <div className="card-premium-light text-center">
               <Users className="h-8 w-8 text-[var(--accent-orange)] mx-auto mb-4" />
               <h3 className="text-[var(--text-primary)] font-bold mb-2">NO CONTRACTS</h3>
               <p className="text-[var(--text-muted)] text-sm">Flexible memberships that adapt to your evolving lifestyle.</p>

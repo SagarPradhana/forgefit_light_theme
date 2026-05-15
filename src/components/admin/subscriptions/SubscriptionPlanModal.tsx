@@ -1,4 +1,5 @@
-import { Modal, GlowButton } from "../../ui/primitives";
+import { useState } from "react";
+import { Modal, GlowButton, ButtonLoader } from "../../ui/primitives";
 import { toast } from "../../../store/toastStore";
 import { adminSubscriptionService } from "../../../services/adminSubscriptionService";
 import { handlePhoneKeyDown, handlePhonePaste, sanitizePhone } from "../../../utils/formUtils";
@@ -30,6 +31,8 @@ export function SubscriptionPlanModal({
   onSuccess
 }: SubscriptionPlanModalProps) {
   const { t } = useTranslation();
+  const [saving, setSaving] = useState(false);
+
   const handleSubmit = async () => {
     if (!planForm.name.trim()) {
       toast.error("Plan name is required");
@@ -43,6 +46,8 @@ export function SubscriptionPlanModal({
       toast.error("Actual price cannot be less than the selling price");
       return;
     }
+
+    setSaving(true);
 
     const payload = {
       name: planForm.name,
@@ -64,6 +69,8 @@ export function SubscriptionPlanModal({
       onClose();
     } catch (err) {
       toast.error("Strategy modification failed. Verify parameters.");
+    } finally {
+      setSaving(false);
     }
   };
 
@@ -74,8 +81,10 @@ export function SubscriptionPlanModal({
       title={editPlanId ? t("editStrategy") : t("defineStrategy")}
       footer={
         <>
-          <GlowButton className="bg-gray-600" onClick={onClose}>{t("cancel")}</GlowButton>
-          <GlowButton onClick={handleSubmit}>{t("submit")}</GlowButton>
+          <GlowButton variant="secondary" onClick={onClose} disabled={saving}>{t("cancel")}</GlowButton>
+          <GlowButton onClick={handleSubmit} disabled={saving}>
+            <ButtonLoader label={t("submit")} loadingLabel={t("loading")} loading={saving} />
+          </GlowButton>
         </>
       }
     >
@@ -83,7 +92,7 @@ export function SubscriptionPlanModal({
         <div className="space-y-1">
           <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest">{t("planDesignation")}</label>
           <input
-            className="w-full rounded-xl bg-slate-950 border border-white/10 p-4 text-white focus:border-indigo-500 outline-none transition font-bold"
+            className="w-full rounded-xl bg-[var(--bg-secondary)] border border-[var(--border-subtle)] p-4 text-[var(--text-primary)] focus:border-[var(--accent-orange)] outline-none transition font-bold"
             placeholder={t("planDesignationPlaceholder")}
             value={planForm.name}
             onChange={(e) => setPlanForm({ ...planForm, name: e.target.value })}
@@ -94,7 +103,7 @@ export function SubscriptionPlanModal({
           <div className="space-y-1">
             <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest">{t("actualPrice")} ({currencySymbol})</label>
             <input
-              className="w-full rounded-xl bg-slate-950 border border-white/10 p-4 text-white focus:border-indigo-500 outline-none transition font-bold"
+              className="w-full rounded-xl bg-[var(--bg-secondary)] border border-[var(--border-subtle)] p-4 text-[var(--text-primary)] focus:border-[var(--accent-orange)] outline-none transition font-bold"
               placeholder="0"
               type="text"
               value={planForm.actual_price}
@@ -106,7 +115,7 @@ export function SubscriptionPlanModal({
           <div className="space-y-1">
             <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest">{t("strategicValuation")} ({currencySymbol})</label>
             <input
-              className="w-full rounded-xl bg-slate-950 border border-white/10 p-4 text-white focus:border-indigo-500 outline-none transition font-bold"
+              className="w-full rounded-xl bg-[var(--bg-secondary)] border border-[var(--border-subtle)] p-4 text-[var(--text-primary)] focus:border-[var(--accent-orange)] outline-none transition font-bold"
               placeholder="0"
               type="text"
               value={planForm.price}
@@ -118,7 +127,7 @@ export function SubscriptionPlanModal({
           <div className="space-y-1">
             <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Duration</label>
             <select
-              className="w-full rounded-xl bg-slate-950 border border-white/10 p-4 text-white focus:border-indigo-500 outline-none transition font-bold"
+              className="w-full rounded-xl bg-[var(--bg-secondary)] border border-[var(--border-subtle)] p-4 text-[var(--text-primary)] focus:border-[var(--accent-orange)] outline-none transition font-bold"
               value={planForm.duration_in_months}
               onChange={(e) => setPlanForm({ ...planForm, duration_in_months: e.target.value })}
             >
@@ -133,7 +142,7 @@ export function SubscriptionPlanModal({
         <div className="space-y-1">
           <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest">{t("protocolDescription")}</label>
           <textarea
-            className="w-full rounded-xl bg-slate-950 border border-white/10 p-4 text-white focus:border-indigo-500 outline-none transition resize-none h-32 font-medium"
+            className="w-full rounded-xl bg-[var(--bg-secondary)] border border-[var(--border-subtle)] p-4 text-[var(--text-primary)] focus:border-[var(--accent-orange)] outline-none transition resize-none h-32 font-medium"
             placeholder={t("protocolDescriptionPlaceholder")}
             value={planForm.description}
             onChange={(e) => setPlanForm({ ...planForm, description: e.target.value })}

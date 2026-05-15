@@ -68,7 +68,7 @@ export function Modal({
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 0.2 }}
-          className="absolute inset-0 bg-black/20 backdrop-blur-sm"
+          className="absolute inset-0 bg-black/70 backdrop-blur-lg"
           onClick={closeOnOverlay ? handleClose : undefined}
         />
 
@@ -79,21 +79,22 @@ export function Modal({
           exit={{ opacity: 0, scale: 0.95, y: 20 }}
           transition={{ duration: 0.2 }}
           className={clsx(
-            "relative z-10 w-full bg-[var(--bg-card)] rounded-3xl shadow-[var(--shadow-hover)] border border-[var(--border-subtle)] overflow-hidden",
+            "relative z-10 w-full bg-white rounded-3xl border border-gray-200 overflow-hidden",
             sizes[size],
             className
           )}
+          style={{ boxShadow: "0 10px 40px rgba(0,0,0,0.12)" }}
         >
           {/* Header */}
           {(title || showCloseButton) && (
-            <div className="flex items-center justify-between px-6 py-5 border-b border-[var(--border-subtle)] bg-gradient-to-r from-[var(--bg-primary)] to-[var(--bg-card)]">
+            <div className="flex items-center justify-between px-6 py-5 border-b border-gray-200 bg-gradient-to-r from-gray-50 to-white">
               {title && (
-                <h2 className="text-xl font-bold text-[var(--text-primary)]">{title}</h2>
+                <h2 className="text-xl font-bold text-gray-800">{title}</h2>
               )}
               {showCloseButton && (
                 <button
                   onClick={handleClose}
-                  className="p-2.5 text-[var(--text-muted)] hover:text-[var(--accent-orange)] hover:bg-[var(--bg-card-hover)] rounded-xl transition-all"
+                  className="p-2.5 text-gray-400 hover:text-orange-600 hover:bg-orange-50 rounded-xl transition-all"
                 >
                   <X className="w-5 h-5" />
                 </button>
@@ -106,13 +107,13 @@ export function Modal({
 
           {/* Footer */}
           {footer && (
-            <div className="px-6 py-4 border-t border-[var(--border-subtle)] bg-[var(--bg-secondary)] flex justify-end gap-3">
+            <div className="px-6 py-4 border-t border-gray-200 bg-gray-50 flex justify-end gap-3">
               {footer}
             </div>
           )}
 
           {/* Bottom Accent Line */}
-          <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-[var(--accent-orange)] via-[var(--accent-gold)] to-[var(--accent-orange)] opacity-50" />
+          <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-orange-600 via-amber-500 to-orange-600 opacity-50" />
         </motion.div>
       </div>
     </AnimatePresence>,
@@ -239,7 +240,7 @@ export function Drawer({
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="absolute inset-0 bg-black/20 backdrop-blur-sm"
+            className="absolute inset-0 bg-black/70 backdrop-blur-lg"
             onClick={onClose}
           />
 
@@ -250,18 +251,18 @@ export function Drawer({
             exit={positions[position].exit}
             transition={{ type: "spring", damping: 25, stiffness: 200 }}
             className={clsx(
-              "absolute top-0 bottom-0 bg-[var(--bg-card)] border-[var(--border-subtle)] shadow-[var(--shadow-hover)]",
+              "absolute top-0 bottom-0 bg-white border-gray-200",
               position === "right" ? "right-0 border-l" : "left-0 border-r"
             )}
-            style={{ width: size, maxWidth: "90vw" }}
+            style={{ width: size, maxWidth: "90vw", boxShadow: "0 10px 40px rgba(0,0,0,0.12)" }}
           >
             {/* Header */}
             {(title) && (
-              <div className="flex items-center justify-between px-6 py-5 border-b border-[var(--border-subtle)]">
-                <h2 className="text-lg font-bold text-[var(--text-primary)]">{title}</h2>
+              <div className="flex items-center justify-between px-6 py-5 border-b border-gray-200">
+                <h2 className="text-lg font-bold text-gray-800">{title}</h2>
                 <button
                   onClick={onClose}
-                  className="p-2 text-[var(--text-muted)] hover:text-[var(--accent-orange)] hover:bg-[var(--bg-card-hover)] rounded-lg transition-all"
+                  className="p-2 text-gray-400 hover:text-orange-600 hover:bg-orange-50 rounded-lg transition-all"
                 >
                   <X className="w-5 h-5" />
                 </button>

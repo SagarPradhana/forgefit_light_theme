@@ -150,14 +150,19 @@ export function FullScreenLoader({
   return (
     <div className={clsx(
       "fixed inset-0 z-[9999] flex items-center justify-center",
-      overlay ? "bg-[var(--bg-primary)]/80 backdrop-blur-sm" : "bg-transparent"
+      overlay ? "bg-black/40 backdrop-blur-md" : "bg-transparent"
     )}>
       <div className="text-center">
-        <div className="relative w-16 h-16 mx-auto mb-4">
-          <div className="absolute inset-0 rounded-full border-4 border-[var(--border-subtle)]" />
-          <div className="absolute inset-0 rounded-full border-4 border-t-[var(--accent-orange)] border-r-transparent animate-spin" />
+        <div className="relative w-20 h-20 mx-auto mb-6">
+          <div className="absolute inset-0 rounded-full bg-gradient-to-br from-[var(--accent-orange)] via-[var(--accent-gold)] to-[var(--accent-orange)] animate-spin" style={{ mask: "radial-gradient(farthest-side, transparent calc(100% - 4px), #fff calc(100% - 3px))", WebkitMask: "radial-gradient(farthest-side, transparent calc(100% - 4px), #fff calc(100% - 3px))" }} />
+          <div className="absolute inset-3 rounded-full bg-white shadow-inner" />
         </div>
-        <p className="text-[var(--text-secondary)] font-medium">{message}</p>
+        <div className="flex items-center justify-center gap-1.5">
+          {[0, 1, 2].map((i) => (
+            <div key={i} className="w-2 h-2 rounded-full bg-gradient-to-r from-[var(--accent-orange)] to-[var(--accent-gold)] animate-bounce" style={{ animationDelay: `${i * 0.15}s` }} />
+          ))}
+        </div>
+        <p className="text-[var(--text-secondary)] font-medium mt-4">{message}</p>
       </div>
     </div>
   );
@@ -165,10 +170,18 @@ export function FullScreenLoader({
 
 // Inline spinner
 export function LoaderSpinner({ size = 24, className }: { size?: number; className?: string }) {
+  const borderPx = size <= 16 ? 2 : 3;
   return (
     <div 
-      className={clsx("animate-spin rounded-full border-2 border-[var(--border-subtle)] border-t-[var(--accent-orange)]", className)}
-      style={{ width: size, height: size }}
+      className={clsx("animate-spin rounded-full", className)}
+      style={{
+        width: size,
+        height: size,
+        background: `conic-gradient(from 0deg, transparent 60%, var(--accent-orange) 85%, var(--accent-gold) 100%)`,
+        WebkitMask: `radial-gradient(farthest-side, transparent calc(100% - ${borderPx}px), #fff calc(100% - ${borderPx - 0.5}px))`,
+        mask: `radial-gradient(farthest-side, transparent calc(100% - ${borderPx}px), #fff calc(100% - ${borderPx - 0.5}px))`,
+        boxShadow: `0 0 12px var(--glow-orange)`,
+      }}
     />
   );
 }

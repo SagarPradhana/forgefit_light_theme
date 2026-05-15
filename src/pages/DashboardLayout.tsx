@@ -173,11 +173,10 @@ function DashboardInner({ children }: { children: React.ReactNode }) {
                   <div key={group.label} className="relative">
                     <button
                       onClick={() => setOpenGroup(isOpen ? null : group.label)}
-                      className={`relative flex items-center gap-1.5 px-3 py-2 rounded-xl text-sm font-semibold transition-all ${
-                        isAnyActive
+                      className={`relative flex items-center gap-1.5 px-3 py-2 rounded-xl text-sm font-semibold transition-all ${isAnyActive
                           ? "text-white bg-gradient-to-r from-[var(--accent-orange)] to-[var(--accent-gold)]"
-                          : "text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-secondary)]"
-                      }`}
+                          : "text-gray-600 hover:text-gray-900 hover:bg-gray-100"
+                        }`}
                     >
                       <group.icon size={16} />
                       <span>{group.label}</span>
@@ -191,13 +190,29 @@ function DashboardInner({ children }: { children: React.ReactNode }) {
                           animate={{ opacity: 1, y: 0, scale: 1 }}
                           exit={{ opacity: 0, y: 6, scale: 0.96 }}
                           transition={{ duration: 0.15 }}
-                          className="absolute top-full left-0 mt-1 min-w-[180px] rounded-2xl bg-white border border-[var(--border-subtle)] p-1.5 z-[60]"
-                          style={{ boxShadow: "var(--shadow-hover)" }}
+                          className="absolute top-full left-0 mt-1 w-max min-w-[180px] rounded-2xl bg-white border border-gray-200 p-1.5 z-[60]"
+                          style={{ boxShadow: "0 10px 40px rgba(0,0,0,0.12)" }}
                         >
                           {group.items.map((item) => {
                             const path = `/${role}/${item.name}`;
                             const isActive = location.pathname === path;
                             const Icon = item.icon;
+                            if (!item.subItems || item.subItems.length === 0) {
+                              return (
+                                <NavLink
+                                  key={item.name}
+                                  to={path}
+                                  onClick={() => setOpenGroup(null)}
+                                  className={`flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-semibold transition-all whitespace-nowrap ${isActive
+                                      ? "bg-gradient-to-r from-[var(--accent-orange)] to-[var(--accent-gold)] text-white"
+                                      : "text-gray-700 hover:text-gray-900 hover:bg-gray-100"
+                                    }`}
+                                >
+                                  <Icon size={18} className={isActive ? "text-white" : "text-gray-500"} />
+                                  {item.label}
+                                </NavLink>
+                              );
+                            }
                             return (
                               <NavItemOrLink key={item.name} item={item} role={role} path={path} isActive={isActive} Icon={Icon} onClose={() => setOpenGroup(null)} />
                             );
@@ -359,13 +374,12 @@ function DashboardInner({ children }: { children: React.ReactNode }) {
                           key={name}
                           to={path}
                           onClick={() => setMobileNavOpen(false)}
-                          className={`flex items-center gap-3 px-4 py-2.5 rounded-2xl transition-all text-sm font-semibold ${
-                            isActive
+                          className={`flex items-center gap-3 px-4 py-2.5 rounded-2xl transition-all text-sm font-semibold ${isActive
                               ? "bg-gradient-to-r from-[var(--accent-orange)] to-[var(--accent-gold)] text-white"
-                              : "text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-secondary)]"
-                          }`}
+                              : "text-gray-700 hover:text-gray-900 hover:bg-gray-100"
+                            }`}
                         >
-                          <Icon size={18} />
+                          <Icon size={18} className={isActive ? "text-white" : "text-gray-500"} />
                           {label}
                         </NavLink>
                       );
@@ -417,12 +431,11 @@ function NavItemOrLink({ item, role, path, isActive, Icon, onClose }: {
   if (!item.subItems || item.subItems.length === 0) {
     return (
       <NavLink to={path} onClick={onClose}
-        className={`flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm font-semibold transition-all ${
-          isActive ? "bg-gradient-to-r from-[var(--accent-orange)] to-[var(--accent-gold)] text-white"
-          : "text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-secondary)]"
-        }`}
+        className={`flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm font-semibold transition-all ${isActive ? "bg-gradient-to-r from-[var(--accent-orange)] to-[var(--accent-gold)] text-white"
+            : "text-gray-700 hover:text-gray-900 hover:bg-gray-100"
+          }`}
       >
-        <Icon size={16} />
+        <Icon size={16} className={isActive ? "text-white" : "text-gray-500"} />
         {item.label}
       </NavLink>
     );
@@ -439,13 +452,12 @@ function NavItemOrLink({ item, role, path, isActive, Icon, onClose }: {
   return (
     <div>
       <button onClick={() => setOpen(!open)}
-        className={`w-full flex items-center justify-between gap-2 px-3 py-2.5 rounded-xl text-sm font-semibold transition-all ${
-          subActive ? "bg-gradient-to-r from-[var(--accent-orange)] to-[var(--accent-gold)] text-white"
-          : "text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-secondary)]"
-        }`}
+        className={`w-full flex items-center justify-between gap-2 px-3 py-2.5 rounded-xl text-sm font-semibold transition-all ${subActive ? "bg-gradient-to-r from-[var(--accent-orange)] to-[var(--accent-gold)] text-white"
+            : "text-gray-700 hover:text-gray-900 hover:bg-gray-100"
+          }`}
       >
         <div className="flex items-center gap-2.5">
-          <Icon size={16} />
+          <Icon size={16} className={subActive ? "text-white" : "text-gray-500"} />
           {item.label}
         </div>
         <ChevronRight size={14} className={`transition-transform ${open ? "rotate-90" : ""}`} />
@@ -463,12 +475,11 @@ function NavItemOrLink({ item, role, path, isActive, Icon, onClose }: {
               return (
                 <NavLink key={sub.name} to={subHref}
                   onClick={() => { setOpen(false); onClose(); }}
-                  className={`flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-semibold transition-all ${
-                    isSubActive ? "text-[var(--accent-orange)] bg-orange-50"
-                    : "text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-secondary)]"
-                  }`}
+                  className={`flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-semibold transition-all ${isSubActive ? "text-[var(--accent-orange)] bg-orange-50"
+                      : "text-gray-500 hover:text-gray-900 hover:bg-gray-100"
+                    }`}
                 >
-                  <SubIcon size={14} />
+                  <SubIcon size={14} className={isSubActive ? "text-[var(--accent-orange)]" : "text-gray-400"} />
                   {sub.label}
                 </NavLink>
               );

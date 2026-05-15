@@ -40,7 +40,7 @@ export function AssignPlanModal({
       footer={
         <div className="flex gap-3 justify-end w-full">
           <button
-            className="px-6 py-2.5 rounded-xl text-sm font-bold text-slate-400 hover:text-white hover:bg-white/5 transition-all"
+            className="px-6 py-2.5 rounded-xl text-sm font-bold text-[var(--text-muted)] hover:text-[var(--accent-orange)] hover:bg-[var(--bg-card-hover)] transition-all"
             onClick={onClose}
             disabled={assigning}
           >
@@ -60,7 +60,7 @@ export function AssignPlanModal({
             <input
               type="text"
               placeholder={t("searchMemberPlaceholder")}
-              className="w-full rounded-2xl bg-slate-950 border border-white/5 pl-12 pr-4 py-4 text-white focus:border-indigo-500/50 outline-none transition duration-300 text-sm font-bold shadow-inner"
+              className="w-full rounded-2xl bg-[var(--bg-secondary)] border border-[var(--border-subtle)] pl-12 pr-4 py-4 text-[var(--text-primary)] focus:border-[var(--accent-orange)]/50 outline-none transition duration-300 text-sm font-bold"
               value={userSearch}
               onChange={(e) => setUserSearch(e.target.value)}
             />
@@ -75,20 +75,20 @@ export function AssignPlanModal({
         <div className="space-y-2">
           <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">{t("deploymentTarget")}</label>
           <select
-            className="w-full rounded-2xl bg-slate-950 border border-white/5 p-4 text-white focus:border-indigo-500/50 outline-none transition duration-300 text-sm font-bold shadow-inner"
+            className="w-full rounded-2xl bg-[var(--bg-secondary)] border border-[var(--border-subtle)] p-4 text-[var(--text-primary)] focus:border-[var(--accent-orange)]/50 outline-none transition duration-300 text-sm font-bold"
             value={assignUserId}
             onChange={(e) => setAssignUserId(e.target.value)}
             disabled={usersLoading}
           >
-            <option value="" className="bg-slate-900">{t("selectRegistryEntity")}</option>
+            <option value="" className="bg-white">{t("selectRegistryEntity")}</option>
             {usersDropdown.map((u: any) => (
-              <option key={u.id} value={u.id} className="bg-slate-900">{u.name} (@{u.username || u.member_id})</option>
+              <option key={u.id} value={u.id} className="bg-white">{u.name} (@{u.username || u.member_id})</option>
             ))}
           </select>
         </div>
 
-        <div className="bg-indigo-500/10 border border-indigo-500/20 rounded-2xl p-4">
-          <p className="text-[10px] text-indigo-300 font-bold uppercase tracking-widest leading-relaxed">
+        <div className="bg-[var(--accent-orange)]/5 border border-[var(--accent-orange)]/20 rounded-2xl p-4">
+          <p className="text-[10px] text-[var(--accent-orange)] font-bold uppercase tracking-widest leading-relaxed">
             {t("deploymentAlert", { type: assignType })}
           </p>
         </div>
