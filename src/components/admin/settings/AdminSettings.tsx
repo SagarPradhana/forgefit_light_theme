@@ -1,51 +1,59 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { GlassCard, SectionTitle } from "../../ui/primitives";
+import { Settings, MapPin, FileText } from "lucide-react";
 import { AppConfigTab } from "./AppConfigTab";
 import { LocationsTab } from "./LocationsTab";
 import { PublicPagesTab } from "./PublicPagesTab";
 
+const tabs = [
+  { id: "app" as const, label: "App Config", icon: Settings },
+  { id: "locations" as const, label: "Locations", icon: MapPin },
+  { id: "pages" as const, label: "Public Pages", icon: FileText },
+];
+
 export function AdminSettings() {
   const { t } = useTranslation();
-  const [settingsTab, setSettingsTab] = useState<"app" | "locations" | "pages">("app");
+  const [activeTab, setActiveTab] = useState<"app" | "locations" | "pages">("app");
 
   return (
-    <GlassCard>
-      <SectionTitle
-        title={t("settings") || "Settings"}
-        subtitle="Configure your app, locations, and public pages."
-      />
-
-      {/* Tab Navigation */}
-      <div className="mb-6 border-b border-white/10 overflow-x-auto no-scrollbar">
-        <nav className="flex space-x-8 min-w-max pb-px">
-          {[
-            { id: "app", label: "App Config", icon: "⚙️" },
-            { id: "locations", label: "Locations", icon: "📍" },
-            { id: "pages", label: "Public Pages", icon: "📄" },
-          ].map((tab) => (
-            <button
-              key={tab.id}
-              onClick={() => setSettingsTab(tab.id as any)}
-              className={`flex items-center gap-2 border-b-2 px-1 py-2 text-sm font-medium transition-colors ${
-                settingsTab === tab.id
-                  ? "border-indigo-400 text-indigo-400"
-                  : "border-transparent text-slate-400 hover:text-white"
-              }`}
-            >
-              <span>{tab.icon}</span>
-              {tab.label}
-            </button>
-          ))}
-        </nav>
+    <div>
+      <div className="mb-8">
+        <h1 className="text-2xl font-bold text-gray-900">{t("settings") || "Settings"}</h1>
+        <p className="text-gray-500 mt-1">Configure your app, locations, and public pages.</p>
       </div>
 
-      {/* Tab Content */}
-      <div className="space-y-6">
-        {settingsTab === "app" && <AppConfigTab />}
-        {settingsTab === "locations" && <LocationsTab />}
-        {settingsTab === "pages" && <PublicPagesTab />}
+      <div className="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
+        <div className="border-b border-gray-200 bg-gray-50/50">
+          <nav className="flex px-6" role="tablist">
+            {tabs.map((tab) => {
+              const Icon = tab.icon;
+              const isActive = activeTab === tab.id;
+              return (
+                <button
+                  key={tab.id}
+                  onClick={() => setActiveTab(tab.id)}
+                  role="tab"
+                  aria-selected={isActive}
+                  className={`flex items-center gap-2.5 px-5 py-4 text-sm font-semibold border-b-2 transition-all duration-200 ${
+                    isActive
+                      ? "border-orange-500 text-orange-600 bg-orange-50/50"
+                      : "border-transparent text-gray-500 hover:text-gray-700 hover:bg-gray-50"
+                  }`}
+                >
+                  <Icon size={17} />
+                  {tab.label}
+                </button>
+              );
+            })}
+          </nav>
+        </div>
+
+        <div className="p-6">
+          {activeTab === "app" && <AppConfigTab />}
+          {activeTab === "locations" && <LocationsTab />}
+          {activeTab === "pages" && <PublicPagesTab />}
+        </div>
       </div>
-    </GlassCard>
+    </div>
   );
 }

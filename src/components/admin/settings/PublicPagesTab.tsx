@@ -18,14 +18,14 @@ function BannerItem({ banner, config, onDelete, onPreview }: { banner: PublicBan
   const isVideo = config.type === "testimonials";
   
   return (
-    <div className="relative group aspect-video rounded-xl overflow-hidden bg-slate-800 border border-white/10">
+    <div className="relative group aspect-video rounded-xl overflow-hidden bg-gray-100 border border-gray-200">
       {isVideo ? (
         <video src={banner.file_path} className="w-full h-full object-cover" />
       ) : (
         <img src={banner.file_path} alt={config.label} className="w-full h-full object-cover" />
       )}
       
-      <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
+      <div className="absolute inset-0 bg-gray-900/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
         <button
           onClick={onPreview}
           className="p-2 rounded-lg bg-white/20 hover:bg-white/30 text-white transition-colors"
@@ -51,7 +51,7 @@ function BannerItem({ banner, config, onDelete, onPreview }: { banner: PublicBan
         </button>
       </div>
       
-      <div className="absolute bottom-0 left-0 right-0 p-2 bg-gradient-to-t from-black/80 to-transparent">
+      <div className="absolute bottom-0 left-0 right-0 p-2 bg-gradient-to-t from-gray-900/80 to-transparent">
         <p className="text-[10px] text-white/70 truncate">
           {new Date(banner.created_date * 1000).toLocaleDateString()}
         </p>
@@ -96,17 +96,17 @@ function BannerSection({ config, banners, onUpload, onDelete }: { config: Banner
 
   return (
     <>
-      <div className="rounded-2xl bg-gradient-to-br from-white/5 to-white/[0.02] p-6 border border-white/10 space-y-4">
+      <div className="bg-white rounded-xl border border-gray-200 p-6 space-y-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
             <span className="text-2xl">{config.icon}</span>
             <div>
-              <h4 className="text-base font-black text-white uppercase tracking-tight">{config.label}</h4>
-              <p className="text-[10px] text-slate-500">{banners.length} / {config.maxCount} uploaded</p>
+              <h4 className="text-base font-bold text-gray-900">{config.label}</h4>
+              <p className="text-xs text-gray-400">{banners.length} / {config.maxCount} uploaded</p>
             </div>
           </div>
-          <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-slate-800/50 border border-white/5">
-            <span className="text-[10px] text-slate-400 uppercase tracking-wider">
+          <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-gray-100 border border-gray-200">
+            <span className="text-[10px] text-gray-500 font-medium uppercase tracking-wider">
               {isVideo ? "Video" : "Image"} • {config.maxSizeMB}MB • {config.allowedTypes.map(t => t.split("/")[1].toUpperCase()).join(", ")}
             </span>
           </div>
@@ -114,10 +114,10 @@ function BannerSection({ config, banners, onUpload, onDelete }: { config: Banner
         
         {banners.length === 0 && !canAddMore && (
           <div className="py-12 text-center">
-            <div className="w-16 h-16 mx-auto mb-4 rounded-2xl bg-slate-800/50 flex items-center justify-center">
-              <ImageIcon size={32} className="text-slate-600" />
+            <div className="w-16 h-16 mx-auto mb-4 rounded-2xl bg-gray-100 flex items-center justify-center">
+              <ImageIcon size={32} className="text-gray-400" />
             </div>
-            <p className="text-sm text-slate-500">No {config.label.toLowerCase()} uploaded yet</p>
+            <p className="text-sm text-gray-500">No {config.label.toLowerCase()} uploaded yet</p>
           </div>
         )}
 
@@ -133,25 +133,25 @@ function BannerSection({ config, banners, onUpload, onDelete }: { config: Banner
           ))}
           
           {canAddMore && (
-            <label className={`relative ${isVideo ? "aspect-video" : "aspect-square"} rounded-2xl border-2 border-dashed border-white/10 hover:border-indigo-500/50 flex flex-col items-center justify-center cursor-pointer transition-all hover:bg-white/5 group`}>
+            <label className={`relative ${isVideo ? "aspect-video" : "aspect-square"} rounded-xl border-2 border-dashed border-gray-200 hover:border-orange-400 flex flex-col items-center justify-center cursor-pointer transition-all hover:bg-orange-50/30 group`}>
               <input ref={fileInputRef} type="file" accept={config.allowedTypes.join(",")} className="hidden" onChange={handleFileChange} disabled={uploading} />
               
               {uploading ? (
                 <div className="flex flex-col items-center gap-2">
-                  <div className="w-10 h-10 border-3 border-indigo-500 border-t-transparent rounded-full animate-spin" />
-                  <span className="text-xs text-indigo-400 font-medium">Uploading...</span>
+                  <div className="w-10 h-10 border-[3px] border-orange-500 border-t-transparent rounded-full animate-spin" />
+                  <span className="text-xs text-orange-500 font-medium">Uploading...</span>
                 </div>
               ) : (
                 <>
-                  <div className="w-12 h-12 rounded-xl bg-indigo-500/10 flex items-center justify-center mb-2 group-hover:bg-indigo-500/20 transition-colors">
+                  <div className="w-12 h-12 rounded-xl bg-orange-50 flex items-center justify-center mb-2 group-hover:bg-orange-100 transition-colors">
                     {isVideo ? (
-                      <Video size={24} className="text-indigo-400" />
+                      <Video size={24} className="text-orange-500" />
                     ) : (
-                      <UploadCloud size={24} className="text-indigo-400" />
+                      <UploadCloud size={24} className="text-orange-500" />
                     )}
                   </div>
-                  <span className="text-xs text-slate-400 font-medium">Click to upload</span>
-                  <span className="text-[10px] text-slate-600">Max {config.maxSizeMB}MB</span>
+                  <span className="text-xs text-gray-600 font-medium">Click to upload</span>
+                  <span className="text-[10px] text-gray-400">Max {config.maxSizeMB}MB</span>
                 </>
               )}
             </label>
@@ -164,7 +164,7 @@ function BannerSection({ config, banners, onUpload, onDelete }: { config: Banner
         open={!!previewBanner}
         onClose={() => setPreviewBanner(null)}
         title={previewBanner ? config.label : ""}
-        maxWidth="max-w-3xl"
+        size="xl"
       >
         {previewBanner && (
           <div className="space-y-4">
@@ -359,26 +359,26 @@ export function PublicPagesTab() {
 
       {/* Testimonials & FAQs */}
       <div className="grid gap-6 md:grid-cols-2">
-        <div className="rounded-2xl bg-white/5 p-6 border border-white/10 space-y-4">
+        <div className="bg-white rounded-xl border border-gray-200 p-6 space-y-4">
           <div className="flex items-center justify-between">
-            <h4 className="text-lg font-black text-white uppercase tracking-tighter">Testimonials</h4>
-            <button className="text-indigo-400 text-[10px] font-black uppercase hover:underline" onClick={() => setTestimonials([...testimonials, { name: "New User", note: "" }])}>+ Add Story</button>
+            <h4 className="text-base font-bold text-gray-900">Testimonials</h4>
+            <button className="text-orange-500 text-xs font-bold uppercase hover:underline" onClick={() => setTestimonials([...testimonials, { name: "New User", note: "" }])}>+ Add Story</button>
           </div>
           <div className="space-y-3 max-h-[400px] overflow-y-auto pr-2 custom-scrollbar">
             {testimonials.map((test, idx) => (
-              <div key={idx} className="p-3 rounded-xl bg-white/5 border border-white/5 space-y-2">
+              <div key={idx} className="p-4 rounded-xl bg-gray-50 border border-gray-100 space-y-3">
                 <div className="flex items-center justify-between">
-                  <input className="bg-transparent border-none text-xs font-bold text-white p-0 focus:ring-0" value={test.name} onChange={(e) => {
+                  <input className="bg-transparent border-none text-sm font-bold text-gray-800 p-0 focus:ring-0 w-full" value={test.name} onChange={(e) => {
                     const newT = [...testimonials];
                     newT[idx].name = e.target.value;
                     setTestimonials(newT);
                   }} />
-                  <div className="flex gap-2">
-                    <button className="text-green-400/50 hover:text-green-400 transition-colors" onClick={() => handleSaveTestimonial(idx)}><Save size={14} /></button>
-                    <button className="text-red-400/50 hover:text-red-400 transition-colors" onClick={() => handleDeleteTestimonial(idx)}><Trash2 size={14} /></button>
+                  <div className="flex gap-2 shrink-0">
+                    <button className="p-1.5 rounded-lg text-gray-400 hover:text-emerald-600 hover:bg-emerald-50 transition-all" onClick={() => handleSaveTestimonial(idx)}><Save size={14} /></button>
+                    <button className="p-1.5 rounded-lg text-gray-400 hover:text-red-500 hover:bg-red-50 transition-all" onClick={() => handleDeleteTestimonial(idx)}><Trash2 size={14} /></button>
                   </div>
                 </div>
-                <textarea className="w-full bg-transparent border-none text-[10px] text-slate-400 p-0 focus:ring-0 italic" rows={2} value={test.note} onChange={(e) => {
+                <textarea className="w-full bg-white border border-gray-200 rounded-lg p-3 text-xs text-gray-600 focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 outline-none transition-all italic" rows={2} value={test.note} onChange={(e) => {
                   const newT = [...testimonials];
                   newT[idx].note = e.target.value;
                   setTestimonials(newT);
@@ -388,27 +388,27 @@ export function PublicPagesTab() {
           </div>
         </div>
 
-        <div className="rounded-2xl bg-white/5 p-6 border border-white/10 space-y-4">
+        <div className="bg-white rounded-xl border border-gray-200 p-6 space-y-4">
           <div className="flex items-center justify-between">
-            <h4 className="text-lg font-black text-white uppercase tracking-tighter">Global FAQs</h4>
-            <button className="text-indigo-400 text-[10px] font-black uppercase hover:underline" onClick={() => setFaqs([...faqs, { question: "New Question", answer: "" }])}>+ Add FAQ</button>
+            <h4 className="text-base font-bold text-gray-900">Global FAQs</h4>
+            <button className="text-orange-500 text-xs font-bold uppercase hover:underline" onClick={() => setFaqs([...faqs, { question: "New Question", answer: "" }])}>+ Add FAQ</button>
           </div>
           <div className="space-y-3 max-h-[400px] overflow-y-auto pr-2 custom-scrollbar">
             {faqs.map((faq, idx) => (
-              <div key={idx} className="p-3 rounded-xl bg-slate-900 border border-white/5 space-y-2">
-                <input className="w-full bg-transparent border-none text-xs font-black text-indigo-400 p-0 focus:ring-0" value={faq.question} onChange={(e) => {
+              <div key={idx} className="p-4 rounded-xl bg-gray-50 border border-gray-100 space-y-3">
+                <input className="w-full bg-transparent border-none text-sm font-bold text-gray-800 p-0 focus:ring-0" value={faq.question} onChange={(e) => {
                   const newF = [...faqs];
                   newF[idx].question = e.target.value;
                   setFaqs(newF);
                 }} />
-                <textarea className="w-full bg-transparent border-none text-[10px] text-slate-400 p-0 focus:ring-0 leading-relaxed" rows={2} value={faq.answer} onChange={(e) => {
+                <textarea className="w-full bg-white border border-gray-200 rounded-lg p-3 text-xs text-gray-600 focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 outline-none transition-all resize-none" rows={2} value={faq.answer} onChange={(e) => {
                   const newF = [...faqs];
                   newF[idx].answer = e.target.value;
                   setFaqs(newF);
-                }} />
-                <div className="flex justify-end gap-3">
-                  <button className="text-green-400/30 hover:text-green-400 transition-colors" onClick={() => handleSaveFaq(idx)}><Save size={14} /></button>
-                  <button className="text-red-400/30 hover:text-red-400 transition-colors" onClick={() => handleDeleteFaq(idx)}><Trash2 size={14} /></button>
+                }} placeholder="Answer..." />
+                <div className="flex justify-end gap-2 pt-1">
+                  <button className="p-1.5 rounded-lg text-gray-400 hover:text-emerald-600 hover:bg-emerald-50 transition-all" onClick={() => handleSaveFaq(idx)}><Save size={14} /></button>
+                  <button className="p-1.5 rounded-lg text-gray-400 hover:text-red-500 hover:bg-red-50 transition-all" onClick={() => handleDeleteFaq(idx)}><Trash2 size={14} /></button>
                 </div>
               </div>
             ))}
