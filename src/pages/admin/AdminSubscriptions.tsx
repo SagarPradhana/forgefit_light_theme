@@ -47,6 +47,7 @@ export function AdminSubscriptions() {
   const [planModalOpen, setPlanModalOpen] = useState(false);
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [deleteTarget, setDeleteTarget] = useState<{ type: string; id: any } | null>(null);
+  const [deleteLoading, setDeleteLoading] = useState(false);
 
   const [planForm, setPlanForm] = useState({
     name: "",
@@ -236,18 +237,23 @@ export function AdminSubscriptions() {
       <DeleteConfirmationModal
         isOpen={deleteModalOpen && deleteTarget?.type === "plan"}
         onClose={() => setDeleteModalOpen(false)}
+        isProcessing={deleteLoading}
         onConfirm={async () => {
           if (deleteTarget && deleteTarget.type === "plan") {
+            setDeleteLoading(true);
             try {
               await adminSubscriptionService.deletePlan(deleteTarget.id);
               toast.success("Strategy terminated successfully");
               fetchPlans(plansMeta.page_no);
+              setTimeout(() => { setDeleteModalOpen(false); setDeleteTarget(null); setDeleteLoading(false); }, 800);
             } catch (err) {
               toast.error("Termination failed. Active dependencies detected.");
+              setDeleteLoading(false);
             }
+          } else {
+            setDeleteModalOpen(false);
+            setDeleteTarget(null);
           }
-          setDeleteModalOpen(false);
-          setDeleteTarget(null);
         }}
         title={t("strategyTermination")}
         description={t("strategyTerminationDesc")}

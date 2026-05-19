@@ -1,9 +1,11 @@
 import { useState, useEffect } from "react";
+import { motion } from "framer-motion";
 import { GlowButton, Modal, ButtonLoader } from "../../ui/primitives";
 import { Search, Edit2, Trash2, Plus, ChevronLeft, ChevronRight, MapPin } from "lucide-react";
 import { adminLocationService, type LocationData } from "../../../services/adminLocationService";
 import { toast } from "../../../store/toastStore";
 import { DeleteConfirmationModal } from "../../common/DeleteConfirmationModal";
+import { SuccessAnimation } from "../../ui/ActionAnimations";
 
 const inp = "w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm text-gray-900 placeholder-gray-400 focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 outline-none transition-all";
 const lbl = "text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-1.5 block";
@@ -19,6 +21,7 @@ export function LocationsTab() {
   const [editId, setEditId] = useState<string | null>(null);
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
+  const [saveSuccess, setSaveSuccess] = useState(false);
 
   const [form, setForm] = useState<LocationData>({
     latitude: 0, longitude: 0, radius: 0, address: "", gym_open_status: false,
@@ -28,6 +31,7 @@ export function LocationsTab() {
   });
 
   useEffect(() => { fetchLocations(page); }, [page, search]);
+  useEffect(() => { setSaveSuccess(false); }, [modalOpen]);
 
   const fetchLocations = async (p: number) => {
     setLoading(true);
@@ -42,11 +46,12 @@ export function LocationsTab() {
   const handleSave = async () => {
     setSaving(true);
     try {
-      if (editId) { await adminLocationService.updateLocation(editId, form); toast.success("Location updated successfully!"); }
-      else { await adminLocationService.createLocation(form); toast.success("Location created successfully!"); }
-      setModalOpen(false); fetchLocations(page);
-    } catch (err) { console.error(err); toast.error("Operation failed"); }
-    finally { setSaving(false); }
+      if (editId) { await adminLocationService.updateLocation(editId, form); }
+      else { await adminLocationService.createLocation(form); }
+      setSaveSuccess(true);
+      toast.success(editId ? "Location updated successfully!" : "Location created successfully!");
+      setTimeout(() => { setModalOpen(false); fetchLocations(page); }, 1200);
+    } catch (err) { console.error(err); toast.error("Operation failed"); setSaving(false); }
   };
 
   const handleDelete = async () => {
@@ -66,6 +71,51 @@ export function LocationsTab() {
   });
 
   const totalPages = Math.ceil(totalCount / 10) || 1;
+
+  const modalContent = saveSuccess ? (
+    <motion.div
+      initial={{ opacity: 0, scale: 0.8 }}
+      animate={{ opacity: 1, scale: 1 }}
+      className="flex flex-col items-center justify-center py-16"
+    >
+      <SuccessAnimation show={true} size={72} />
+      <motion.p
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.3 }}
+        className="mt-4 text-lg font-semibold text-gray-900"
+      >
+        {editId ? "Location Updated!" : "Location Added!"}
+      </motion.p>
+      <p className="text-sm text-gray-500 mt-1">Redirecting...</p>
+    </motion.div>
+  ) : (
+    <div className="space-y-4 pt-2 max-h-[60vh] overflow-y-auto pr-2 custom-scrollbar">
+      <div><label className={lbl}>Address</label><input className={inp} value={form.address} onChange={e => setForm({...form, address: e.target.value})} /></div>
+      <div className="grid grid-cols-2 gap-4">
+        <div><label className={lbl}>Latitude</label><input type="number" className={inp} value={form.latitude} onChange={e => setForm({...form, latitude: Number(e.target.value)})} /></div>
+        <div><label className={lbl}>Longitude</label><input type="number" className={inp} value={form.longitude} onChange={e => setForm({...form, longitude: Number(e.target.value)})} /></div>
+        <div><label className={lbl}>Radius</label><input type="number" className={inp} value={form.radius} onChange={e => setForm({...form, radius: Number(e.target.value)})} /></div>
+        <div><label className={lbl}>Country</label><input className={inp} value={form.country} onChange={e => setForm({...form, country: e.target.value})} /></div>
+      </div>
+      <div className="flex items-center gap-3 p-4 rounded-xl bg-orange-50/50 border border-orange-100">
+        <input type="checkbox" id="gym_status" className="rounded border-orange-200 text-orange-500 focus:ring-orange-500/30" checked={form.gym_open_status} onChange={e => setForm({...form, gym_open_status: e.target.checked})} />
+        <label htmlFor="gym_status" className="text-sm font-semibold text-gray-800 cursor-pointer">Gym is currently Open</label>
+      </div>
+      <div className="grid grid-cols-2 gap-4">
+        <div><label className={lbl}>Working Hours (From)</label><input type="time" className={inp} value={form.working_hours_from_time} onChange={e => setForm({...form, working_hours_from_time: e.target.value})} /></div>
+        <div><label className={lbl}>Working Hours (To)</label><input type="time" className={inp} value={form.working_hours_to_time} onChange={e => setForm({...form, working_hours_to_time: e.target.value})} /></div>
+      </div>
+      <div className="grid grid-cols-2 gap-4">
+        <div><label className={lbl}>Email</label><input className={inp} value={form.email} onChange={e => setForm({...form, email: e.target.value})} /></div>
+        <div><label className={lbl}>Phone</label><input className={inp} value={form.phone} onChange={e => setForm({...form, phone: e.target.value})} /></div>
+        <div><label className={lbl}>WhatsApp</label><input className={inp} value={form.whatsapp} onChange={e => setForm({...form, whatsapp: e.target.value})} /></div>
+        <div><label className={lbl}>Website</label><input className={inp} value={form.website_url} onChange={e => setForm({...form, website_url: e.target.value})} /></div>
+        <div><label className={lbl}>Facebook</label><input className={inp} value={form.facebook_url} onChange={e => setForm({...form, facebook_url: e.target.value})} /></div>
+        <div><label className={lbl}>Instagram</label><input className={inp} value={form.instagram_url} onChange={e => setForm({...form, instagram_url: e.target.value})} /></div>
+      </div>
+    </div>
+  );
 
   return (
     <div className="space-y-6">
@@ -167,31 +217,7 @@ export function LocationsTab() {
       {/* Location Modal */}
       <Modal open={modalOpen} onClose={() => setModalOpen(false)} title={editId ? "Edit Location" : "Add Location"}
         footer={<><GlowButton variant="secondary" onClick={() => setModalOpen(false)} disabled={saving}>Cancel</GlowButton><GlowButton onClick={handleSave} disabled={saving}><ButtonLoader label="Submit" loadingLabel="Saving..." loading={saving} /></GlowButton></>}>
-        <div className="space-y-4 pt-2 max-h-[60vh] overflow-y-auto pr-2 custom-scrollbar">
-          <div><label className={lbl}>Address</label><input className={inp} value={form.address} onChange={e => setForm({...form, address: e.target.value})} /></div>
-          <div className="grid grid-cols-2 gap-4">
-            <div><label className={lbl}>Latitude</label><input type="number" className={inp} value={form.latitude} onChange={e => setForm({...form, latitude: Number(e.target.value)})} /></div>
-            <div><label className={lbl}>Longitude</label><input type="number" className={inp} value={form.longitude} onChange={e => setForm({...form, longitude: Number(e.target.value)})} /></div>
-            <div><label className={lbl}>Radius</label><input type="number" className={inp} value={form.radius} onChange={e => setForm({...form, radius: Number(e.target.value)})} /></div>
-            <div><label className={lbl}>Country</label><input className={inp} value={form.country} onChange={e => setForm({...form, country: e.target.value})} /></div>
-          </div>
-          <div className="flex items-center gap-3 p-4 rounded-xl bg-orange-50/50 border border-orange-100">
-            <input type="checkbox" id="gym_status" className="rounded border-orange-200 text-orange-500 focus:ring-orange-500/30" checked={form.gym_open_status} onChange={e => setForm({...form, gym_open_status: e.target.checked})} />
-            <label htmlFor="gym_status" className="text-sm font-semibold text-gray-800 cursor-pointer">Gym is currently Open</label>
-          </div>
-          <div className="grid grid-cols-2 gap-4">
-            <div><label className={lbl}>Working Hours (From)</label><input type="time" className={inp} value={form.working_hours_from_time} onChange={e => setForm({...form, working_hours_from_time: e.target.value})} /></div>
-            <div><label className={lbl}>Working Hours (To)</label><input type="time" className={inp} value={form.working_hours_to_time} onChange={e => setForm({...form, working_hours_to_time: e.target.value})} /></div>
-          </div>
-          <div className="grid grid-cols-2 gap-4">
-            <div><label className={lbl}>Email</label><input className={inp} value={form.email} onChange={e => setForm({...form, email: e.target.value})} /></div>
-            <div><label className={lbl}>Phone</label><input className={inp} value={form.phone} onChange={e => setForm({...form, phone: e.target.value})} /></div>
-            <div><label className={lbl}>WhatsApp</label><input className={inp} value={form.whatsapp} onChange={e => setForm({...form, whatsapp: e.target.value})} /></div>
-            <div><label className={lbl}>Website</label><input className={inp} value={form.website_url} onChange={e => setForm({...form, website_url: e.target.value})} /></div>
-            <div><label className={lbl}>Facebook</label><input className={inp} value={form.facebook_url} onChange={e => setForm({...form, facebook_url: e.target.value})} /></div>
-            <div><label className={lbl}>Instagram</label><input className={inp} value={form.instagram_url} onChange={e => setForm({...form, instagram_url: e.target.value})} /></div>
-          </div>
-        </div>
+        {modalContent}
       </Modal>
 
       <DeleteConfirmationModal isOpen={deleteModalOpen} onClose={() => setDeleteModalOpen(false)} onConfirm={handleDelete}

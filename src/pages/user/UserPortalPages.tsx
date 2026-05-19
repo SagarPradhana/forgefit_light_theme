@@ -1,6 +1,6 @@
 import { Outlet } from "react-router-dom";
 import { useNav } from "../../contexts/NavContext";
-import { LayoutDashboard, User, CreditCard, Calendar, DollarSign, Box } from "lucide-react";
+import { LayoutDashboard, User, BadgeDollarSign, Calendar, DollarSign, Box } from "lucide-react";
 import { useEffect } from "react";
 
 export function UserPortalPages() {
@@ -15,14 +15,14 @@ export function UserPortalPages() {
       {
         label: "My Account", icon: User,
         items: [
-          { name: "subscription", label: "Subscription", icon: CreditCard },
+          { name: "subscription", label: "Subscription", icon: BadgeDollarSign },
           { name: "attendance", label: "Attendance", icon: Calendar },
         ],
       },
       {
         label: "Billing", icon: DollarSign,
         items: [
-          { name: "payments", label: "Payments", icon: CreditCard },
+          { name: "payments", label: "Payments", icon: BadgeDollarSign },
           { name: "products", label: "Products", icon: Box },
         ],
       },

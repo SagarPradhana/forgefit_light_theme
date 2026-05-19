@@ -1,6 +1,6 @@
 import { Outlet } from "react-router-dom";
 import { useNav } from "../../contexts/NavContext";
-import { LayoutDashboard, Users, Calendar, MessageSquare, DollarSign, CreditCard, TrendingUp, ShoppingBag, Box, ClipboardList, Settings, ShoppingCart, Phone, Clock, BadgeDollarSign, Wallet } from "lucide-react";
+import { LayoutDashboard, Users, Calendar, MessageSquare, DollarSign, TrendingUp, ShoppingBag, Box, ClipboardList, Settings, ShoppingCart, Phone, Clock, BadgeDollarSign, Wallet } from "lucide-react";
 import { useEffect } from "react";
 
 export function AdminPortalPages() {
@@ -20,7 +20,7 @@ export function AdminPortalPages() {
           {
             name: "inquiries", label: "Inquiries", icon: MessageSquare,
             subItems: [
-              { name: "inquiries-subscriptions", label: "Subscriptions", icon: CreditCard, href: "/admin/inquiries?tab=subscriptions" },
+              { name: "inquiries-subscriptions", label: "Subscriptions", icon: BadgeDollarSign, href: "/admin/inquiries?tab=subscriptions" },
               { name: "inquiries-products", label: "Product Orders", icon: ShoppingCart, href: "/admin/inquiries?tab=products" },
               { name: "inquiries-contacts", label: "Contact", icon: Phone, href: "/admin/inquiries?tab=contacts" },
               { name: "inquiries-expiry", label: "Upcoming Renewals", icon: Clock, href: "/admin/inquiries?tab=expiry" },

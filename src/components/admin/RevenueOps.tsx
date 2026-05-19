@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { motion } from "framer-motion";
 import {
-  TrendingUp, IndianRupee, CreditCard, ShoppingBag,
+  TrendingUp, IndianRupee, BadgeDollarSign, ShoppingBag,
   RefreshCw, Search, ChevronLeft, ChevronRight,
   Users, Mail, Phone, CheckCircle, XCircle, Filter,
 } from "lucide-react";
@@ -182,11 +182,10 @@ function Badge({ value, green, red }: { value: string; green?: string[]; red?: s
   const isGreen = green?.includes(v);
   const isRed = red?.includes(v);
   return (
-    <span className={`px-2 py-0.5 rounded-full text-[10px] font-black uppercase tracking-widest ${
-      isGreen ? "bg-emerald-500/20 text-emerald-400" :
-      isRed   ? "bg-red-500/20 text-red-400" :
-               "bg-indigo-500/20 text-indigo-300"
-    }`}>
+    <span className={`px-2 py-0.5 rounded-full text-[10px] font-black uppercase tracking-widest ${isGreen ? "bg-emerald-500/20 text-emerald-400" :
+        isRed ? "bg-red-500/20 text-red-400" :
+          "bg-indigo-500/20 text-indigo-300"
+      }`}>
       {value || "—"}
     </span>
   );
@@ -235,7 +234,7 @@ export function RevenueOps() {
     try {
       const params = new URLSearchParams();
       if (dateRange.from_date) params.set("from_date", String(dateRange.from_date));
-      if (dateRange.to_date)   params.set("to_date",   String(dateRange.to_date));
+      if (dateRange.to_date) params.set("to_date", String(dateRange.to_date));
       const res: any = await api.get(`${API_ENDPOINTS.ADMIN.REVENUE_STATS}?${params}`);
       if (res?.data) setStats(res.data);
     } catch (e) { console.error(e); } finally { setStatsLoading(false); }
@@ -248,16 +247,16 @@ export function RevenueOps() {
     try {
       const endpoint =
         activeTab === "subscriptions" ? API_ENDPOINTS.ADMIN.REVENUE_PAYMENTS_SUBSCRIPTIONS :
-        activeTab === "products"      ? API_ENDPOINTS.ADMIN.REVENUE_PAYMENTS_PRODUCTS :
-                                        API_ENDPOINTS.ADMIN.REVENUE_PAYMENTS;
+          activeTab === "products" ? API_ENDPOINTS.ADMIN.REVENUE_PAYMENTS_PRODUCTS :
+            API_ENDPOINTS.ADMIN.REVENUE_PAYMENTS;
       const params = new URLSearchParams({
         offset: String((page - 1) * PAGE_SIZE),
-        count:  String(PAGE_SIZE),
+        count: String(PAGE_SIZE),
       });
       if (dateRange.from_date) params.set("from_date", String(dateRange.from_date));
-      if (dateRange.to_date)   params.set("to_date",   String(dateRange.to_date));
-      if (debouncedSearch)     params.set("search",    debouncedSearch);
-      if (paymentMethod)       params.set("payment_method", paymentMethod);
+      if (dateRange.to_date) params.set("to_date", String(dateRange.to_date));
+      if (debouncedSearch) params.set("search", debouncedSearch);
+      if (paymentMethod) params.set("payment_method", paymentMethod);
       const res: any = await api.get(`${endpoint}?${params}`);
       if (res?.data) {
         setPayments(res.data);
@@ -273,11 +272,11 @@ export function RevenueOps() {
     try {
       const params = new URLSearchParams({
         offset: String((page - 1) * PAGE_SIZE),
-        count:  String(PAGE_SIZE),
+        count: String(PAGE_SIZE),
       });
       if (dateRange.from_date) params.set("from_date", String(dateRange.from_date));
-      if (dateRange.to_date)   params.set("to_date",   String(dateRange.to_date));
-      if (debouncedSearch)     params.set("search",    debouncedSearch);
+      if (dateRange.to_date) params.set("to_date", String(dateRange.to_date));
+      if (debouncedSearch) params.set("search", debouncedSearch);
       const res: any = await api.get(`${API_ENDPOINTS.ADMIN.REVENUE_CONTACT_INQUIRIES}?${params}`);
       if (res?.data) {
         setInquiries(res.data);
@@ -306,10 +305,10 @@ export function RevenueOps() {
     : Math.ceil(paymentsTotal / PAGE_SIZE);
 
   const tabs: { id: Tab; label: string; icon: any }[] = [
-    { id: "all",           label: t("allPayments"),    icon: IndianRupee },
-    { id: "subscriptions", label: t("subscriptions"),   icon: CreditCard },
-    { id: "products",      label: t("products"),        icon: ShoppingBag },
-    { id: "inquiries",     label: t("inquiries"),       icon: Mail },
+    { id: "all", label: t("allPayments"), icon: IndianRupee },
+    { id: "subscriptions", label: t("subscriptions"), icon: BadgeDollarSign },
+    { id: "products", label: t("products"), icon: ShoppingBag },
+    { id: "inquiries", label: t("inquiries"), icon: Mail },
   ];
 
   return (
@@ -340,10 +339,10 @@ export function RevenueOps() {
       {/* ── Stats Cards ── */}
       {stats && (
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-          <StatCard label={t("totalRevenue")}        value={stats.total_revenue}        icon={TrendingUp}  color="bg-indigo-500"  delay={0}    currency={currency} />
-          <StatCard label={t("subscriptionRevenue")} value={stats.subscription_revenue} icon={CreditCard}  color="bg-violet-500"  delay={0.05} currency={currency} />
-          <StatCard label={t("productRevenue")}      value={stats.product_revenue}      icon={ShoppingBag} color="bg-amber-500"   delay={0.1}  currency={currency} />
-          <StatCard label={t("renewalRevenue")}      value={stats.renewal_revenue}      icon={RefreshCw}   color="bg-emerald-500" delay={0.15} currency={currency} />
+          <StatCard label={t("totalRevenue")} value={stats.total_revenue} icon={TrendingUp} color="bg-indigo-500" delay={0} currency={currency} />
+          <StatCard label={t("subscriptionRevenue")} value={stats.subscription_revenue} icon={BadgeDollarSign} color="bg-violet-500" delay={0.05} currency={currency} />
+          <StatCard label={t("productRevenue")} value={stats.product_revenue} icon={ShoppingBag} color="bg-amber-500" delay={0.1} currency={currency} />
+          <StatCard label={t("renewalRevenue")} value={stats.renewal_revenue} icon={RefreshCw} color="bg-emerald-500" delay={0.15} currency={currency} />
         </div>
       )}
 
@@ -357,8 +356,7 @@ export function RevenueOps() {
           <div className="flex items-center gap-2">
             {[3, 6, 12].map((m) => (
               <button key={m} onClick={() => setRevenueMonths(m)}
-                className={`px-3 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all ${
-                  revenueMonths === m ? "bg-indigo-500 text-white" : "bg-white/5 text-slate-400 hover:text-white border border-white/10"}`}>
+                className={`px-3 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all ${revenueMonths === m ? "bg-indigo-500 text-white" : "bg-white/5 text-slate-400 hover:text-white border border-white/10"}`}>
                 {m}M
               </button>
             ))}
@@ -381,11 +379,10 @@ export function RevenueOps() {
           <button
             key={id}
             onClick={() => setActiveTab(id)}
-            className={`flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-black uppercase tracking-widest transition-all whitespace-nowrap ${
-              activeTab === id
+            className={`flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-black uppercase tracking-widest transition-all whitespace-nowrap ${activeTab === id
                 ? "bg-gradient-to-r from-indigo-500 to-violet-500 text-white shadow-lg shadow-indigo-500/20"
                 : "text-slate-400 hover:text-white hover:bg-white/5"
-            }`}
+              }`}
           >
             <Icon size={14} />
             {label}
@@ -408,16 +405,16 @@ export function RevenueOps() {
         {activeTab !== "inquiries" && (
           <div className="relative">
             <Filter size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" />
-<select
-  value={paymentMethod}
-  onChange={(e) => setPaymentMethod(e.target.value)}
-  className="bg-white border border-gray-200 rounded-xl pl-9 pr-4 py-2.5 text-sm text-gray-700 outline-none focus:border-orange-500 transition cursor-pointer appearance-none"
->
-  <option value="" className="bg-white">{t("allMethods")}</option>
-  {PAYMENT_METHODS.map((m) => (
-    <option key={m} value={m} className="bg-white capitalize">{m}</option>
-  ))}
-</select>
+            <select
+              value={paymentMethod}
+              onChange={(e) => setPaymentMethod(e.target.value)}
+              className="bg-white border border-gray-200 rounded-xl pl-9 pr-4 py-2.5 text-sm text-gray-700 outline-none focus:border-orange-500 transition cursor-pointer appearance-none"
+            >
+              <option value="" className="bg-white">{t("allMethods")}</option>
+              {PAYMENT_METHODS.map((m) => (
+                <option key={m} value={m} className="bg-white capitalize">{m}</option>
+              ))}
+            </select>
           </div>
         )}
       </div>

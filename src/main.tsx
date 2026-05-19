@@ -12,7 +12,7 @@ import { registerSW } from 'virtual:pwa-register';
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 // Initialize Query Client
-const queryClient = new QueryClient({
+export const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
       retry: 1,

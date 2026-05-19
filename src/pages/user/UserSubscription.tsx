@@ -2,16 +2,16 @@ import { useState, useEffect, useCallback } from "react";
 import { useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useGymStore } from "../../store/gymStore";
-import { 
-  GlassCard, 
-  SectionTitle, 
-  Skeleton, 
-  EmptyState, 
-  Modal, 
+import {
+  GlassCard,
+  SectionTitle,
+  Skeleton,
+  EmptyState,
+  Modal,
   GlowButton,
-  StatusBadge 
+  StatusBadge
 } from "../../components/ui/primitives";
-import { Clock, Star, ShieldCheck, Zap, Info, CheckCircle2 } from "lucide-react";
+import { Clock, BadgeDollarSign, ShieldCheck, Zap, Info, CheckCircle2 } from "lucide-react";
 import { motion } from "framer-motion";
 import { useAuthStore } from "../../store/authStore";
 import { appSubscriptionService, type AppSubscriptionPlanResponse, type AppCurrentSubscriptionResponse, type AppSubscriptionHistoryResponse } from "../../services/appSubscriptionService";
@@ -50,7 +50,7 @@ export function UserSubscription() {
         appSubscriptionService.getSubscriptionHistory(userId, { count: 100 })
       ]);
       if (plansRes && plansRes.data) setFetchedSubscriptionPlans(plansRes.data);
-      
+
       if (currentRes && currentRes.id) {
         setCurrentSubscription(currentRes as unknown as AppCurrentSubscriptionResponse);
       } else if (currentRes && currentRes.data && currentRes.data.length > 0) {
@@ -59,7 +59,7 @@ export function UserSubscription() {
       } else {
         setCurrentSubscription(null);
       }
-      
+
       if (historyRes && historyRes.data) setSubscriptionHistory(historyRes.data);
     } catch (err) {
       console.error(err);
@@ -139,7 +139,7 @@ export function UserSubscription() {
           <div className="flex flex-col sm:flex-row items-center sm:items-start text-center sm:text-left gap-6 sm:gap-8 relative z-10 w-full sm:w-auto">
             <div className="h-20 w-20 sm:h-24 sm:w-24 rounded-[1.5rem] sm:rounded-[2rem] bg-gradient-to-br from-indigo-500 to-emerald-400 p-[3px] shadow-2xl shadow-indigo-500/30 shrink-0">
               <div className="h-full w-full bg-[var(--bg-primary)] rounded-[1.3rem] sm:rounded-[1.8rem] flex items-center justify-center">
-                <Star size={32} className="text-[var(--text-primary)] sm:w-[40px] sm:h-[40px]" fill="currentColor" />
+                <BadgeDollarSign size={32} className="text-[var(--text-primary)] sm:w-[40px] sm:h-[40px]" />
               </div>
             </div>
             <div>
@@ -192,112 +192,99 @@ export function UserSubscription() {
       <Modal
         open={upgradeOpen}
         onClose={() => setUpgradeOpen(false)}
-        title={selectedPlanForUpgrade ? `Request: ${selectedPlanForUpgrade.name}` : "Upgrade Strategy"}
+        title={selectedPlanForUpgrade ? `Upgrade to ${selectedPlanForUpgrade.name}` : "Upgrade Plan"}
       >
-        <div className="space-y-8 p-4">
-          <div className="p-6 rounded-2xl bg-indigo-100 border border-indigo-200 flex items-start gap-4">
-            <div className="h-10 w-10 rounded-xl bg-indigo-100 flex items-center justify-center shrink-0">
+        <div className="space-y-5">
+          <div className="flex items-start gap-3 p-4 bg-indigo-50 rounded-xl border border-indigo-100">
+            <div className="h-10 w-10 rounded-lg bg-indigo-100 flex items-center justify-center shrink-0">
               <Zap size={20} className="text-indigo-600" />
             </div>
             <div>
-              <p className="text-sm font-bold text-[var(--text-primary)] mb-1 uppercase tracking-tight">Upgrade Confirmation</p>
-              <p className="text-xs text-[var(--text-muted)] leading-relaxed">
-                You are requesting to transition from <span className="text-[var(--text-primary)] font-bold">{currentPlanName}</span> to <span className="text-indigo-600 font-bold">{selectedPlanForUpgrade?.name || "a New Plan"}</span>.
+              <p className="text-sm font-semibold text-gray-900">Upgrade Confirmation</p>
+              <p className="text-xs text-gray-600 mt-0.5">
+                You are requesting to upgrade from <span className="font-semibold text-gray-900">{currentPlanName}</span> to <span className="font-semibold text-indigo-600">{selectedPlanForUpgrade?.name || "a New Plan"}</span>.
               </p>
             </div>
           </div>
 
-          <div className="space-y-4">
-            <h4 className="text-[10px] font-bold text-[var(--text-muted)] uppercase tracking-widest">Request Details</h4>
-            <div className="space-y-3">
-              <div className="flex justify-between items-center text-sm">
-                <span className="text-[var(--text-muted)]">Strategy Level</span>
-                <span className="text-[var(--text-primary)] font-bold uppercase tracking-tighter">{selectedPlanForUpgrade?.name || "Inquiry Only"}</span>
-              </div>
-              <div className="flex justify-between items-center text-sm">
-                <span className="text-[var(--text-muted)]">Monthly Commitment</span>
-                <span className="text-[var(--text-primary)] font-bold italic">{currencySymbol}{selectedPlanForUpgrade?.price || "0"}.00</span>
-              </div>
-              <div className="h-px bg-[var(--border-subtle)]" />
+          <div className="space-y-3">
+            <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Plan Details</h4>
+            <div className="bg-white border border-gray-200 rounded-xl p-4 space-y-3">
               <div className="flex justify-between items-center">
-                <span className="text-[var(--text-muted)] text-xs">Administrative Processing</span>
-                <span className="text-emerald-600 text-[10px] font-bold uppercase tracking-widest">24-48 Hours</span>
+                <span className="text-sm text-gray-600">Plan Name</span>
+                <span className="text-sm font-semibold text-gray-900">{selectedPlanForUpgrade?.name || "—"}</span>
+              </div>
+              <div className="flex justify-between items-center">
+                <span className="text-sm text-gray-600">Price</span>
+                <span className="text-sm font-semibold text-gray-900">{currencySymbol}{selectedPlanForUpgrade?.price || "0"}</span>
+              </div>
+              <hr className="border-gray-100" />
+              <div className="flex justify-between items-center">
+                <span className="text-xs text-gray-500">Processing Time</span>
+                <span className="text-xs font-semibold text-green-600">24-48 Hours</span>
               </div>
             </div>
           </div>
 
-          <div className="pt-4 space-y-4">
-            <div>
-              <label className="text-[10px] font-bold text-[var(--text-muted)] uppercase tracking-widest block mb-2">Additional Description</label>
-              <textarea
-                value={upgradeDescription}
-                onChange={(e) => setUpgradeDescription(e.target.value)}
-                className="w-full bg-[var(--bg-secondary)] border border-[var(--border-subtle)] rounded-xl p-3 text-xs text-[var(--text-primary)] outline-none focus:border-indigo-500 min-h-[80px]"
-                placeholder="Any specific requests?"
-              />
-            </div>
-            <GlowButton
-              className="w-full h-14 rounded-2xl text-xs font-bold uppercase tracking-widest"
-              onClick={handleConfirmUpgrade}
-            >
-              Confirm Strategy Transition
-            </GlowButton>
-            <p className="text-[9px] text-center text-[var(--text-muted)] italic px-6">
-              By confirming, you authorize our administrative team to process your plan change. Final billing will be adjusted on your next cycle.
-            </p>
+          <div className="space-y-3">
+            <label className="text-sm font-medium text-gray-700">Notes (Optional)</label>
+            <textarea value={upgradeDescription} onChange={(e) => setUpgradeDescription(e.target.value)}
+              className="w-full bg-white border border-gray-200 rounded-lg px-4 py-2.5 text-sm text-gray-900 placeholder-gray-400 outline-none focus:border-indigo-400 focus:ring-2 focus:ring-indigo-50 transition-all resize-none min-h-[80px]"
+              placeholder="Any specific requests?" />
           </div>
+
+          <GlowButton className="w-full h-12 rounded-lg text-sm font-semibold" onClick={handleConfirmUpgrade}>
+            Confirm Upgrade
+          </GlowButton>
+          <p className="text-xs text-center text-gray-400">
+            By confirming, you authorize our team to process your plan change. Final billing will be adjusted on your next cycle.
+          </p>
         </div>
       </Modal>
 
       <Modal open={historyModalOpen} onClose={() => setHistoryModalOpen(false)} title="Subscription History">
-        <div className="p-4 space-y-4">
-          <div className="flex items-center gap-1 bg-[var(--bg-secondary)] border border-[var(--border-subtle)] rounded-xl p-1">
+        <div className="space-y-4">
+          <div className="flex gap-1 bg-gray-100 rounded-lg p-1">
             {([["", "All"], ["active", "Active"], ["expired", "Expired"]] as const).map(([val, label]) => (
-              <button
-                key={val}
-                onClick={() => setHistoryStatusFilter(val)}
-                className={`flex-1 px-3 py-1.5 rounded-lg text-[10px] font-bold uppercase tracking-widest transition-all ${
-                  historyStatusFilter === val
-                    ? "bg-gradient-to-r from-indigo-500 to-violet-500 text-[var(--text-primary)] shadow-lg"
-                    : "text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-card-hover)]"
-                }`}
-              >
+              <button key={val} onClick={() => setHistoryStatusFilter(val)}
+                className={`flex-1 px-3 py-1.5 rounded-md text-xs font-medium transition-all ${historyStatusFilter === val ? "bg-white text-gray-900 shadow-sm" : "text-gray-500 hover:text-gray-700"}`}>
                 {label}
               </button>
             ))}
           </div>
 
-          <div className="max-h-[55vh] overflow-y-auto">
+          <div className="max-h-[55vh] overflow-y-auto space-y-2">
             {subscriptionHistory.length === 0 ? (
-              <EmptyState title="No History" hint="You don't have any past subscriptions." />
+              <div className="text-center py-12">
+                <p className="text-sm font-medium text-gray-500">No History</p>
+                <p className="text-xs text-gray-400 mt-1">No past subscriptions found.</p>
+              </div>
             ) : (() => {
               const filtered = subscriptionHistory.filter(h =>
                 historyStatusFilter === "" ? true
-                : historyStatusFilter === "active" ? h.status === true
-                : h.status === false
+                  : historyStatusFilter === "active" ? h.status === true
+                    : h.status === false
               );
               return filtered.length === 0 ? (
-                <EmptyState title="No Records" hint={`No ${historyStatusFilter} subscriptions found.`} />
+                <div className="text-center py-12">
+                  <p className="text-sm font-medium text-gray-500">No Records</p>
+                </div>
               ) : (
-                <div className="space-y-3">
-                  {filtered.map((h) => (
-                    <div key={h.id} className="flex items-center justify-between p-4 rounded-2xl bg-[var(--bg-secondary)] border border-[var(--border-subtle)] hover:border-indigo-500/20 transition-all group">
-                      <div className="space-y-1">
-                        <p className="text-xs font-bold text-[var(--text-primary)] uppercase tracking-tight">
-                          {(h as any).subscription_name || "Subscription"}
-                        </p>
-                        <div className="flex items-center gap-3 text-[10px] text-[var(--text-muted)] font-bold uppercase tracking-widest">
-                          <span>{fmtDate(h.start_date)} → {fmtDate(h.end_date)}</span>
-                          <span className="text-indigo-600">{h.duration_in_months} {h.duration_in_months === 1 ? "Month" : "Months"}</span>
-                        </div>
-                      </div>
-                      <div className="flex flex-col items-end gap-1">
-                        <span className="text-sm font-bold text-emerald-600">{currencySymbol}{Number(h.amount).toLocaleString("en-IN")}</span>
-                        <StatusBadge status={h.status ? "Active" : "Expired"} />
+                filtered.map((h) => (
+                  <div key={h.id} className="flex items-center justify-between p-4 bg-white border border-gray-200 rounded-xl hover:border-indigo-200 transition-all">
+                    <div>
+                      <p className="text-sm font-semibold text-gray-900">{(h as any).subscription_name || "Subscription"}</p>
+                      <div className="flex items-center gap-2 mt-1">
+                        <span className="text-xs text-gray-500">{fmtDate(h.start_date)} - {fmtDate(h.end_date)}</span>
+                        <span className="text-xs font-medium text-indigo-600">{h.duration_in_months}m</span>
                       </div>
                     </div>
-                  ))}
-                </div>
+                    <div className="text-right">
+                      <p className="text-sm font-semibold text-gray-900">{currencySymbol}{Number(h.amount).toLocaleString("en-IN")}</p>
+                      <StatusBadge status={h.status ? "Active" : "Expired"} />
+                    </div>
+                  </div>
+                ))
               );
             })()}
           </div>

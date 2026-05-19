@@ -2,7 +2,7 @@ import { NavLink, useNavigate, useLocation } from "react-router-dom";
 import { useAuthStore } from "../store/authStore";
 import { useState, useEffect, useRef, useCallback } from "react";
 import {
-  Box, CreditCard, Dumbbell, LayoutDashboard, LogOut, Palette, Settings, TrendingUp,
+  Box, Dumbbell, LayoutDashboard, LogOut, Palette, Settings, TrendingUp,
   User, Users, Menu, X, ClipboardList, Calendar, MessageSquare, Sparkles, ChevronDown,
   ChevronRight, DollarSign, ShoppingBag,
 } from "lucide-react";
@@ -11,9 +11,12 @@ import { useTranslation } from "react-i18next";
 import { Helmet } from "react-helmet-async";
 import LanguageSwitcher from "../components/ui/LanguageSwitcher";
 import { useGymStore } from "../store/gymStore";
+import { useToastStore } from "../store/toastStore";
+import { useNotificationStore } from "../store/notificationStore";
 import { api } from "../utils/httputils";
 import { API_ENDPOINTS } from "../utils/url";
 import { NavProvider, useNav } from "../contexts/NavContext";
+import { queryClient } from "../main";
 
 const themes = [
   { id: "elegant", name: "Elegant Pearl", accent: "#d4a853" },
@@ -109,6 +112,17 @@ function DashboardInner({ children }: { children: React.ReactNode }) {
     if (role === "trainer") return "bg-blue-100 text-blue-700";
     return "bg-emerald-100 text-emerald-700";
   };
+
+  const handleLogout = useCallback(() => {
+    api.post(API_ENDPOINTS.AUTH.LOGOUT, {}).catch(() => {});
+    queryClient.clear();
+    useGymStore.getState().resetPublicData();
+    useNotificationStore.getState().clearAll();
+    useToastStore.getState().clearAll();
+    localStorage.removeItem("auth-storage");
+    logout();
+    navigate("/");
+  }, [logout, navigate]);
 
   if (!mounted) return null;
 
@@ -288,7 +302,7 @@ function DashboardInner({ children }: { children: React.ReactNode }) {
                     </button>
                     <div className="h-px bg-[var(--border-subtle)] my-1" />
                     <button
-                      onClick={() => { logout(); navigate("/"); }}
+                      onClick={handleLogout}
                       className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-red-50 text-red-500 transition-colors text-sm font-semibold"
                     >
                       <LogOut size={16} />
@@ -390,7 +404,7 @@ function DashboardInner({ children }: { children: React.ReactNode }) {
 
               <div className="mt-6 pt-4 border-t border-[var(--border-subtle)]">
                 <button
-                  onClick={() => { logout(); navigate("/"); }}
+                  onClick={handleLogout}
                   className="w-full flex items-center gap-3 px-4 py-3 rounded-2xl text-red-500 hover:bg-red-50 transition-all text-sm font-semibold"
                 >
                   <LogOut size={18} />

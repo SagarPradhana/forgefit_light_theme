@@ -190,6 +190,7 @@ type GymState = {
   publicSubscriptionPlans: SubscriptionPlan[];
   isLoadingPublicData: boolean;
   fetchPublicData: (configOnly?: boolean) => Promise<void>;
+  resetPublicData: () => void;
 };
 
 export const useGymStore = create<GymState>((set) => ({
@@ -398,6 +399,15 @@ export const useGymStore = create<GymState>((set) => ({
   publicLocations: [],
   publicSubscriptionPlans: [],
   isLoadingPublicData: false,
+  resetPublicData: () => set({
+    publicAppConfig: null,
+    publicFaqs: [],
+    publicTestimonials: [],
+    publicBanners: {},
+    publicLocations: [],
+    publicSubscriptionPlans: [],
+    isLoadingPublicData: false,
+  }),
   fetchPublicData: async (configOnly = false) => {
     set({ isLoadingPublicData: true });
     

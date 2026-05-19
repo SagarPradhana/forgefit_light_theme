@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { createPortal } from "react-dom";
-import { X, Lock, ShieldCheck, Loader2, Eye, EyeOff } from "lucide-react";
+import { X, Lock, Eye, EyeOff, Loader2 } from "lucide-react";
 import { useMutation } from "../../../hooks/useApi";
 import { API_ENDPOINTS } from "../../../utils/url";
 import { toast } from "../../../store/toastStore";
@@ -70,109 +70,70 @@ export const PasswordResetModal = ({
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
         onClick={handleClose}
-        className="absolute inset-0 bg-black/70 backdrop-blur-lg"
+        className="absolute inset-0 bg-black/60 backdrop-blur-sm"
       />
       
       <motion.div
-        initial={{ scale: 0.9, opacity: 0, y: 20 }}
+        initial={{ scale: 0.95, opacity: 0, y: 20 }}
         animate={{ scale: 1, opacity: 1, y: 0 }}
-        exit={{ scale: 0.9, opacity: 0, y: 20 }}
-        className="relative w-full max-w-md overflow-hidden rounded-[2.5rem] border border-[var(--border-subtle)] bg-[var(--bg-card)] shadow-[var(--shadow-hover)]"
+        exit={{ scale: 0.95, opacity: 0, y: 20 }}
+        className="relative w-full max-w-md bg-white rounded-2xl overflow-hidden border border-gray-100 shadow-xl"
       >
-        <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/5 via-transparent to-orange-500/5 pointer-events-none" />
-        
-        <div className="relative p-8">
-          <div className="flex items-center justify-between mb-8">
-            <div className="flex items-center gap-3">
-              <div className="h-10 w-10 rounded-xl bg-[var(--bg-secondary)] flex items-center justify-center border border-[var(--border-subtle)]">
-                <Lock className="text-[var(--accent-orange)]" size={20} />
-              </div>
-              <div>
-                <h2 className="text-lg font-black text-[var(--text-primary)] uppercase tracking-tight">Reset Password</h2>
-                <p className="text-[10px] text-[var(--text-muted)] font-bold uppercase tracking-widest leading-none">
-                  {userName ? `for ${userName}` : "Update credentials"}
-                </p>
-              </div>
+        <div className="flex items-center justify-between px-6 pt-6 pb-4 border-b border-gray-100">
+          <div className="flex items-center gap-3">
+            <div className="h-10 w-10 rounded-xl bg-orange-50 flex items-center justify-center">
+              <Lock className="text-orange-500" size={18} />
             </div>
-            <button
-              onClick={handleClose}
-              className="p-2 rounded-xl bg-[var(--bg-secondary)] text-[var(--text-muted)] hover:text-[var(--accent-orange)] hover:bg-[var(--bg-card-hover)] transition-all shadow-lg"
-            >
-              <X size={20} />
-            </button>
+            <div>
+              <h2 className="text-base font-semibold text-gray-900">Reset Password</h2>
+              <p className="text-xs text-gray-500">{userName ? `for ${userName}` : "Update credentials"}</p>
+            </div>
+          </div>
+          <button onClick={handleClose} className="p-1.5 rounded-lg text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition-all">
+            <X size={18} />
+          </button>
+        </div>
+
+        <form onSubmit={handleSubmit} className="p-6 space-y-5">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">New Password</label>
+            <div className="relative">
+              <input type={showNew ? "text" : "password"} required
+                value={newPassword} onChange={(e) => setNewPassword(e.target.value)}
+                className="pr-10 pl-3 py-2.5 w-full bg-white border border-gray-200 rounded-lg text-sm text-gray-900 placeholder-gray-400 outline-none focus:border-orange-400 focus:ring-2 focus:ring-orange-50 transition-all"
+                placeholder="Enter new password" />
+              <button type="button" onClick={() => setShowNew(!showNew)}
+                className="absolute right-2.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600">
+                {showNew ? <EyeOff size={16} /> : <Eye size={16} />}
+              </button>
+            </div>
           </div>
 
-          <form onSubmit={handleSubmit} className="space-y-6">
-            <div className="space-y-4">
-              {/* New Password */}
-              <div className="space-y-2">
-                <label className="text-[10px] font-black text-[var(--text-muted)] uppercase tracking-widest ml-1">New Password</label>
-                <div className="relative group">
-                  <div className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--text-muted)] group-focus-within:text-[var(--accent-orange)] transition-colors">
-                    <ShieldCheck size={16} />
-                  </div>
-                  <input
-                    type={showNew ? "text" : "password"}
-                    required
-                    value={newPassword}
-                    onChange={(e) => setNewPassword(e.target.value)}
-                    className="w-full bg-[var(--bg-secondary)] border border-[var(--border-subtle)] rounded-2xl pl-10 pr-12 py-3.5 text-sm text-[var(--text-primary)] focus:outline-none focus:border-[var(--accent-orange)] transition-all placeholder-[var(--text-muted)] shadow-inner"
-                    placeholder="Enter new password"
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowNew(!showNew)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 p-1.5 text-[var(--text-muted)] hover:text-[var(--accent-orange)] transition-colors"
-                  >
-                    {showNew ? <EyeOff size={16} /> : <Eye size={16} />}
-                  </button>
-                </div>
-              </div>
-
-              {/* Confirm New Password */}
-              <div className="space-y-2">
-                <label className="text-[10px] font-black text-[var(--text-muted)] uppercase tracking-widest ml-1">Confirm Password</label>
-                <div className="relative group">
-                  <div className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--text-muted)] group-focus-within:text-[var(--accent-orange)] transition-colors">
-                    <ShieldCheck size={16} />
-                  </div>
-                  <input
-                    type={showConfirm ? "text" : "password"}
-                    required
-                    value={confirmPassword}
-                    onChange={(e) => setConfirmPassword(e.target.value)}
-                    className="w-full bg-[var(--bg-secondary)] border border-[var(--border-subtle)] rounded-2xl pl-10 pr-12 py-3.5 text-sm text-[var(--text-primary)] focus:outline-none focus:border-[var(--accent-orange)] transition-all placeholder-[var(--text-muted)] shadow-inner"
-                    placeholder="Confirm new password"
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowConfirm(!showConfirm)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 p-1.5 text-[var(--text-muted)] hover:text-[var(--accent-orange)] transition-colors"
-                  >
-                    {showConfirm ? <EyeOff size={16} /> : <Eye size={16} />}
-                  </button>
-                </div>
-              </div>
-            </div>
-
-            <div className="flex gap-4 pt-4">
-              <button
-                type="button"
-                onClick={handleClose}
-                className="flex-1 px-6 py-4 rounded-2xl bg-[var(--bg-secondary)] text-[var(--text-secondary)] font-black uppercase tracking-widest text-[10px] border border-[var(--border-subtle)] hover:bg-[var(--bg-card-hover)] hover:text-[var(--accent-orange)] transition-all shadow-xl"
-              >
-                Cancel
-              </button>
-              <button
-                type="submit"
-                disabled={loading}
-                className="flex-1 flex items-center justify-center gap-2 px-6 py-4 rounded-2xl bg-gradient-to-r from-[var(--accent-orange)] to-[var(--accent-gold)] hover:opacity-90 text-white font-black uppercase tracking-widest text-[10px] transition-all shadow-xl disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                {loading ? <Loader2 size={16} className="animate-spin" /> : "Submit"}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Confirm Password</label>
+            <div className="relative">
+              <input type={showConfirm ? "text" : "password"} required
+                value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)}
+                className="pr-10 pl-3 py-2.5 w-full bg-white border border-gray-200 rounded-lg text-sm text-gray-900 placeholder-gray-400 outline-none focus:border-orange-400 focus:ring-2 focus:ring-orange-50 transition-all"
+                placeholder="Confirm new password" />
+              <button type="button" onClick={() => setShowConfirm(!showConfirm)}
+                className="absolute right-2.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600">
+                {showConfirm ? <EyeOff size={16} /> : <Eye size={16} />}
               </button>
             </div>
-          </form>
-        </div>
+          </div>
+
+          <div className="flex gap-3 pt-2">
+            <button type="button" onClick={handleClose}
+              className="flex-1 px-6 py-2.5 rounded-lg border border-gray-200 text-sm font-medium text-gray-700 hover:bg-gray-50 transition-all">
+              Cancel
+            </button>
+            <button type="submit" disabled={loading}
+              className="flex-1 flex items-center justify-center gap-2 px-6 py-2.5 rounded-lg bg-orange-500 hover:bg-orange-600 text-white text-sm font-medium transition-all disabled:opacity-50 disabled:cursor-not-allowed">
+              {loading ? <Loader2 size={16} className="animate-spin" /> : "Reset Password"}
+            </button>
+          </div>
+        </form>
       </motion.div>
     </div>,
     document.body

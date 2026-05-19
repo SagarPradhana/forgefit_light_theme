@@ -44,6 +44,7 @@ export function AttendanceManagement() {
   const [editingRecord, setEditingRecord] = useState<AttendanceResponse | null>(null);
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [deleteId, setDeleteId] = useState<string | null>(null);
+  const [deleteLoading, setDeleteLoading] = useState(false);
 
   const [form, setForm] = useState({
     user_id: "",
@@ -147,15 +148,16 @@ export function AttendanceManagement() {
 
   const handleDelete = async () => {
     if (deleteId) {
+      setDeleteLoading(true);
       try {
         await adminAttendanceService.deleteAttendance(deleteId);
         toast.success("Record purged from registry");
-        setDeleteModalOpen(false);
-        setDeleteId(null);
         fetchRecords();
         fetchStats();
+        setTimeout(() => { setDeleteModalOpen(false); setDeleteId(null); setDeleteLoading(false); }, 800);
       } catch (err) {
         toast.error("Process failure");
+        setDeleteLoading(false);
       }
     }
   };
@@ -334,6 +336,7 @@ export function AttendanceManagement() {
         title={t("deleteRecordQuestion")}
         description={t("deleteRecordDescription")}
         confirmLabel={t("submit")}
+        isProcessing={deleteLoading}
       />
     </div>
   );

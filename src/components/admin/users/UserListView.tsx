@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { Edit2, Calendar, ToggleRight, ToggleLeft, Trash2, FileText, Mail, Phone, Users, Loader2, ChevronLeft, ChevronRight, CreditCard, Key, Contact, Clock, MessageCircle, MoreVertical } from "lucide-react";
+import { Edit2, Calendar, ToggleRight, ToggleLeft, Trash2, FileText, Mail, Phone, Users, Loader2, ChevronLeft, ChevronRight, BadgeDollarSign, Key, Contact, Clock, MessageCircle, MoreVertical } from "lucide-react";
 import { SkeletonRows } from "../../ui/primitives";
 import type { ViewType } from "./types";
 import { useState, useEffect } from "react";
@@ -114,195 +114,191 @@ export const UserListView = ({
   if (viewType === "grid") {
     return (
       <>
-      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-6 mb-8 overflow-visible">
-        {users.length > 0 ? (
-          users.map((user: any, index) => (
-            <motion.div
-              key={user.id || index}
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              whileHover={{ y: -5 }}
-              transition={{ delay: index * 0.05 }}
-              className="group relative overflow-visible"
-              ref={index === users.length - 1 ? lastUserElementRef : null}
-            >
-              <div className="relative h-full flex flex-col rounded-[1.5rem] md:rounded-[2.5rem] border border-[var(--border-subtle)] bg-[var(--bg-card)] p-4 md:p-6 transition-all duration-300 hover:border-[var(--accent-orange)] hover:shadow-[var(--shadow-hover)]" style={{ boxShadow: "var(--shadow-card)" }}>
-                {/* Visual Identity */}
-                <div className="flex items-center gap-4 mb-6">
-                  <div className="relative h-14 w-14 rounded-2xl bg-[var(--bg-secondary)] border-2 border-[var(--border-subtle)] overflow-hidden flex items-center justify-center">
-                    {(user.profile_image_path || user.metadata?.profile_image_path) ? (
-                      <img src={user.profile_image_path || user.metadata.profile_image_path} className="h-full w-full object-cover" alt="" />
-                    ) : (
-                      <span className="text-xl font-bold text-[var(--text-muted)] uppercase">{user.name?.charAt(0)}</span>
-                    )}
-                    <div className={`absolute bottom-0 right-0 h-3 w-3 rounded-full border-2 border-white ${user.is_active !== false ? 'bg-emerald-500' : 'bg-gray-300'}`} />
-                  </div>
-                  <div className="min-w-0">
-                    <h3 className="truncate text-xs md:text-sm font-bold text-[var(--text-primary)] uppercase tracking-tight" title={user.name}>{user.name}</h3>
-                    <p className="text-[10px] font-bold text-[var(--accent-orange)]">@{user.username || user.member_id || 'user'}</p>
-                    <div className="flex items-center gap-2">
-                      <p className="text-[9px] md:text-[10px] text-[var(--text-muted)] font-bold uppercase tracking-widest">{user.role}</p>
-                      {(user.purchase_id || user.metadata?.purchase_id) && (
-                        <span className="text-[8px] bg-amber-100 text-amber-700 px-1.5 py-0.5 rounded border border-amber-200 font-bold">PID: {user.purchase_id || user.metadata.purchase_id}</span>
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-6 mb-8 overflow-visible">
+          {users.length > 0 ? (
+            users.map((user: any, index) => (
+              <motion.div
+                key={user.id || index}
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                whileHover={{ y: -5 }}
+                transition={{ delay: index * 0.05 }}
+                className="group relative overflow-visible"
+                ref={index === users.length - 1 ? lastUserElementRef : null}
+              >
+                <div className="relative h-full flex flex-col rounded-[1.5rem] md:rounded-[2.5rem] border border-[var(--border-subtle)] bg-[var(--bg-card)] p-4 md:p-6 transition-all duration-300 hover:border-[var(--accent-orange)] hover:shadow-[var(--shadow-hover)]" style={{ boxShadow: "var(--shadow-card)" }}>
+                  {/* Visual Identity */}
+                  <div className="flex items-center gap-4 mb-6">
+                    <div className="relative h-14 w-14 rounded-2xl bg-[var(--bg-secondary)] border-2 border-[var(--border-subtle)] overflow-hidden flex items-center justify-center">
+                      {(user.profile_image_path || user.metadata?.profile_image_path) ? (
+                        <img src={user.profile_image_path || user.metadata.profile_image_path} className="h-full w-full object-cover" alt="" />
+                      ) : (
+                        <span className="text-xl font-bold text-[var(--text-muted)] uppercase">{user.name?.charAt(0)}</span>
                       )}
+                      <div className={`absolute bottom-0 right-0 h-3 w-3 rounded-full border-2 border-white ${user.is_active !== false ? 'bg-emerald-500' : 'bg-gray-300'}`} />
                     </div>
-                  </div>
-                </div>
-
-                <div className="space-y-3 mb-6">
-                  <div className="flex items-center gap-3 text-[var(--text-muted)]">
-                    <Mail size={12} className="shrink-0 text-[var(--accent-orange)]" />
-                    <span className="text-xs truncate text-[var(--text-secondary)]">{user.email}</span>
-                  </div>
-                  <div className="flex items-center gap-3 text-[var(--text-muted)]">
-                    <Phone size={12} className="shrink-0 text-[var(--accent-gold)]" />
-                    <span className="text-xs text-[var(--text-secondary)]">{user.mobile || user.phone || 'N/A'}</span>
-                  </div>
-                </div>
-
-                {/* Action Bar */}
-                <div className="mt-auto pt-3 border-t border-[var(--border-subtle)]">
-                  {portalType !== "trainer" ? (
-                    <div className="flex items-center gap-2">
-                      <button
-                        disabled={isCurrentUser(user.id)}
-                        onClick={() => onEdit(user)}
-                        className={`flex-1 flex items-center justify-center gap-2 py-2 rounded-xl border text-xs font-bold uppercase tracking-wider transition-all ${
-                          isCurrentUser(user.id)
-                            ? "opacity-30 cursor-not-allowed bg-[var(--bg-secondary)] border-[var(--border-subtle)] text-[var(--text-muted)]"
-                            : "bg-[var(--bg-secondary)] border-[var(--border-subtle)] text-[var(--accent-orange)] hover:bg-gradient-to-r hover:from-[var(--accent-orange)] hover:to-[var(--accent-gold)] hover:text-white"}`}
-                        title="Edit Profile"
-                      >
-                        <Edit2 size={13} />
-                        <span>{t("edit")}</span>
-                      </button>
-
-                      <button
-                        disabled={deletingRecord && loadingDeleteId === user.id}
-                        onClick={() => onDelete(user.id)}
-                        className="flex-1 flex items-center justify-center gap-2 py-2 rounded-xl border bg-red-50 border-red-200 text-red-600 hover:bg-red-500 hover:text-white hover:border-red-500 text-xs font-bold uppercase tracking-wider transition-all"
-                        title="Delete User"
-                      >
-                        {deletingRecord && loadingDeleteId === user.id
-                          ? <Loader2 size={13} className="animate-spin" />
-                          : <Trash2 size={13} />}
-                        <span>{t("delete")}</span>
-                      </button>
-
-                      <div className="relative" data-menu-id={user.id}>
-                        <button
-                          onClick={(e) => handleMenuToggle(e, user.id)}
-                          className={`h-9 w-9 flex items-center justify-center rounded-xl border transition-all ${
-                            openMenuId === user.id
-                              ? "bg-[var(--accent-orange)] border-[var(--accent-orange)] text-white"
-                              : "bg-[var(--bg-secondary)] border-[var(--border-subtle)] text-[var(--text-muted)] hover:text-[var(--accent-orange)]"}`}
-                          title="More actions"
-                        >
-                          <MoreVertical size={15} />
-                        </button>
+                    <div className="min-w-0">
+                      <h3 className="truncate text-xs md:text-sm font-bold text-[var(--text-primary)] uppercase tracking-tight" title={user.name}>{user.name}</h3>
+                      <p className="text-[10px] font-bold text-[var(--accent-orange)]">@{user.username || user.member_id || 'user'}</p>
+                      <div className="flex items-center gap-2">
+                        <p className="text-[9px] md:text-[10px] text-[var(--text-muted)] font-bold uppercase tracking-widest">{user.role}</p>
+                        {(user.purchase_id || user.metadata?.purchase_id) && (
+                          <span className="text-[8px] bg-amber-100 text-amber-700 px-1.5 py-0.5 rounded border border-amber-200 font-bold">PID: {user.purchase_id || user.metadata.purchase_id}</span>
+                        )}
                       </div>
                     </div>
-                  ) : (
-                    <button
-                      onClick={() => onOpenIdCard(user)}
-                      className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-emerald-600 border border-emerald-200 transition-all text-xs font-bold uppercase tracking-wider"
-                    >
-                      <Contact size={14} /><span>{t("viewIdCard")}</span>
-                    </button>
-                  )}
-                </div>
-              </div>
-            </motion.div>
-          ))
-        ) : !usersLoading && (
-          <div className="col-span-full py-20 text-center">
-            <Users size={40} className="mx-auto text-[var(--text-muted)] mb-4" />
-            <p className="text-[var(--text-muted)] font-bold uppercase tracking-widest">{t("noRecords")}</p>
-          </div>
-        )}
-        {usersLoading && (
-          <div className="col-span-full py-20 flex justify-center">
-            <Loader2 className="animate-spin text-[var(--accent-orange)]" size={40} />
-          </div>
-        )}
-      </div>
+                  </div>
 
-      {/* Popover menu portal */}
-      {openMenuId && menuPos && (() => {
-        const user = users.find(u => u.id === openMenuId);
-        if (!user) return null;
-        return createPortal(
-          <motion.div
-            data-popover="user-menu"
-            initial={{ opacity: 0, scale: 0.93, y: -6 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            transition={{ duration: 0.15, ease: "easeOut" }}
-            style={{ 
-              position: "fixed", 
-              top: menuPos.top, 
-              left: menuPos.left, 
-              zIndex: 9999,
-              maxHeight: "calc(100vh - 40px)"
-            }}
-            className="w-60 rounded-2xl border border-[var(--border-subtle)] bg-[var(--bg-card)] shadow-lg overflow-y-auto custom-scrollbar"
-          >
-            <div className="px-4 py-3 border-b border-[var(--border-subtle)] bg-gradient-to-r from-[var(--accent-orange)]/5 to-transparent">
-              <p className="text-[9px] font-bold uppercase tracking-widest text-[var(--accent-orange)]/70">{t("moreActions")}</p>
-              <p className="text-[12px] font-bold text-[var(--text-primary)] truncate mt-0.5">{user.name}</p>
-            </div>
-            <div className="p-2 space-y-0.5">
-              <button onClick={() => { onOpenIdCard(user); setOpenMenuId(null); setMenuPos(null); }}
-                className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-emerald-50 text-emerald-600 transition-all group/item">
-                <div className="h-7 w-7 rounded-lg bg-emerald-100 border border-emerald-200 flex items-center justify-center shrink-0"><Contact size={13} /></div>
-                <span className="text-[11px] font-bold uppercase tracking-wider">{t("idCard")}</span>
-              </button>
-              <button onClick={() => { onOpenSubscription(user); setOpenMenuId(null); setMenuPos(null); }}
-                className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-purple-50 text-purple-600 transition-all group/item">
-                <div className="h-7 w-7 rounded-lg bg-purple-100 border border-purple-200 flex items-center justify-center shrink-0"><CreditCard size={13} /></div>
-                <span className="text-[11px] font-bold uppercase tracking-wider">{t("plans")}</span>
-              </button>
-              <button onClick={() => { onOpenAttendance(user); setOpenMenuId(null); setMenuPos(null); }}
-                className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-sky-50 text-sky-600 transition-all group/item">
-                <div className="h-7 w-7 rounded-lg bg-sky-100 border border-sky-200 flex items-center justify-center shrink-0"><Calendar size={13} /></div>
-                <span className="text-[11px] font-bold uppercase tracking-wider">{t("attendance")}</span>
-              </button>
-              <button onClick={() => { onOpenDocs(user); setOpenMenuId(null); setMenuPos(null); }}
-                className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-amber-50 text-amber-600 transition-all group/item">
-                <div className="h-7 w-7 rounded-lg bg-amber-100 border border-amber-200 flex items-center justify-center shrink-0"><FileText size={13} /></div>
-                <span className="text-[11px] font-bold uppercase tracking-wider">{t("docs")}</span>
-              </button>
-              <button onClick={() => { onSendWhatsAppReminder(user); setOpenMenuId(null); setMenuPos(null); }}
-                className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-green-50 text-green-600 transition-all group/item">
-                <div className="h-7 w-7 rounded-lg bg-green-100 border border-green-200 flex items-center justify-center shrink-0"><MessageCircle size={13} /></div>
-                <span className="text-[11px] font-bold uppercase tracking-wider">{t("whatsapp")}</span>
-              </button>
-              <button onClick={() => { onResetPassword(user); setOpenMenuId(null); setMenuPos(null); }}
-                className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-gray-100 text-[var(--text-secondary)] transition-all group/item">
-                <div className="h-7 w-7 rounded-lg bg-gray-100 border border-[var(--border-subtle)] flex items-center justify-center shrink-0"><Key size={13} /></div>
-                <span className="text-[11px] font-bold uppercase tracking-wider">{t("resetPassword")}</span>
-              </button>
-              <div className="h-px bg-[var(--border-subtle)] my-1.5 mx-2" />
-              <button
-                disabled={statusUpdating && loadingStatusId === user.id}
-                onClick={() => { onToggleStatus(user.id, user.is_active !== false); setOpenMenuId(null); setMenuPos(null); }}
-                className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all group/item ${
-                  user.is_active !== false ? "hover:bg-amber-50 text-amber-600" : "hover:bg-emerald-50 text-emerald-600"}`}
-              >
-                <div className={`h-7 w-7 rounded-lg border flex items-center justify-center shrink-0 ${
-                  user.is_active !== false ? "bg-amber-100 border-amber-200" : "bg-emerald-100 border-emerald-200"}`}>
-                  {statusUpdating && loadingStatusId === user.id
-                    ? <Loader2 size={13} className="animate-spin" />
-                    : user.is_active !== false ? <ToggleLeft size={13} /> : <ToggleRight size={13} />}
+                  <div className="space-y-3 mb-6">
+                    <div className="flex items-center gap-3 text-[var(--text-muted)]">
+                      <Mail size={12} className="shrink-0 text-[var(--accent-orange)]" />
+                      <span className="text-xs truncate text-[var(--text-secondary)]">{user.email}</span>
+                    </div>
+                    <div className="flex items-center gap-3 text-[var(--text-muted)]">
+                      <Phone size={12} className="shrink-0 text-[var(--accent-gold)]" />
+                      <span className="text-xs text-[var(--text-secondary)]">{user.mobile || user.phone || 'N/A'}</span>
+                    </div>
+                  </div>
+
+                  {/* Action Bar */}
+                  <div className="mt-auto pt-3 border-t border-[var(--border-subtle)]">
+                    {portalType !== "trainer" ? (
+                      <div className="flex items-center gap-2">
+                        <button
+                          disabled={isCurrentUser(user.id)}
+                          onClick={() => onEdit(user)}
+                          className={`flex-1 flex items-center justify-center gap-2 py-2 rounded-xl border text-xs font-bold uppercase tracking-wider transition-all ${isCurrentUser(user.id)
+                              ? "opacity-30 cursor-not-allowed bg-[var(--bg-secondary)] border-[var(--border-subtle)] text-[var(--text-muted)]"
+                              : "bg-[var(--bg-secondary)] border-[var(--border-subtle)] text-[var(--accent-orange)] hover:bg-gradient-to-r hover:from-[var(--accent-orange)] hover:to-[var(--accent-gold)] hover:text-white"}`}
+                          title="Edit Profile"
+                        >
+                          <Edit2 size={13} />
+                          <span>{t("edit")}</span>
+                        </button>
+
+                        <button
+                          disabled={deletingRecord && loadingDeleteId === user.id}
+                          onClick={() => onDelete(user.id)}
+                          className="flex-1 flex items-center justify-center gap-2 py-2 rounded-xl border bg-red-50 border-red-200 text-red-600 hover:bg-red-500 hover:text-white hover:border-red-500 text-xs font-bold uppercase tracking-wider transition-all"
+                          title="Delete User"
+                        >
+                          {deletingRecord && loadingDeleteId === user.id
+                            ? <Loader2 size={13} className="animate-spin" />
+                            : <Trash2 size={13} />}
+                          <span>{t("delete")}</span>
+                        </button>
+
+                        <div className="relative" data-menu-id={user.id}>
+                          <button
+                            onClick={(e) => handleMenuToggle(e, user.id)}
+                            className={`h-9 w-9 flex items-center justify-center rounded-xl border transition-all ${openMenuId === user.id
+                                ? "bg-[var(--accent-orange)] border-[var(--accent-orange)] text-white"
+                                : "bg-[var(--bg-secondary)] border-[var(--border-subtle)] text-[var(--text-muted)] hover:text-[var(--accent-orange)]"}`}
+                            title="More actions"
+                          >
+                            <MoreVertical size={15} />
+                          </button>
+                        </div>
+                      </div>
+                    ) : (
+                      <button
+                        onClick={() => onOpenIdCard(user)}
+                        className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-emerald-600 border border-emerald-200 transition-all text-xs font-bold uppercase tracking-wider"
+                      >
+                        <Contact size={14} /><span>{t("viewIdCard")}</span>
+                      </button>
+                    )}
+                  </div>
                 </div>
-                <span className="text-[11px] font-bold uppercase tracking-wider">
-                  {user.is_active !== false ? t("suspendUser") : t("activateUser")}
-                </span>
-              </button>
+              </motion.div>
+            ))
+          ) : !usersLoading && (
+            <div className="col-span-full py-20 text-center">
+              <Users size={40} className="mx-auto text-[var(--text-muted)] mb-4" />
+              <p className="text-[var(--text-muted)] font-bold uppercase tracking-widest">{t("noRecords")}</p>
             </div>
-          </motion.div>,
-          document.body
-        );
-      })()}
+          )}
+          {usersLoading && (
+            <div className="col-span-full py-20 flex justify-center">
+              <Loader2 className="animate-spin text-[var(--accent-orange)]" size={40} />
+            </div>
+          )}
+        </div>
+
+        {/* Popover menu portal */}
+        {openMenuId && menuPos && (() => {
+          const user = users.find(u => u.id === openMenuId);
+          if (!user) return null;
+          return createPortal(
+            <motion.div
+              data-popover="user-menu"
+              initial={{ opacity: 0, scale: 0.93, y: -6 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              transition={{ duration: 0.15, ease: "easeOut" }}
+              style={{
+                position: "fixed",
+                top: menuPos.top,
+                left: menuPos.left,
+                zIndex: 9999,
+                maxHeight: "calc(100vh - 40px)"
+              }}
+              className="w-60 rounded-2xl border border-[var(--border-subtle)] bg-[var(--bg-card)] shadow-lg overflow-y-auto custom-scrollbar"
+            >
+              <div className="px-4 py-3 border-b border-[var(--border-subtle)] bg-gradient-to-r from-[var(--accent-orange)]/5 to-transparent">
+                <p className="text-[9px] font-bold uppercase tracking-widest text-[var(--accent-orange)]/70">{t("moreActions")}</p>
+                <p className="text-[12px] font-bold text-[var(--text-primary)] truncate mt-0.5">{user.name}</p>
+              </div>
+              <div className="p-2 space-y-0.5">
+                <button onClick={() => { onOpenIdCard(user); setOpenMenuId(null); setMenuPos(null); }}
+                  className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-emerald-50 text-emerald-600 transition-all group/item">
+                  <div className="h-7 w-7 rounded-lg bg-emerald-100 border border-emerald-200 flex items-center justify-center shrink-0"><Contact size={13} /></div>
+                  <span className="text-[11px] font-bold uppercase tracking-wider">{t("idCard")}</span>
+                </button>
+                <button onClick={() => { onOpenSubscription(user); setOpenMenuId(null); setMenuPos(null); }}
+                  className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-purple-50 text-purple-600 transition-all group/item">
+                  <div className="h-7 w-7 rounded-lg bg-purple-100 border border-purple-200 flex items-center justify-center shrink-0"><BadgeDollarSign size={13} /></div>
+                  <span className="text-[11px] font-bold uppercase tracking-wider">{t("plans")}</span>
+                </button>
+                <button onClick={() => { onOpenAttendance(user); setOpenMenuId(null); setMenuPos(null); }}
+                  className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-sky-50 text-sky-600 transition-all group/item">
+                  <div className="h-7 w-7 rounded-lg bg-sky-100 border border-sky-200 flex items-center justify-center shrink-0"><Calendar size={13} /></div>
+                  <span className="text-[11px] font-bold uppercase tracking-wider">{t("attendance")}</span>
+                </button>
+                <button onClick={() => { onOpenDocs(user); setOpenMenuId(null); setMenuPos(null); }}
+                  className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-amber-50 text-amber-600 transition-all group/item">
+                  <div className="h-7 w-7 rounded-lg bg-amber-100 border border-amber-200 flex items-center justify-center shrink-0"><FileText size={13} /></div>
+                  <span className="text-[11px] font-bold uppercase tracking-wider">{t("docs")}</span>
+                </button>
+                <button onClick={() => { onSendWhatsAppReminder(user); setOpenMenuId(null); setMenuPos(null); }}
+                  className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-green-50 text-green-600 transition-all group/item">
+                  <div className="h-7 w-7 rounded-lg bg-green-100 border border-green-200 flex items-center justify-center shrink-0"><MessageCircle size={13} /></div>
+                  <span className="text-[11px] font-bold uppercase tracking-wider">{t("whatsapp")}</span>
+                </button>
+                <button onClick={() => { onResetPassword(user); setOpenMenuId(null); setMenuPos(null); }}
+                  className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-gray-100 text-[var(--text-secondary)] transition-all group/item">
+                  <div className="h-7 w-7 rounded-lg bg-gray-100 border border-[var(--border-subtle)] flex items-center justify-center shrink-0"><Key size={13} /></div>
+                  <span className="text-[11px] font-bold uppercase tracking-wider">{t("resetPassword")}</span>
+                </button>
+                <div className="h-px bg-[var(--border-subtle)] my-1.5 mx-2" />
+                <button
+                  disabled={statusUpdating && loadingStatusId === user.id}
+                  onClick={() => { onToggleStatus(user.id, user.is_active !== false); setOpenMenuId(null); setMenuPos(null); }}
+                  className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all group/item ${user.is_active !== false ? "hover:bg-amber-50 text-amber-600" : "hover:bg-emerald-50 text-emerald-600"}`}
+                >
+                  <div className={`h-7 w-7 rounded-lg border flex items-center justify-center shrink-0 ${user.is_active !== false ? "bg-amber-100 border-amber-200" : "bg-emerald-100 border-emerald-200"}`}>
+                    {statusUpdating && loadingStatusId === user.id
+                      ? <Loader2 size={13} className="animate-spin" />
+                      : user.is_active !== false ? <ToggleLeft size={13} /> : <ToggleRight size={13} />}
+                  </div>
+                  <span className="text-[11px] font-bold uppercase tracking-wider">
+                    {user.is_active !== false ? t("suspendUser") : t("activateUser")}
+                  </span>
+                </button>
+              </div>
+            </motion.div>,
+            document.body
+          );
+        })()}
       </>
     );
   }
@@ -376,8 +372,7 @@ export const UserListView = ({
                             <button
                               disabled={isCurrentUser(user.id)}
                               onClick={() => onEdit(user)}
-                              className={`h-10 w-10 flex items-center justify-center rounded-xl border transition-all ${
-                                isCurrentUser(user.id)
+                              className={`h-10 w-10 flex items-center justify-center rounded-xl border transition-all ${isCurrentUser(user.id)
                                   ? "bg-[var(--bg-secondary)] text-[var(--text-muted)] border-[var(--border-subtle)] cursor-not-allowed"
                                   : "bg-[var(--bg-secondary)] hover:bg-[var(--accent-orange)] text-[var(--accent-orange)] hover:text-white border-[var(--border-subtle)]"}`}
                               title={isCurrentUser(user.id) ? t("cannotEditSelf") : t("editProfile")}
@@ -389,7 +384,7 @@ export const UserListView = ({
                               className="h-10 w-10 flex items-center justify-center rounded-xl bg-[var(--bg-secondary)] hover:bg-purple-500 text-purple-600 hover:text-white border border-[var(--border-subtle)] transition-all"
                               title={t("membershipProtocol")}
                             >
-                              <CreditCard size={16} />
+                              <BadgeDollarSign size={16} />
                             </button>
                             <button
                               onClick={() => onOpenAttendance(user)}
@@ -415,8 +410,7 @@ export const UserListView = ({
                             <button
                               disabled={statusUpdating && loadingStatusId === user.id}
                               onClick={() => onToggleStatus(user.id, user.is_active !== false)}
-                              className={`h-10 w-10 flex items-center justify-center rounded-xl bg-[var(--bg-secondary)] border border-[var(--border-subtle)] transition-all ${
-                                user.is_active !== false
+                              className={`h-10 w-10 flex items-center justify-center rounded-xl bg-[var(--bg-secondary)] border border-[var(--border-subtle)] transition-all ${user.is_active !== false
                                   ? 'text-amber-600 hover:bg-amber-500 hover:text-white'
                                   : 'text-[var(--text-muted)] hover:bg-gray-500 hover:text-white'}`}
                             >
@@ -490,7 +484,7 @@ export const UserListView = ({
                     {portalType !== "trainer" && (
                       <div className="flex gap-2">
                         <button disabled={isCurrentUser(user.id)} onClick={() => onEdit(user)} className={`h-10 w-10 flex items-center justify-center rounded-xl ${isCurrentUser(user.id) ? "bg-gray-100 text-gray-400 border border-gray-200 cursor-not-allowed" : "bg-[var(--bg-secondary)] text-[var(--accent-orange)] border border-[var(--border-subtle)]"}`}><Edit2 size={18} /></button>
-                        <button onClick={() => onOpenSubscription(user)} className="h-10 w-10 flex items-center justify-center rounded-xl bg-purple-50 text-purple-600 border border-purple-200"><CreditCard size={18} /></button>
+                        <button onClick={() => onOpenSubscription(user)} className="h-10 w-10 flex items-center justify-center rounded-xl bg-purple-50 text-purple-600 border border-purple-200"><BadgeDollarSign size={18} /></button>
                         <button onClick={() => onOpenAttendance(user)} className="h-10 w-10 flex items-center justify-center rounded-xl bg-emerald-50 text-emerald-600 border border-emerald-200"><Clock size={18} /></button>
                       </div>
                     )}
@@ -568,15 +562,15 @@ export const UserListView = ({
         </div>
       ) : usersLoading ? (
         <div className="p-8 bg-[var(--bg-card)] rounded-[2.5rem] border border-[var(--border-subtle)] overflow-hidden relative" style={{ boxShadow: "var(--shadow-card)" }}>
-           <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-[var(--accent-orange)] to-transparent" />
-           <div className="flex items-center gap-4 mb-10">
-              <div className="h-12 w-12 rounded-2xl bg-[var(--accent-orange)]/10 animate-pulse" />
-              <div>
-                <div className="h-4 w-32 bg-[var(--bg-secondary)] rounded-md mb-2 animate-pulse" />
-                <div className="h-3 w-48 bg-[var(--bg-secondary)] rounded-md animate-pulse" />
-              </div>
-           </div>
-           <SkeletonRows count={8} />
+          <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-[var(--accent-orange)] to-transparent" />
+          <div className="flex items-center gap-4 mb-10">
+            <div className="h-12 w-12 rounded-2xl bg-[var(--accent-orange)]/10 animate-pulse" />
+            <div>
+              <div className="h-4 w-32 bg-[var(--bg-secondary)] rounded-md mb-2 animate-pulse" />
+              <div className="h-3 w-48 bg-[var(--bg-secondary)] rounded-md animate-pulse" />
+            </div>
+          </div>
+          <SkeletonRows count={8} />
         </div>
       ) : (
         <div className="text-center py-32 bg-[var(--bg-card)] rounded-[3rem] border border-[var(--border-subtle)]" style={{ boxShadow: "var(--shadow-card)" }}>

@@ -181,71 +181,54 @@ export function ProductCard({ product }: ProductCardProps) {
         </GlassCard>
       </motion.div>
 
-      {/* 🛒 ORDER INQUIRY MODAL */}
+      {/* Order Inquiry Modal */}
       <Modal
         open={orderOpen}
         onClose={() => setOrderOpen(false)}
         title={`Order Inquiry — ${product.name}`}
       >
-        <div className="space-y-6 p-4">
-          <div className="flex items-center gap-4 p-4 rounded-2xl bg-white/5 border border-white/5">
-            <div className="h-14 w-14 rounded-xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center shrink-0">
-              {isSupplement ? <Zap size={24} className="text-indigo-400" /> : <ShoppingBag size={24} className="text-orange-400" />}
+        <div className="space-y-5">
+          <div className="flex items-center gap-3 p-4 bg-orange-50 rounded-xl border border-orange-100">
+            <div className="h-12 w-12 rounded-lg bg-white flex items-center justify-center">
+              {isSupplement ? <Zap size={20} className="text-indigo-500" /> : <ShoppingBag size={20} className="text-orange-500" />}
             </div>
             <div>
-              <p className="text-sm font-black text-white uppercase tracking-tight">{product.name}</p>
-              <p className="text-[10px] text-slate-400 uppercase tracking-widest">{product.category} • ₹{Number(product.price).toLocaleString("en-IN")}</p>
+              <p className="text-sm font-semibold text-gray-900">{product.name}</p>
+              <p className="text-xs text-gray-500">{product.category} • ₹{Number(product.price).toLocaleString("en-IN")}</p>
             </div>
           </div>
 
-          {/* Quantity Selector */}
-          <div className="space-y-2">
-            <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Quantity</label>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Quantity</label>
             <div className="flex items-center gap-3">
-              <button
-                onClick={() => setQuantity((q) => Math.max(1, q - 1))}
-                className="h-10 w-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-white hover:bg-white/10 transition-all"
-              >
+              <button onClick={() => setQuantity((q) => Math.max(1, q - 1))}
+                className="h-10 w-10 rounded-lg border border-gray-200 flex items-center justify-center text-gray-600 hover:bg-gray-50 transition-all">
                 <Minus size={16} />
               </button>
-              <span className="text-2xl font-black text-white w-12 text-center">{quantity}</span>
-              <button
-                onClick={() => setQuantity((q) => Math.min(product.stock_count, q + 1))}
-                className="h-10 w-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-white hover:bg-white/10 transition-all"
-              >
+              <span className="text-xl font-semibold text-gray-900 w-12 text-center">{quantity}</span>
+              <button onClick={() => setQuantity((q) => Math.min(product.stock_count, q + 1))}
+                className="h-10 w-10 rounded-lg border border-gray-200 flex items-center justify-center text-gray-600 hover:bg-gray-50 transition-all">
                 <Plus size={16} />
               </button>
             </div>
           </div>
 
-          {/* Description */}
-          <div className="space-y-2">
-            <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Note (Optional)</label>
-            <textarea
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-              rows={3}
-              placeholder="Any special requests or notes..."
-              className="w-full bg-slate-900 border border-white/10 rounded-xl px-4 py-3 text-sm text-white placeholder-slate-600 outline-none focus:border-indigo-500 transition resize-none"
-            />
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Notes (Optional)</label>
+            <textarea value={description} onChange={(e) => setDescription(e.target.value)} rows={3}
+              className="w-full bg-white border border-gray-200 rounded-lg px-4 py-2.5 text-sm text-gray-900 placeholder-gray-400 outline-none focus:border-orange-400 focus:ring-2 focus:ring-orange-50 transition-all resize-none"
+              placeholder="Any special requests..." />
           </div>
 
-          {/* Total */}
-          <div className="flex justify-between items-center p-4 rounded-2xl bg-indigo-500/5 border border-indigo-500/20">
-            <span className="text-xs font-black text-slate-400 uppercase tracking-widest">Estimated Total</span>
-            <span className="text-xl font-black text-white italic tracking-tighter">
-              ₹{(product.price * quantity).toLocaleString("en-IN")}
-            </span>
+          <div className="flex justify-between items-center p-4 bg-gray-50 rounded-xl border border-gray-200">
+            <span className="text-sm font-medium text-gray-600">Estimated Total</span>
+            <span className="text-lg font-bold text-gray-900">₹{(product.price * quantity).toLocaleString("en-IN")}</span>
           </div>
 
-          <GlowButton
-            className="w-full h-14 rounded-2xl text-xs font-black uppercase tracking-widest"
-            onClick={handleOrderInquiry}
-            disabled={submitting}
-          >
+          <GlowButton className="w-full h-12 rounded-lg text-sm font-semibold" onClick={handleOrderInquiry} disabled={submitting}>
             {submitting ? "Submitting..." : "Submit Order Inquiry"}
           </GlowButton>
-          <p className="text-[9px] text-center text-slate-500 italic px-6">
+          <p className="text-xs text-center text-gray-400">
             This sends an inquiry to the gym admin. You'll complete the payment at the counter.
           </p>
         </div>

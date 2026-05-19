@@ -1,15 +1,15 @@
 import { useState, useEffect, useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { useGymStore } from "../../store/gymStore";
-import { 
-  GlassCard, 
-  SectionTitle, 
-  Skeleton, 
-  EmptyState, 
-  Table, 
-  StatusBadge 
+import {
+  GlassCard,
+  SectionTitle,
+  Skeleton,
+  EmptyState,
+  Table,
+  StatusBadge
 } from "../../components/ui/primitives";
-import { CreditCard, CheckCircle2, Clock, RefreshCw } from "lucide-react";
+import { BadgeDollarSign, CheckCircle2, Clock, RefreshCw } from "lucide-react";
 import { useAuthStore } from "../../store/authStore";
 import { appPaymentService, type AppPaymentResponse } from "../../services/appPaymentService";
 import { DateRangeFilter, type DateRange } from "../../components/ui/DateRangeFilter";
@@ -127,7 +127,7 @@ export function UserPayments() {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <GlassCard className="p-4 flex items-center gap-4">
           <div className="h-10 w-10 rounded-xl bg-emerald-100 flex items-center justify-center text-emerald-600">
-            <CreditCard size={18} />
+            <BadgeDollarSign size={18} />
           </div>
           <div>
             <p className="text-[10px] font-bold text-[var(--text-muted)] uppercase tracking-widest leading-none mb-1">Total Transactions</p>

@@ -194,6 +194,7 @@ export function PublicPagesTab() {
   });
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [deleteTarget, setDeleteTarget] = useState<{ type: 'banner' | 'faq' | 'testimonial'; id?: string; index?: number; bannerType?: PublicBannerType } | null>(null);
+  const [deleteLoading, setDeleteLoading] = useState(false);
 
   useEffect(() => {
     fetchData();
@@ -242,6 +243,7 @@ export function PublicPagesTab() {
 
   const confirmDelete = async () => {
     if (!deleteTarget) return;
+    setDeleteLoading(true);
 
     try {
       if (deleteTarget.type === 'banner' && deleteTarget.id && deleteTarget.bannerType) {
@@ -259,11 +261,10 @@ export function PublicPagesTab() {
         setTestimonials(testimonials.filter((_, i) => i !== deleteTarget.index));
         toast.success("Testimonial deleted successfully!");
       }
+      setTimeout(() => { setDeleteModalOpen(false); setDeleteTarget(null); setDeleteLoading(false); }, 800);
     } catch (err) {
       toast.error("Deletion failed");
-    } finally {
-      setDeleteModalOpen(false);
-      setDeleteTarget(null);
+      setDeleteLoading(false);
     }
   };
 
@@ -423,6 +424,7 @@ export function PublicPagesTab() {
         title={deleteTarget?.type === 'banner' ? 'Banner Removal' : deleteTarget?.type === 'faq' ? 'FAQ Deletion' : 'Testimonial Purge'}
         description="Are you sure you want to permanently remove this content? This action cannot be reversed."
         confirmLabel="Submit"
+        isProcessing={deleteLoading}
       />
     </div>
   );

@@ -6,7 +6,7 @@ import * as am5 from "@amcharts/amcharts5";
 import * as am5xy from "@amcharts/amcharts5/xy";
 import am5themes_Animated from "@amcharts/amcharts5/themes/Animated";
 import {
-  Users, CreditCard, UserPlus, RefreshCw, IndianRupee,
+  Users, BadgeDollarSign, UserPlus, RefreshCw, IndianRupee,
   ShoppingBag, Mail, Bell, Activity,
   ChevronRight, TrendingUp, Clock, Camera,
 } from "lucide-react";
@@ -412,7 +412,7 @@ export default function AdminDashboard() {
   // ── Inquiry tab data ──
   const inqData: any[] = inquiries?.[inqTab] ?? [];
   const inqTabs = [
-    { id: "subscriptions", label: "Subscriptions", icon: CreditCard },
+    { id: "subscriptions", label: "Subscriptions", icon: BadgeDollarSign },
     { id: "product_orders", label: "Product Orders", icon: ShoppingBag },
     { id: "contact_inquiries", label: "Contact", icon: Mail },
   ] as const;
@@ -456,7 +456,7 @@ export default function AdminDashboard() {
           <div className="absolute -top-6 -right-6 w-32 h-32 rounded-full blur-3xl opacity-10 bg-[var(--accent-orange)]" />
           <div className="flex items-center gap-4 relative z-10">
             <div className="inline-flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-[var(--accent-orange)] to-[var(--accent-gold)]/20 group-hover:scale-110 transition-transform shrink-0">
-              <CreditCard size={20} className="text-[var(--accent-orange)]" />
+              <BadgeDollarSign size={20} className="text-[var(--accent-orange)]" />
             </div>
             <div>
               <p className="text-[10px] font-bold uppercase tracking-widest text-[var(--text-muted)] leading-tight">{t("subscriptionOverview")}</p>
@@ -528,10 +528,10 @@ export default function AdminDashboard() {
               >
                 <div
                   className={`h-10 w-10 rounded-full flex items-center justify-center text-sm font-bold shrink-0 ${inqTab === "subscriptions"
-                      ? "bg-indigo-100 text-indigo-600"
-                      : inqTab === "product_orders"
-                        ? "bg-emerald-100 text-emerald-600"
-                        : "bg-amber-100 text-amber-600"
+                    ? "bg-indigo-100 text-indigo-600"
+                    : inqTab === "product_orders"
+                      ? "bg-emerald-100 text-emerald-600"
+                      : "bg-amber-100 text-amber-600"
                     }`}
                 >
                   {(item.user_name ?? "?")?.[0]?.toUpperCase()}
@@ -545,8 +545,8 @@ export default function AdminDashboard() {
 
                     <span
                       className={`text-[10px] font-bold uppercase px-2 py-1 rounded-md ${item.status
-                          ? "bg-emerald-100 text-emerald-600"
-                          : "bg-amber-100 text-amber-600"
+                        ? "bg-emerald-100 text-emerald-600"
+                        : "bg-amber-100 text-amber-600"
                         }`}
                     >
                       {item.status ? t("resolved") : t("pending")}
@@ -676,11 +676,10 @@ export default function AdminDashboard() {
           <div className="flex items-center gap-2">
             {[3, 6, 12].map((m) => (
               <button key={m} onClick={() => handleRevenueMonthsChange(m)}
-                className={`px-3 py-1.5 rounded-lg text-[10px] font-bold uppercase tracking-widest transition-all ${
-                  derivedRevenueMonths === m
+                className={`px-3 py-1.5 rounded-lg text-[10px] font-bold uppercase tracking-widest transition-all ${derivedRevenueMonths === m
                     ? "bg-gradient-to-r from-[var(--accent-orange)] to-[var(--accent-gold)] text-white"
                     : "bg-[var(--bg-secondary)] text-[var(--text-muted)] hover:text-[var(--text-primary)] border border-[var(--border-subtle)]"
-                }`}>
+                  }`}>
                 {m}M
               </button>
             ))}

@@ -38,6 +38,7 @@ export function AdminProducts() {
   const [editProduct, setEditProduct] = useState<string | null>(null);
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [deleteTarget, setDeleteTarget] = useState<{ type: string; id: any } | null>(null);
+  const [deleteLoading, setDeleteLoading] = useState(false);
 
   const [productForm, setProductForm] = useState({
     name: "",
@@ -241,18 +242,23 @@ export function AdminProducts() {
       <DeleteConfirmationModal
         isOpen={deleteModalOpen && deleteTarget?.type === "product"}
         onClose={() => setDeleteModalOpen(false)}
+        isProcessing={deleteLoading}
         onConfirm={async () => {
           if (deleteTarget && deleteTarget.type === "product") {
+            setDeleteLoading(true);
             try {
               await adminProductService.deleteProduct(deleteTarget.id);
               toast.success("Inventory item terminated successfully");
               fetchProducts(productsMeta.page_no);
+              setTimeout(() => { setDeleteModalOpen(false); setDeleteTarget(null); setDeleteLoading(false); }, 800);
             } catch (err) {
               toast.error("Termination failed");
+              setDeleteLoading(false);
             }
+          } else {
+            setDeleteModalOpen(false);
+            setDeleteTarget(null);
           }
-          setDeleteModalOpen(false);
-          setDeleteTarget(null);
         }}
         title={t("inventoryPurge")}
         description={t("inventoryPurgeDesc")}

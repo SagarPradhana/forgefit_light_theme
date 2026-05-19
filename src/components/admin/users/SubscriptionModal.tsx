@@ -1,11 +1,11 @@
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { createPortal } from "react-dom";
-import { X, CreditCard, History, Plus, RefreshCw, Loader2, Calendar, CheckCircle2 } from "lucide-react";
+import { X, Plus, History, Loader2, Calendar, CreditCard } from "lucide-react";
 import { useState, useEffect } from "react";
 import { useGet, useMutation } from "../../../hooks/useApi";
 import { API_ENDPOINTS } from "../../../utils/url";
 import { toast } from "../../../store/toastStore";
-import { useTranslation } from "react-i18next";
+import { SuccessAnimation } from "../../ui/ActionAnimations";
 
 interface SubscriptionModalProps {
   isOpen: boolean;
@@ -14,8 +14,10 @@ interface SubscriptionModalProps {
   plans: any[];
 }
 
+const inp = "w-full bg-white border border-gray-200 rounded-lg px-4 py-2.5 text-sm text-gray-900 outline-none focus:border-orange-400 focus:ring-2 focus:ring-orange-50 transition-all";
+const sel = "w-full bg-white border border-gray-200 rounded-lg px-4 py-2.5 text-sm text-gray-900 outline-none focus:border-orange-400 focus:ring-2 focus:ring-orange-50 transition-all appearance-none cursor-pointer";
+
 export const SubscriptionModal = ({ isOpen, onClose, selectedUser, plans }: SubscriptionModalProps) => {
-  const { t } = useTranslation();
   const [activeTab, setActiveTab] = useState<"add" | "history">("add");
   const [selectedPlanId, setSelectedPlanId] = useState("");
   const [joiningDate, setJoiningDate] = useState(new Date().toISOString().split("T")[0]);
@@ -23,6 +25,7 @@ export const SubscriptionModal = ({ isOpen, onClose, selectedUser, plans }: Subs
   const [duration, setDuration] = useState<number>(1);
   const [endDate, setEndDate] = useState("");
   const [paymentMethod, setPaymentMethod] = useState("cash");
+  const [saveSuccess, setSaveSuccess] = useState(false);
 
   const { data: historyData, loading: historyLoading, refetch: refetchHistory } = useGet(
     selectedUser ? `${API_ENDPOINTS.ADMIN.SUBSCRIPTION_HISTORY}?user_id=${selectedUser.id}` : null
@@ -31,13 +34,15 @@ export const SubscriptionModal = ({ isOpen, onClose, selectedUser, plans }: Subs
 
   const { mutate: subscribe, loading: subscribing } = useMutation("post", {
     onSuccess: () => {
-      toast.success("Strategic membership activated");
+      setSaveSuccess(true);
+      toast.success("Subscription activated");
       refetchHistory();
-      setActiveTab("history");
     }
   });
 
-  // Real-time end date calculation
+  useEffect(() => { if (isOpen) setSaveSuccess(false); }, [isOpen]);
+  useEffect(() => { if (saveSuccess) setTimeout(() => setActiveTab("history"), 1200); }, [saveSuccess]);
+
   useEffect(() => {
     const start = new Date(joiningDate);
     if (!isNaN(start.getTime())) {
@@ -58,7 +63,7 @@ export const SubscriptionModal = ({ isOpen, onClose, selectedUser, plans }: Subs
 
   const handleSubscribe = () => {
     if (!selectedPlanId) {
-      toast.error("Please select a target plan");
+      toast.error("Please select a plan");
       return;
     }
     const payload = {
@@ -87,206 +92,155 @@ export const SubscriptionModal = ({ isOpen, onClose, selectedUser, plans }: Subs
 
   return createPortal(
     <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        onClick={onClose}
-        className="absolute inset-0 bg-black/70 backdrop-blur-lg"
-      />
+      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} onClick={onClose}
+        className="absolute inset-0 bg-black/60 backdrop-blur-sm" />
 
-      <motion.div
-        initial={{ scale: 0.9, opacity: 0, y: 20 }}
-        animate={{ scale: 1, opacity: 1, y: 0 }}
-        className="relative z-[101] w-full max-w-4xl bg-[var(--bg-card)] border border-[var(--border-subtle)] rounded-[2.5rem] shadow-[var(--shadow-hover)] overflow-hidden"
-      >
-        <div className="p-10 border-b border-[var(--border-subtle)] flex items-center justify-between bg-gradient-to-r from-[var(--bg-primary)] to-[var(--bg-card)]">
-          <div className="flex items-center gap-6">
-            <div className="h-16 w-16 rounded-[1.5rem] bg-gradient-to-r from-[var(--accent-orange)] to-[var(--accent-gold)] flex items-center justify-center text-white shadow-lg">
-              <CreditCard size={32} />
+      <motion.div initial={{ scale: 0.95, opacity: 0, y: 20 }} animate={{ scale: 1, opacity: 1, y: 0 }}
+        className="relative w-full max-w-3xl bg-white rounded-2xl border border-gray-100 shadow-xl overflow-hidden">
+        
+        <div className="flex items-center justify-between px-6 pt-6 pb-4 border-b border-gray-100">
+          <div className="flex items-center gap-3">
+            <div className="h-10 w-10 rounded-xl bg-orange-50 flex items-center justify-center">
+              <CreditCard className="text-orange-500" size={18} />
             </div>
             <div>
-              <h2 className="text-3xl font-black text-[var(--text-primary)] uppercase tracking-tighter italic">{t("subscriptionManagement")}</h2>
-              <div className="flex items-center gap-2 mt-1">
-                <span className="h-2 w-2 rounded-full bg-[var(--accent-orange)] animate-pulse" />
-                <p className="text-[10px] text-[var(--text-muted)] font-black uppercase tracking-[0.2em]">{selectedUser.name}</p>
-              </div>
+              <h2 className="text-base font-semibold text-gray-900">Subscription Management</h2>
+              <p className="text-xs text-gray-500">{selectedUser.name}</p>
             </div>
           </div>
-          <button onClick={onClose} className="h-12 w-12 flex items-center justify-center rounded-2xl bg-[var(--bg-secondary)] hover:bg-[var(--bg-card-hover)] transition-all text-[var(--text-muted)] hover:text-[var(--accent-orange)] border border-[var(--border-subtle)]">
-            <X size={24} />
+          <button onClick={onClose} className="p-1.5 rounded-lg text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition-all">
+            <X size={18} />
           </button>
         </div>
 
-        <div className="flex p-3 bg-[var(--bg-secondary)] border-b border-[var(--border-subtle)] shrink-0 gap-2">
-          <button onClick={() => setActiveTab("add")} className={`flex-1 py-4 rounded-2xl flex items-center justify-center gap-3 font-black uppercase tracking-widest text-[10px] transition-all duration-300 ${activeTab === "add" ? "bg-gradient-to-r from-[var(--accent-orange)] to-[var(--accent-gold)] text-white shadow-xl" : "text-[var(--text-muted)] hover:bg-[var(--bg-card-hover)]"}`}>
-            <Plus size={18} /> {t("addPlan")}
+        <div className="flex px-6 gap-2 border-b border-gray-100">
+          <button onClick={() => setActiveTab("add")}
+            className={`pb-3 px-4 text-sm font-medium border-b-2 transition-all ${activeTab === "add" ? "border-orange-500 text-orange-600" : "border-transparent text-gray-500 hover:text-gray-700"}`}>
+            <Plus size={14} className="inline mr-1.5" />Add Plan
           </button>
-          <button onClick={() => setActiveTab("history")} className={`flex-1 py-4 rounded-2xl flex items-center justify-center gap-3 font-black uppercase tracking-widest text-[10px] transition-all duration-300 ${activeTab === "history" ? "bg-gradient-to-r from-[var(--accent-orange)] to-[var(--accent-gold)] text-white shadow-xl" : "text-[var(--text-muted)] hover:bg-[var(--bg-card-hover)]"}`}>
-            <History size={18} /> {t("history")}
+          <button onClick={() => setActiveTab("history")}
+            className={`pb-3 px-4 text-sm font-medium border-b-2 transition-all ${activeTab === "history" ? "border-orange-500 text-orange-600" : "border-transparent text-gray-500 hover:text-gray-700"}`}>
+            <History size={14} className="inline mr-1.5" />History
           </button>
         </div>
 
-        <div className="p-10 overflow-y-auto max-h-[60vh] custom-scrollbar">
-          {activeTab === "add" ? (
-            <div className="grid lg:grid-cols-2 gap-12">
-              <div className="space-y-8">
+        <div className="p-6 overflow-y-auto max-h-[60vh]">
+          {saveSuccess ? (
+            <motion.div
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              className="flex flex-col items-center justify-center py-16"
+            >
+              <SuccessAnimation show={true} size={72} />
+              <motion.p
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.3 }}
+                className="mt-4 text-lg font-semibold text-gray-900"
+              >
+                Subscription Activated!
+              </motion.p>
+              <p className="text-sm text-gray-500 mt-1">Redirecting...</p>
+            </motion.div>
+          ) : activeTab === "add" ? (
+            <div className="grid md:grid-cols-2 gap-6">
+              <div className="space-y-4">
                 <div>
-                  <label className="block text-[10px] font-black text-[var(--text-muted)] uppercase tracking-[0.3em] mb-4 ml-1">Selection Protocol</label>
-                  <div className="relative group">
-                    <select 
-                      value={selectedPlanId} 
-                      onChange={(e) => handlePlanSelect(e.target.value)}
-                      className="w-full bg-[var(--bg-secondary)] border border-[var(--border-subtle)] rounded-2xl px-6 py-5 text-[var(--text-primary)] font-black text-sm appearance-none focus:outline-none focus:border-[var(--accent-orange)] transition-all hover:bg-[var(--bg-card-hover)]"
-                    >
-                      <option value="" className="bg-white">Select Strategic Tier...</option>
-                      {plans.map((p: any) => (
-                        <option key={p.id} value={p.id} className="bg-white">{p.name} — ₹{p.price}</option>
-                      ))}
-                    </select>
-                    <div className="absolute right-6 top-1/2 -translate-y-1/2 pointer-events-none text-[var(--text-muted)] group-hover:text-[var(--accent-orange)] transition-colors">
-                      <Plus size={16} />
-                    </div>
-                  </div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Select Plan <span className="text-red-500">*</span></label>
+                  <select className={sel} value={selectedPlanId} onChange={(e) => handlePlanSelect(e.target.value)}>
+                    <option value="">Choose a subscription plan</option>
+                    {plans.map((p: any) => (
+                      <option key={p.id} value={p.id}>{p.name} — ₹{p.price}</option>
+                    ))}
+                  </select>
                 </div>
-
                 <div>
-                  <label className="block text-[10px] font-black text-[var(--text-muted)] uppercase tracking-[0.3em] mb-4 ml-1">Payment Mode</label>
-                  <div className="relative group">
-                    <select 
-                      value={paymentMethod} 
-                      onChange={(e) => setPaymentMethod(e.target.value)}
-                      className="w-full bg-[var(--bg-secondary)] border border-[var(--border-subtle)] rounded-2xl px-6 py-5 text-[var(--accent-orange)] font-black text-sm appearance-none focus:outline-none focus:border-[var(--accent-orange)] transition-all hover:bg-[var(--bg-card-hover)]"
-                    >
-                      <option value="cash" className="bg-white">Cash Settlement</option>
-                      <option value="card" className="bg-white">Bank Card</option>
-                      <option value="upi" className="bg-white">UPI Interface</option>
-                      <option value="other" className="bg-white">Other Channels</option>
-                    </select>
-                    <div className="absolute right-6 top-1/2 -translate-y-1/2 pointer-events-none text-[var(--text-muted)] group-hover:text-[var(--accent-orange)] transition-colors">
-                      <CreditCard size={16} />
-                    </div>
-                  </div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Payment Method</label>
+                  <select className={sel} value={paymentMethod} onChange={(e) => setPaymentMethod(e.target.value)}>
+                    <option value="cash">Cash</option>
+                    <option value="card">Card</option>
+                    <option value="upi">UPI</option>
+                    <option value="other">Other</option>
+                  </select>
                 </div>
-
-                <div className="p-8 rounded-[2rem] bg-gradient-to-br from-[var(--accent-orange)]/5 to-transparent border border-[var(--border-subtle)] space-y-6 relative overflow-hidden">
-                   <div className="absolute top-0 right-0 w-32 h-32 bg-[var(--accent-orange)]/5 blur-3xl rounded-full -mr-16 -mt-16" />
-                   
-                   <div className="flex items-center justify-between relative z-10">
-                     <span className="text-[10px] text-[var(--text-muted)] font-black uppercase tracking-widest">Base Valuation</span>
-                     <span className="text-2xl font-black text-[var(--text-primary)] italic">₹{amount}</span>
-                   </div>
-                   <div className="flex items-center justify-between relative z-10">
-                     <span className="text-[10px] text-[var(--text-muted)] font-black uppercase tracking-widest">Calculated Span</span>
-                     <div className="flex items-center gap-2">
-                        <Calendar size={14} className="text-[var(--accent-orange)]" />
-                        <span className="text-sm font-black text-[var(--text-secondary)]">{duration} Months</span>
-                     </div>
-                   </div>
-                   <div className="h-px bg-[var(--border-subtle)] relative z-10" />
-                   <div className="flex items-center justify-between relative z-10">
-                     <div className="flex flex-col">
-                       <span className="text-[10px] text-[var(--accent-orange)] font-black uppercase tracking-widest">Final Price</span>
-                       <span className="text-[8px] text-[var(--text-muted)] font-bold uppercase mt-0.5 whitespace-nowrap">Standard Membership Rate</span>
-                     </div>
-                     <div className="flex items-center gap-2 bg-[var(--accent-orange)]/5 px-4 py-2 rounded-xl border border-[var(--accent-orange)]/10">
-                       <span className="text-[var(--accent-orange)] font-black italic">₹</span>
-                       <span className="text-[var(--text-primary)] font-black text-xl">{amount}</span>
-                     </div>
-                   </div>
+                <div className="bg-orange-50 border border-orange-100 rounded-xl p-4 space-y-3">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs text-gray-600">Plan Amount</span>
+                    <span className="text-lg font-bold text-gray-900">₹{amount}</span>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs text-gray-600">Duration</span>
+                    <span className="text-sm font-semibold text-gray-700">{duration} Months</span>
+                  </div>
+                  <hr className="border-orange-200" />
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-medium text-orange-600">Total</span>
+                    <span className="text-xl font-bold text-orange-600">₹{amount}</span>
+                  </div>
                 </div>
               </div>
 
-              <div className="space-y-8">
-                <div className="grid grid-cols-2 gap-6">
-                  <div className="space-y-3">
-                    <label className="block text-[10px] font-black text-[var(--text-muted)] uppercase tracking-widest ml-1">Initiation</label>
-                    <input type="date" max={new Date().toISOString().split('T')[0]} value={joiningDate} onChange={(e) => setJoiningDate(e.target.value)} className="w-full bg-[var(--bg-secondary)] border border-[var(--border-subtle)] p-4 rounded-2xl text-[var(--text-primary)] font-bold text-xs focus:outline-none focus:border-[var(--accent-orange)] transition-all" />
+              <div className="space-y-4">
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Start Date</label>
+                    <input type="date" max={new Date().toISOString().split('T')[0]} className={inp}
+                      value={joiningDate} onChange={(e) => setJoiningDate(e.target.value)} />
                   </div>
-                  <div className="space-y-3">
-                    <label className="block text-[10px] font-black text-[var(--accent-orange)]/50 uppercase tracking-widest text-right mr-1">Termination</label>
-                    <div className="p-4 text-right text-[var(--accent-orange)] font-black font-mono text-xs bg-[var(--accent-orange)]/5 rounded-2xl border border-[var(--accent-orange)]/20">
-                      {endDate}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">End Date</label>
+                    <div className="flex items-center gap-2 px-4 py-2.5 bg-gray-50 rounded-lg border border-gray-200 text-sm text-gray-500">
+                      <Calendar size={14} />
+                      {endDate || "—"}
                     </div>
                   </div>
                 </div>
 
-                <div className="bg-[var(--accent-orange)]/5 border border-[var(--accent-orange)]/10 p-6 rounded-[1.5rem] flex items-start gap-4">
-                  <div className="h-10 w-10 rounded-xl bg-[var(--accent-orange)]/10 flex items-center justify-center text-[var(--accent-orange)] shrink-0">
-                    <Calendar size={20} />
-                  </div>
-                  <p className="text-[10px] text-[var(--text-muted)] leading-relaxed uppercase font-bold">
-                    Automatic synchronization set for <span className="text-[var(--text-primary)] font-black">{endDate}</span>. 
-                    <br />
-                    <span className="text-[var(--accent-orange)]/80">Override capability active for custom strategic pricing.</span>
-                  </p>
+                <div className="bg-gray-50 rounded-lg p-4 text-xs text-gray-500">
+                  <p>Subscription will auto-end on <span className="font-semibold text-gray-700">{endDate}</span></p>
                 </div>
 
-                <div className="flex gap-4">
-                  <motion.button
-                    whileHover={{ scale: 1.02 }}
-                    whileTap={{ scale: 0.98 }}
-                    onClick={onClose}
-                    className="flex-1 px-6 py-5 rounded-[1.5rem] bg-[var(--bg-secondary)] border border-[var(--border-subtle)] font-black uppercase text-[10px] tracking-widest text-[var(--text-secondary)] hover:bg-[var(--bg-card-hover)] hover:text-[var(--accent-orange)] transition-all"
-                  >
+                <div className="flex gap-3 pt-2">
+                  <button onClick={onClose}
+                    className="flex-1 px-4 py-2.5 rounded-lg border border-gray-200 text-sm font-medium text-gray-700 hover:bg-gray-50 transition-all">
                     Cancel
-                  </motion.button>
-                  <motion.button
-                    whileHover={{ scale: 1.02, y: -2 }}
-                    whileTap={{ scale: 0.98 }}
-                    disabled={subscribing || !selectedPlanId}
-                    onClick={handleSubscribe}
-                    className="flex-[2] bg-gradient-to-r from-[var(--accent-orange)] to-[var(--accent-gold)] py-5 rounded-[1.5rem] font-black uppercase text-[10px] italic tracking-[0.2em] text-white disabled:opacity-50 flex items-center justify-center gap-4 group transition-all"
-                  >
-                    {subscribing ? <Loader2 className="animate-spin" size={24} /> : (
-                      <>
-                        <CheckCircle2 size={24} className="group-hover:rotate-12 transition-transform" /> 
-                        Submit
-                      </>
-                    )}
-                  </motion.button>
+                  </button>
+                  <button disabled={subscribing || !selectedPlanId} onClick={handleSubscribe}
+                    className="flex-[2] flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-orange-500 hover:bg-orange-600 text-white text-sm font-medium transition-all disabled:opacity-50 disabled:cursor-not-allowed">
+                    {subscribing ? <Loader2 size={16} className="animate-spin" /> : "Activate Subscription"}
+                  </button>
                 </div>
               </div>
             </div>
           ) : (
-            <div className="space-y-6">
+            <div>
               {historyLoading ? (
-                <div className="py-24 flex flex-col items-center gap-4">
-                    <Loader2 className="animate-spin text-[var(--accent-orange)]" size={48} />
-                    <span className="text-[10px] font-black text-[var(--text-muted)] uppercase tracking-widest">Retrieving Logs...</span>
+                <div className="py-16 flex flex-col items-center gap-3">
+                  <Loader2 className="animate-spin text-orange-500" size={32} />
+                  <span className="text-xs text-gray-500 font-medium">Loading history...</span>
                 </div>
               ) : history.length > 0 ? (
-                <div className="overflow-hidden rounded-[2rem] border border-[var(--border-subtle)] bg-[var(--bg-secondary)]">
+                <div className="overflow-hidden rounded-xl border border-gray-200">
                   <table className="w-full text-left">
-                    <thead className="bg-[var(--bg-primary)]">
+                    <thead className="bg-gray-50">
                       <tr>
-                        <th className="px-8 py-5 text-[10px] font-black text-[var(--text-muted)] uppercase tracking-widest">Plan Designation</th>
-                        <th className="px-8 py-5 text-[10px] font-black text-[var(--text-muted)] uppercase tracking-widest text-center">Protocol Life</th>
-                        <th className="px-8 py-5 text-[10px] font-black text-[var(--text-muted)] uppercase tracking-widest">Investment</th>
-                        <th className="px-8 py-5 text-[10px] font-black text-[var(--text-muted)] uppercase tracking-widest text-center">Status</th>
+                        <th className="px-5 py-3 text-xs font-semibold text-gray-500 uppercase">Plan</th>
+                        <th className="px-5 py-3 text-xs font-semibold text-gray-500 uppercase">Duration</th>
+                        <th className="px-5 py-3 text-xs font-semibold text-gray-500 uppercase">Amount</th>
+                        <th className="px-5 py-3 text-xs font-semibold text-gray-500 uppercase text-center">Status</th>
                       </tr>
                     </thead>
-                    <tbody className="divide-y divide-[var(--border-subtle)]">
+                    <tbody className="divide-y divide-gray-100">
                       {history.map((sub: any, idx: number) => (
-                        <tr key={idx} className="hover:bg-[var(--bg-card-hover)] transition-colors group">
-                          <td className="px-8 py-5">
-                            <p className="font-black text-[var(--text-primary)] uppercase tracking-tighter italic text-sm">{sub.plan_name}</p>
-                            <p className="text-[9px] text-[var(--text-muted)] uppercase font-black tracking-widest mt-0.5">{sub.duration_in_months || sub.duration} Month Span</p>
+                        <tr key={idx} className="hover:bg-gray-50 transition-colors">
+                          <td className="px-5 py-4">
+                            <p className="font-semibold text-gray-900">{sub.plan_name}</p>
+                            <p className="text-xs text-gray-500">{new Date(sub.start_date * 1000).toLocaleDateString()}</p>
                           </td>
-                          <td className="px-8 py-5 text-center">
-                            <div className="flex flex-col items-center gap-1">
-                                <span className="text-[var(--text-secondary)] font-black font-mono text-[10px]">{new Date(sub.start_date * 1000).toLocaleDateString()}</span>
-                                <div className="h-1 w-8 bg-[var(--accent-orange)]/20 rounded-full overflow-hidden">
-                                    <div className="h-full bg-[var(--accent-orange)] w-1/2" />
-                                </div>
-                            </div>
-                          </td>
-                          <td className="px-8 py-5">
-                             <span className="text-[var(--accent-orange)] font-black text-sm italic">₹{sub.amount}</span>
-                          </td>
-                          <td className="px-8 py-5 text-center">
-                            <span className="bg-emerald-500/10 text-emerald-600 border border-emerald-500/20 px-4 py-1.5 rounded-xl text-[9px] font-black uppercase tracking-widest">
-                                Active Protocol
-                            </span>
+                          <td className="px-5 py-4 text-sm text-gray-700">{sub.duration_in_months || sub.duration} months</td>
+                          <td className="px-5 py-4 text-sm font-semibold text-gray-900">₹{sub.amount}</td>
+                          <td className="px-5 py-4 text-center">
+                            <span className="inline-block px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-700">Active</span>
                           </td>
                         </tr>
                       ))}
@@ -294,12 +248,10 @@ export const SubscriptionModal = ({ isOpen, onClose, selectedUser, plans }: Subs
                   </table>
                 </div>
               ) : (
-                <div className="py-24 text-center">
-                   <div className="h-24 w-24 rounded-[2rem] bg-[var(--bg-secondary)] border border-[var(--border-subtle)] flex items-center justify-center mx-auto mb-6 shadow-inner">
-                    <History size={40} className="text-[var(--text-muted)]" />
-                  </div>
-                  <h3 className="text-xl font-black text-[var(--text-primary)] uppercase tracking-tighter">No Active Protocols</h3>
-                  <p className="text-[var(--text-muted)] font-bold uppercase tracking-widest text-[9px] mt-2 italic">Waiting for initial membership deployment</p>
+                <div className="py-16 text-center">
+                  <History size={40} className="text-gray-300 mx-auto mb-3" />
+                  <h3 className="text-base font-semibold text-gray-900">No Subscription History</h3>
+                  <p className="text-sm text-gray-500 mt-1">No past subscriptions found for this member</p>
                 </div>
               )}
             </div>
